@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 
 <head>
 
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>旅遊行程｜囍莉旅遊</title>
@@ -14,81 +13,176 @@
     <style>
 
         /* =========================
-           旅遊行程頁面
+           基本設定
+        ========================= */
+
+        body {
+            background: #fff7fb;
+        }
+
+
+        /* =========================
+           頁面標題
         ========================= */
 
         .page-banner {
+            background: linear-gradient(
+                135deg,
+                #fce4ec,
+                #f8bbd0
+            );
 
-            background: linear-gradient(135deg, #f8bfd8, #e77eae);
-
-            color: white;
+            padding: 50px 20px;
 
             text-align: center;
 
-            padding: 60px 20px;
-
-            border-radius: 0 0 35px 35px;
-
+            border-radius: 0 0 30px 30px;
         }
 
         .page-banner h1 {
+            color: #c2185b;
 
-            font-size: 38px;
+            font-size: 36px;
 
             margin-bottom: 15px;
-
         }
 
         .page-banner p {
+            color: #880e4f;
 
             font-size: 18px;
 
+            margin: 0;
         }
 
 
-        /* 行程列表 */
+        /* =========================
+           行程區域
+        ========================= */
+
+        .trip-section {
+            max-width: 1200px;
+
+            margin: 40px auto;
+
+            padding: 20px;
+        }
+
+
+        /* =========================
+           月份區塊
+        ========================= */
+
+        .month-section {
+            margin-bottom: 60px;
+        }
+
+        .month-title {
+            display: flex;
+
+            align-items: center;
+
+            gap: 15px;
+
+            color: #d94f8c;
+
+            font-size: 30px;
+
+            font-weight: bold;
+
+            padding-bottom: 15px;
+
+            border-bottom: 3px solid #f8bbd0;
+
+            margin-bottom: 30px;
+        }
+
+        .month-title::before {
+            content: "🌸";
+
+            font-size: 30px;
+        }
+
+
+        /* =========================
+           一日遊 / 多日遊標題
+        ========================= */
+
+        .trip-category {
+            margin-bottom: 35px;
+        }
+
+        .category-title {
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            font-size: 24px;
+
+            color: #ad1457;
+
+            margin-bottom: 20px;
+
+            padding-left: 10px;
+
+            border-left: 5px solid #ec407a;
+        }
+
+
+        /* =========================
+           行程列表
+        ========================= */
 
         .trip-list {
+            display: flex;
 
-            display: grid;
+            flex-direction: column;
 
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-
-            gap: 30px;
-
+            gap: 20px;
         }
 
 
-        /* 行程卡片 */
+        /* =========================
+           行程卡片
+        ========================= */
 
         .trip-card {
+            display: grid;
 
-            background: white;
+            grid-template-columns: 220px 1fr;
 
-            border-radius: 25px;
+            background: #ffffff;
+
+            border-radius: 20px;
 
             overflow: hidden;
 
-            box-shadow: 0 8px 25px rgba(220, 120, 160, 0.15);
+            box-shadow: 0 4px 15px rgba(194, 24, 91, 0.08);
 
             transition: 0.3s;
-
         }
 
         .trip-card:hover {
+            transform: translateY(-3px);
 
-            transform: translateY(-5px);
-
+            box-shadow: 0 8px 25px rgba(194, 24, 91, 0.15);
         }
 
 
-        /* 行程圖片 */
+        /* =========================
+           行程圖片
+        ========================= */
 
         .trip-photo {
+            background: linear-gradient(
+                135deg,
+                #fce4ec,
+                #f8bbd0
+            );
 
-            height: 220px;
-
-            background: linear-gradient(135deg, #ffd7e9, #f4a7c9);
+            min-height: 220px;
 
             display: flex;
 
@@ -96,201 +190,360 @@
 
             justify-content: center;
 
-            font-size: 80px;
+            font-size: 60px;
 
+            overflow: hidden;
         }
 
+        .trip-photo img {
+            width: 100%;
+
+            height: 100%;
+
+            object-fit: cover;
+        }
+
+
+        /* =========================
+           行程內容
+        ========================= */
 
         .trip-content {
-
             padding: 25px;
-
         }
 
+
+        /* =========================
+           行程狀態
+        ========================= */
+
+        .trip-tag {
+            display: inline-block;
+
+            padding: 7px 15px;
+
+            border-radius: 20px;
+
+            background: #fce4ec;
+
+            color: #c2185b;
+
+            font-size: 14px;
+
+            font-weight: bold;
+
+            margin-bottom: 12px;
+        }
+
+        .trip-tag.full {
+            background: #eeeeee;
+
+            color: #666666;
+        }
+
+        .trip-tag.coming {
+            background: #fff3e0;
+
+            color: #ef6c00;
+        }
+
+
+        /* =========================
+           行程名稱
+        ========================= */
 
         .trip-title {
-
-            font-size: 25px;
-
             color: #d94f8c;
 
-            margin-bottom: 15px;
+            font-size: 26px;
 
+            margin-bottom: 20px;
+
+            line-height: 1.5;
         }
 
 
+        /* =========================
+           行程資訊
+        ========================= */
+
         .trip-info {
+            display: grid;
 
-            background: #fff5fa;
+            grid-template-columns: repeat(2, 1fr);
 
-            padding: 15px;
+            gap: 10px;
+
+            background: #fff5f9;
+
+            padding: 18px;
 
             border-radius: 15px;
 
-            margin: 20px 0;
-
+            margin-bottom: 20px;
         }
 
-
-        .trip-info p {
-
-            margin: 10px 0;
+        .trip-info-item {
+            color: #555555;
 
             line-height: 1.8;
 
+            font-size: 16px;
+        }
+
+        .trip-info-item strong {
+            color: #ad1457;
         }
 
 
-        .trip-tag {
+        /* =========================
+           行程特色
+        ========================= */
 
-            display: inline-block;
+        .trip-highlights {
+            margin-bottom: 20px;
+        }
 
-            background: #ffe4ef;
+        .trip-highlights h4 {
+            color: #c2185b;
 
-            color: #d94f8c;
+            font-size: 18px;
 
-            padding: 6px 15px;
+            margin-bottom: 10px;
+        }
+
+        .trip-highlights ul {
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 8px;
+
+            padding: 0;
+
+            margin: 0;
+
+            list-style: none;
+        }
+
+        .trip-highlights li {
+            background: #fce4ec;
+
+            color: #ad1457;
+
+            padding: 7px 12px;
 
             border-radius: 20px;
 
             font-size: 14px;
-
-            margin-bottom: 15px;
-
         }
 
 
-        /* 行程特色 */
+        /* =========================
+           行程簡介
+        ========================= */
 
-        .trip-highlights {
+        .trip-description {
+            color: #666666;
 
-            margin: 20px 0;
+            line-height: 1.8;
 
-        }
-
-        .trip-highlights h4 {
-
-            color: #d94f8c;
-
-            margin-bottom: 10px;
-
-        }
-
-        .trip-highlights ul {
-
-            padding-left: 20px;
-
-            line-height: 2;
-
+            margin-bottom: 20px;
         }
 
 
-        /* 行程內容 */
+        /* =========================
+           按鈕
+        ========================= */
 
-        .trip-detail {
+        .trip-buttons {
+            display: flex;
 
-            background: #fff8fb;
+            gap: 12px;
 
-            border: 1px solid #ffe0ed;
-
-            border-radius: 15px;
-
-            padding: 20px;
-
-            margin: 20px 0;
-
+            flex-wrap: wrap;
         }
-
-        .trip-detail h4 {
-
-            color: #d94f8c;
-
-            margin-bottom: 15px;
-
-        }
-
-
-        /* 報名按鈕 */
 
         .trip-button {
+            display: inline-block;
 
-            display: block;
+            padding: 12px 25px;
 
-            text-align: center;
-
-            background: linear-gradient(135deg, #f28bb8, #d94f8c);
-
-            color: white;
+            border-radius: 30px;
 
             text-decoration: none;
 
-            padding: 15px;
-
-            border-radius: 50px;
-
-            font-size: 18px;
+            font-size: 16px;
 
             font-weight: bold;
 
-            margin-top: 20px;
+            text-align: center;
 
+            transition: 0.3s;
         }
 
-        .trip-button:hover {
+        .detail-button {
+            background: #ffffff;
 
-            opacity: 0.9;
+            color: #c2185b;
 
+            border: 2px solid #ec407a;
+        }
+
+        .detail-button:hover {
+            background: #fce4ec;
+        }
+
+        .registration-button {
+            background: linear-gradient(
+                135deg,
+                #ec407a,
+                #c2185b
+            );
+
+            color: #ffffff;
+
+            border: none;
+        }
+
+        .registration-button:hover {
+            background: linear-gradient(
+                135deg,
+                #c2185b,
+                #880e4f
+            );
+        }
+
+        .registration-button.disabled {
+            background: #cccccc;
+
+            color: #666666;
+
+            pointer-events: none;
         }
 
 
-        /* 尚未開放 */
+        /* =========================
+           沒有行程
+        ========================= */
 
-        .coming-soon {
-
-            background: #f5f5f5;
-
-            color: #999;
-
-        }
-
-
-        /* 注意事項 */
-
-        .notice-box {
-
-            background: #fff0f6;
-
-            border-left: 5px solid #e889b5;
+        .empty-category {
+            background: #ffffff;
 
             border-radius: 15px;
 
             padding: 25px;
 
-            line-height: 2;
+            text-align: center;
 
+            color: #888888;
+
+            border: 1px dashed #f8bbd0;
         }
 
 
-        /* 手機版 */
+        .empty-trip {
+            background: #ffffff;
+
+            padding: 50px 20px;
+
+            border-radius: 20px;
+
+            text-align: center;
+
+            color: #888888;
+        }
+
+
+        /* =========================
+           注意事項
+        ========================= */
+
+        .trip-notice {
+            background: #fff3e0;
+
+            border-left: 5px solid #ff9800;
+
+            padding: 25px;
+
+            border-radius: 15px;
+
+            margin-top: 50px;
+        }
+
+        .trip-notice h3 {
+            color: #e65100;
+
+            margin-bottom: 15px;
+        }
+
+        .trip-notice ul {
+            padding-left: 25px;
+
+            line-height: 2;
+
+            color: #666666;
+        }
+
+
+        /* =========================
+           手機版
+        ========================= */
 
         @media (max-width: 768px) {
 
+            .page-banner {
+                padding: 40px 15px;
+            }
+
             .page-banner h1 {
+                font-size: 28px;
+            }
 
-                font-size: 30px;
+            .page-banner p {
+                font-size: 16px;
+            }
 
+            .trip-section {
+                padding: 15px;
+            }
+
+            .month-title {
+                font-size: 24px;
+            }
+
+            .category-title {
+                font-size: 21px;
+            }
+
+            .trip-card {
+                grid-template-columns: 1fr;
             }
 
             .trip-photo {
+                height: 200px;
 
-                height: 180px;
-
+                min-height: auto;
             }
 
             .trip-content {
-
                 padding: 20px;
+            }
 
+            .trip-title {
+                font-size: 22px;
+            }
+
+            .trip-info {
+                grid-template-columns: 1fr;
+            }
+
+            .trip-buttons {
+                flex-direction: column;
+            }
+
+            .trip-button {
+                width: 100%;
             }
 
         }
@@ -304,45 +557,44 @@
 
 
     <!-- =========================
-         網站標題
+         導覽列
     ========================= -->
 
     <header class="site-header">
 
-        <h1>囍莉旅遊</h1>
+        <div class="navbar">
 
-        <p>✈️ 跟著阿冷四處玩吧！！</p>
+            <div class="nav-container">
 
-    </header>
+                <a href="index.html" class="logo">
+                    囍莉旅遊
+                </a>
 
+                <nav class="nav-menu">
 
-    <!-- =========================
-         導覽列
-    ========================= -->
+                    <a href="index.html">首頁</a>
 
-    <nav class="navbar">
+                    <a href="trips.html" class="active">
+                        旅遊行程
+                    </a>
 
-        <div class="nav-container">
+                    <a href="notice.html">注意事項</a>
 
-            <a href="index.html">🏠 首頁</a>
+                    <a href="process.html">報名流程</a>
 
-            <a href="trips.html">🚌 旅遊行程</a>
+                    <a href="faq.html">常見問題</a>
 
-            <a href="notice.html">📋 報名須知</a>
+                    <a href="boarding.html">上車地點</a>
 
-            <a href="process.html">📝 報名流程</a>
+                    <a href="about.html">關於我們</a>
 
-            <a href="faq.html">❓ 常見問題</a>
+                </nav>
 
-            <a href="boarding.html">📍 上車地點</a>
-
-            <a href="about.html">💗 關於我們</a>
-
-            <a href="registration.html">✍️ 我要報名</a>
+            </div>
 
         </div>
 
-    </nav>
+    </header>
 
 
     <!-- =========================
@@ -351,450 +603,69 @@
 
     <section class="page-banner">
 
-        <h1>🚌 旅遊行程</h1>
+        <h1>🌸 最新旅遊行程</h1>
 
         <p>
-            一起出發，享受美好旅程！
-        </p>
-
-        <p>
-            台南出發｜輕鬆慢遊｜溫暖同行
+            跟著阿冷四處玩吧！！
         </p>
 
     </section>
 
 
     <!-- =========================
-         行程列表
+         行程內容
     ========================= -->
 
-    <section class="container">
+    <main>
 
-        <h2 class="section-title">
-            🌸 最新旅遊行程
-        </h2>
+        <section class="trip-section">
 
+            <div id="tripContainer">
 
-        <div class="trip-list">
-
-
-            <!-- =========================
-                 行程 1
-            ========================= -->
-
-            <div class="trip-card">
-
-                <div class="trip-photo">
-
-                    🌸
-
-                </div>
-
-
-                <div class="trip-content">
-
-
-                    <span class="trip-tag">
-
-                        ✨ 最新行程
-
-                    </span>
-
-
-                    <h3 class="trip-title">
-
-                        行程名稱（待設定）
-
-                    </h3>
-
-
-                    <div class="trip-info">
-
-
-                        <p>
-
-                            📅 <strong>出團日期：</strong>
-
-                            待設定
-
-                        </p>
-
-
-                        <p>
-
-                            💰 <strong>團費：</strong>
-
-                            待設定
-
-                        </p>
-
-
-                        <p>
-
-                            👥 <strong>報名人數：</strong>
-
-                            待設定
-
-                        </p>
-
-
-                        <p>
-
-                            ⏰ <strong>報名截止：</strong>
-
-                            待設定
-
-                        </p>
-
-
-                    </div>
-
-
-                    <div class="trip-highlights">
-
-                        <h4>✨ 行程特色</h4>
-
-                        <ul>
-
-                            <li>精選特色景點</li>
-
-                            <li>輕鬆慢遊行程</li>
-
-                            <li>台南出發</li>
-
-                            <li>專業遊覽車接送</li>
-
-                        </ul>
-
-                    </div>
-
-
-                    <div class="trip-detail">
-
-                        <h4>📍 行程內容</h4>
-
-                        <p>
-
-                            這裡將顯示完整旅遊行程。
-
-                        </p>
-
-                        <p>
-
-                            未來可以依照不同旅遊團，
-                            設定各自的行程內容。
-
-                        </p>
-
-                    </div>
-
-
-                    <a href="registration.html" class="trip-button">
-
-                        🌸 我要報名
-
-                    </a>
-
-
+                <div class="empty-trip">
+                    正在載入旅遊行程...
                 </div>
 
             </div>
 
 
             <!-- =========================
-                 行程 2
+                 報名注意事項
             ========================= -->
 
-            <div class="trip-card">
+            <div class="trip-notice">
 
-                <div class="trip-photo">
+                <h3>📢 報名前請注意</h3>
 
-                    🚌
+                <ul>
 
-                </div>
+                    <li>
+                        請確認出團日期及行程內容。
+                    </li>
 
+                    <li>
+                        報名資料請務必填寫正確。
+                    </li>
 
-                <div class="trip-content">
+                    <li>
+                        報名完成後，請加入 LINE 聯絡小幫手確認報名資料。
+                    </li>
 
+                    <li>
+                        請勿於公布繳費時間前提前付款。
+                    </li>
 
-                    <span class="trip-tag">
+                    <li>
+                        如有任何疑問，歡迎透過 LINE 聯絡小幫手。
+                    </li>
 
-                        💗 精選旅程
-
-                    </span>
-
-
-                    <h3 class="trip-title">
-
-                        精選旅遊行程
-
-                    </h3>
-
-
-                    <div class="trip-info">
-
-
-                        <p>
-
-                            📅 <strong>出團日期：</strong>
-
-                            待設定
-
-                        </p>
-
-
-                        <p>
-
-                            💰 <strong>團費：</strong>
-
-                            待設定
-
-                        </p>
-
-
-                        <p>
-
-                            👥 <strong>報名人數：</strong>
-
-                            待設定
-
-                        </p>
-
-
-                        <p>
-
-                            ⏰ <strong>報名截止：</strong>
-
-                            待設定
-
-                        </p>
-
-
-                    </div>
-
-
-                    <div class="trip-highlights">
-
-                        <h4>✨ 行程特色</h4>
-
-                        <ul>
-
-                            <li>特色景點</li>
-
-                            <li>美食探索</li>
-
-                            <li>拍照打卡</li>
-
-                            <li>舒適旅遊體驗</li>
-
-                        </ul>
-
-                    </div>
-
-
-                    <div class="trip-detail">
-
-                        <h4>📍 行程內容</h4>
-
-                        <p>
-
-                            這裡將顯示完整旅遊行程。
-
-                        </p>
-
-                    </div>
-
-
-                    <a href="registration.html" class="trip-button">
-
-                        🌸 我要報名
-
-                    </a>
-
-
-                </div>
+                </ul>
 
             </div>
 
+        </section>
 
-            <!-- =========================
-                 行程 3
-            ========================= -->
-
-            <div class="trip-card">
-
-                <div class="trip-photo">
-
-                    💗
-
-                </div>
-
-
-                <div class="trip-content">
-
-
-                    <span class="trip-tag">
-
-                        🌿 輕鬆慢遊
-
-                    </span>
-
-
-                    <h3 class="trip-title">
-
-                        更多精彩旅程
-
-                    </h3>
-
-
-                    <div class="trip-info">
-
-
-                        <p>
-
-                            📅 <strong>出團日期：</strong>
-
-                            待設定
-
-                        </p>
-
-
-                        <p>
-
-                            💰 <strong>團費：</strong>
-
-                            待設定
-
-                        </p>
-
-
-                        <p>
-
-                            👥 <strong>報名人數：</strong>
-
-                            待設定
-
-                        </p>
-
-
-                        <p>
-
-                            ⏰ <strong>報名截止：</strong>
-
-                            待設定
-
-                        </p>
-
-
-                    </div>
-
-
-                    <div class="trip-highlights">
-
-                        <h4>✨ 行程特色</h4>
-
-                        <ul>
-
-                            <li>慢活旅行</li>
-
-                            <li>景點探索</li>
-
-                            <li>美食體驗</li>
-
-                            <li>溫暖同行</li>
-
-                        </ul>
-
-                    </div>
-
-
-                    <div class="trip-detail">
-
-                        <h4>📍 行程內容</h4>
-
-                        <p>
-
-                            這裡將顯示完整旅遊行程。
-
-                        </p>
-
-                    </div>
-
-
-                    <a href="registration.html" class="trip-button">
-
-                        🌸 我要報名
-
-                    </a>
-
-
-                </div>
-
-            </div>
-
-
-        </div>
-
-    </section>
-
-
-    <!-- =========================
-         報名前注意事項
-    ========================= -->
-
-    <section class="container">
-
-        <h2 class="section-title">
-
-            📋 報名前注意事項
-
-        </h2>
-
-
-        <div class="notice-box">
-
-
-            <p>
-
-                🌸 報名前請仔細閱讀行程內容、
-                出團日期及相關費用。
-
-            </p>
-
-
-            <p>
-
-                🌸 確認報名資料填寫正確。
-
-            </p>
-
-
-            <p>
-
-                🌸 填寫完成後，
-                請加入 LINE 確認報名是否成功。
-
-            </p>
-
-
-            <p>
-
-                🌸 若行程確認成團，
-                將另行公告繳費時間。
-
-            </p>
-
-
-            <p>
-
-                🌸 請勿提前繳費。
-
-            </p>
-
-
-        </div>
-
-    </section>
+    </main>
 
 
     <!-- =========================
@@ -803,33 +674,442 @@
 
     <footer>
 
-        <h2>🌸 囍莉旅遊</h2>
+        <div class="container">
 
-        <p>✈️ 跟著阿冷四處玩吧！！</p>
+            <h3>囍莉旅遊</h3>
 
-        <p>
+            <p>
+                跟著阿冷四處玩吧！！
+            </p>
 
-            一起把平凡的日子，
-            <br>
-            變成值得收藏的旅行回憶。
+            <p>
+                © 2026 囍莉旅遊
+            </p>
 
-        </p>
-
-
-        <p>
-
-            台南出發｜遊覽車旅行｜輕鬆慢遊｜溫暖同行
-
-        </p>
-
-
-        <p>
-
-            © 2026 囍莉旅遊 All Rights Reserved.
-
-        </p>
+        </div>
 
     </footer>
+
+
+    <!-- =========================
+         行程資料
+    ========================= -->
+
+    <script src="trips.js"></script>
+
+
+    <!-- =========================
+         行程顯示功能
+    ========================= -->
+
+    <script>
+
+        const tripContainer = document.getElementById("tripContainer");
+
+
+        /* =========================
+           日期轉換
+        ========================= */
+
+        function getTripMonth(trip) {
+
+            if (!trip.date) {
+                return "日期待設定";
+            }
+
+            const date = new Date(trip.date);
+
+            if (isNaN(date.getTime())) {
+                return "日期待設定";
+            }
+
+            return date.getFullYear() + " 年 " +
+                   (date.getMonth() + 1) + " 月";
+
+        }
+
+
+        /* =========================
+           建立行程卡片
+        ========================= */
+
+        function createTripCard(trip) {
+
+            let highlightsHTML = "";
+
+            if (trip.highlights && trip.highlights.length > 0) {
+
+                trip.highlights.forEach(function(item) {
+
+                    highlightsHTML += `
+                        <li>${item}</li>
+                    `;
+
+                });
+
+            }
+
+
+            let statusClass = "";
+
+            if (trip.status === "額滿") {
+
+                statusClass = "full";
+
+            } else if (trip.status === "籌備中") {
+
+                statusClass = "coming";
+
+            }
+
+
+            let registrationButton = "";
+
+            if (trip.status === "額滿") {
+
+                registrationButton = `
+                    <a class="trip-button registration-button disabled">
+                        🚫 已額滿
+                    </a>
+                `;
+
+            } else if (trip.status === "籌備中") {
+
+                registrationButton = `
+                    <a class="trip-button registration-button disabled">
+                        🌸 敬請期待
+                    </a>
+                `;
+
+            } else {
+
+                registrationButton = `
+                    <a
+                        href="registration.html?trip=${trip.id}"
+                        class="trip-button registration-button"
+                    >
+                        🌸 我要報名
+                    </a>
+                `;
+
+            }
+
+
+            const card = document.createElement("div");
+
+            card.className = "trip-card";
+
+
+            card.innerHTML = `
+
+                <div class="trip-photo">
+
+                    ${
+                        trip.image
+                        ?
+                        `<img src="${trip.image}" alt="${trip.title}">`
+                        :
+                        "🌸"
+                    }
+
+                </div>
+
+
+                <div class="trip-content">
+
+
+                    <span class="trip-tag ${statusClass}">
+                        ${trip.status || "報名中"}
+                    </span>
+
+
+                    <h3 class="trip-title">
+                        ${trip.title}
+                    </h3>
+
+
+                    <div class="trip-info">
+
+
+                        <div class="trip-info-item">
+                            📅
+                            <strong>出團日期：</strong>
+                            ${trip.dateText || "待設定"}
+                        </div>
+
+
+                        <div class="trip-info-item">
+                            💰
+                            <strong>團費：</strong>
+                            ${trip.priceText || "待設定"}
+                        </div>
+
+
+                        <div class="trip-info-item">
+                            👥
+                            <strong>報名人數：</strong>
+                            ${trip.registeredPeople || 0}
+                            /
+                            ${trip.maxPeople || "不限"}
+                        </div>
+
+
+                        <div class="trip-info-item">
+                            ⏰
+                            <strong>報名截止：</strong>
+                            ${trip.deadline || "待設定"}
+                        </div>
+
+
+                    </div>
+
+
+                    ${
+                        highlightsHTML
+                        ?
+                        `
+                        <div class="trip-highlights">
+
+                            <h4>✨ 行程特色</h4>
+
+                            <ul>
+                                ${highlightsHTML}
+                            </ul>
+
+                        </div>
+                        `
+                        :
+                        ""
+                    }
+
+
+                    <div class="trip-description">
+
+                        ${trip.description || ""}
+
+                    </div>
+
+
+                    <div class="trip-buttons">
+
+                        <a
+                            href="trip-detail.html?trip=${trip.id}"
+                            class="trip-button detail-button"
+                        >
+                            📖 查看詳細行程
+                        </a>
+
+
+                        ${registrationButton}
+
+                    </div>
+
+
+                </div>
+
+            `;
+
+
+            return card;
+
+        }
+
+
+        /* =========================
+           依月份分類
+        ========================= */
+
+        function renderTrips() {
+
+            tripContainer.innerHTML = "";
+
+
+            if (!tripsData || tripsData.length === 0) {
+
+                tripContainer.innerHTML = `
+                    <div class="empty-trip">
+
+                        <h2>🌸 目前沒有旅遊行程</h2>
+
+                        <p>精彩旅程即將推出，敬請期待！</p>
+
+                    </div>
+                `;
+
+                return;
+
+            }
+
+
+            /* 依月份分組 */
+
+            const monthGroups = {};
+
+
+            tripsData.forEach(function(trip) {
+
+                const month = getTripMonth(trip);
+
+                if (!monthGroups[month]) {
+
+                    monthGroups[month] = [];
+
+                }
+
+                monthGroups[month].push(trip);
+
+            });
+
+
+            /* 排序月份 */
+
+            const sortedMonths = Object.keys(monthGroups).sort(function(a, b) {
+
+                if (a === "日期待設定") return 1;
+
+                if (b === "日期待設定") return -1;
+
+
+                const dateA = new Date(
+                    a.replace(" 年 ", "-").replace(" 月", "-01")
+                );
+
+                const dateB = new Date(
+                    b.replace(" 年 ", "-").replace(" 月", "-01")
+                );
+
+                return dateA - dateB;
+
+            });
+
+
+            /* 建立月份區塊 */
+
+            sortedMonths.forEach(function(month) {
+
+
+                const monthSection = document.createElement("section");
+
+                monthSection.className = "month-section";
+
+
+                monthSection.innerHTML = `
+
+                    <h2 class="month-title">
+                        ${month}
+                    </h2>
+
+                `;
+
+
+                const tripsInMonth = monthGroups[month];
+
+
+                /* =========================
+                   一日遊
+                ========================= */
+
+                const oneDayTrips = tripsInMonth.filter(function(trip) {
+
+                    return trip.type === "一日遊";
+
+                });
+
+
+                if (oneDayTrips.length > 0) {
+
+                    const category = document.createElement("div");
+
+                    category.className = "trip-category";
+
+
+                    category.innerHTML = `
+
+                        <h3 class="category-title">
+                            ☀️ 一日遊
+                        </h3>
+
+                        <div class="trip-list"></div>
+
+                    `;
+
+
+                    const list = category.querySelector(".trip-list");
+
+
+                    oneDayTrips.forEach(function(trip) {
+
+                        list.appendChild(createTripCard(trip));
+
+                    });
+
+
+                    monthSection.appendChild(category);
+
+                }
+
+
+                /* =========================
+                   多日遊
+                ========================= */
+
+                const multiDayTrips = tripsInMonth.filter(function(trip) {
+
+                    return trip.type === "多日遊";
+
+                });
+
+
+                if (multiDayTrips.length > 0) {
+
+                    const category = document.createElement("div");
+
+                    category.className = "trip-category";
+
+
+                    category.innerHTML = `
+
+                        <h3 class="category-title">
+                            🌙 多日遊
+                        </h3>
+
+                        <div class="trip-list"></div>
+
+                    `;
+
+
+                    const list = category.querySelector(".trip-list");
+
+
+                    multiDayTrips.forEach(function(trip) {
+
+                        list.appendChild(createTripCard(trip));
+
+                    });
+
+
+                    monthSection.appendChild(category);
+
+                }
+
+
+                tripContainer.appendChild(monthSection);
+
+
+            });
+
+
+        }
+
+
+        /* =========================
+           執行
+        ========================= */
+
+        renderTrips();
+
+
+    </script>
 
 
 </body>
