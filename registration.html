@@ -1,0 +1,780 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>旅遊報名｜囍莉旅遊</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         網站導覽列
+    ========================= -->
+
+    <header class="site-header">
+
+        <div class="navbar">
+
+            <div class="nav-container">
+
+                <a href="index.html" class="logo">
+                    囍莉旅遊
+                </a>
+
+                <nav class="nav-menu">
+
+                    <a href="index.html">
+                        首頁
+                    </a>
+
+                    <a href="trips.html">
+                        旅遊行程
+                    </a>
+
+                    <a href="notice.html">
+                        注意事項
+                    </a>
+
+                    <a href="process.html">
+                        報名流程
+                    </a>
+
+                    <a href="faq.html">
+                        常見問題
+                    </a>
+
+                    <a href="boarding.html">
+                        上車地點
+                    </a>
+
+                    <a href="about.html">
+                        關於我們
+                    </a>
+
+                </nav>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================
+         頁面標題
+    ========================= -->
+
+    <section class="page-banner">
+
+        <h1>📝 旅遊報名</h1>
+
+        <p>
+            填寫報名資料，一起出發旅行！
+        </p>
+
+    </section>
+
+
+    <!-- =========================
+         報名表
+    ========================= -->
+
+    <main>
+
+        <section class="container">
+
+
+            <form id="registrationForm">
+
+
+                <!-- =========================
+                     第一部分：報名行程
+                ========================= -->
+
+                <section class="card">
+
+                    <h2>① 報名行程</h2>
+
+                    <div id="selectedTrip">
+
+                        <p>
+                            正在載入行程資訊...
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =========================
+                     第二部分：報名人資料
+                ========================= -->
+
+                <section class="card">
+
+                    <h2>② 報名人資料</h2>
+
+
+                    <div class="form-group">
+
+                        <label for="mainName">
+
+                            報名人姓名
+                            <span class="required">*</span>
+
+                        </label>
+
+                        <input
+                            type="text"
+                            id="mainName"
+                            name="mainName"
+                            required
+                            placeholder="請輸入報名人姓名"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="mainPhone">
+
+                            聯絡電話
+                            <span class="required">*</span>
+
+                        </label>
+
+                        <input
+                            type="tel"
+                            id="mainPhone"
+                            name="mainPhone"
+                            required
+                            placeholder="請輸入聯絡電話"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="mainEmail">
+
+                            Email
+
+                        </label>
+
+                        <input
+                            type="email"
+                            id="mainEmail"
+                            name="mainEmail"
+                            placeholder="請輸入 Email"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="mainLine">
+
+                            LINE 名稱
+
+                        </label>
+
+                        <input
+                            type="text"
+                            id="mainLine"
+                            name="mainLine"
+                            placeholder="請輸入 LINE 名稱"
+                        >
+
+                    </div>
+
+
+                </section>
+
+
+                <!-- =========================
+                     第三部分：報名人數
+                ========================= -->
+
+                <section class="card">
+
+                    <h2>③ 報名人數</h2>
+
+
+                    <div class="form-group">
+
+                        <label for="peopleCount">
+
+                            報名總人數
+                            <span class="required">*</span>
+
+                        </label>
+
+                        <select
+                            id="peopleCount"
+                            name="peopleCount"
+                            required
+                        >
+
+                            <option value="">
+                                請選擇報名人數
+                            </option>
+
+                            <option value="1">
+                                1 人
+                            </option>
+
+                            <option value="2">
+                                2 人
+                            </option>
+
+                            <option value="3">
+                                3 人
+                            </option>
+
+                            <option value="4">
+                                4 人
+                            </option>
+
+                            <option value="5">
+                                5 人
+                            </option>
+
+                            <option value="6">
+                                6 人
+                            </option>
+
+                            <option value="7">
+                                7 人
+                            </option>
+
+                            <option value="8">
+                                8 人
+                            </option>
+
+                            <option value="9">
+                                9 人
+                            </option>
+
+                            <option value="10">
+                                10 人
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <p>
+                        請選擇此次報名的總人數。
+                    </p>
+
+
+                </section>
+
+
+                <!-- =========================
+                     第四部分：旅客資料
+                ========================= -->
+
+                <section class="card">
+
+                    <h2>④ 旅客資料</h2>
+
+
+                    <p>
+
+                        請依照報名人數，填寫每位旅客的資料。
+
+                    </p>
+
+
+                    <div id="travelerContainer">
+
+                        <!--
+                            旅客資料將由 registration.js
+                            根據報名人數自動產生
+                        -->
+
+                    </div>
+
+
+                </section>
+
+
+                <!-- =========================
+                     第五部分：上車地點
+                ========================= -->
+
+                <section class="card">
+
+                    <h2>⑤ 上車地點</h2>
+
+
+                    <p>
+
+                        每位旅客可以選擇自己的上車地點。
+
+                    </p>
+
+
+                    <p>
+
+                        第一上車地點為必填，
+                        第二上車地點為選填。
+                        如不需要第二上車地點，請留空即可。
+
+                    </p>
+
+
+                    <div id="boardingContainer">
+
+                        <!--
+                            每位旅客的上車地點
+                            將由 registration.js 自動產生
+                        -->
+
+                    </div>
+
+
+                </section>
+
+
+                <!-- =========================
+                     第六部分：個資告知事項
+                ========================= -->
+
+                <section class="card">
+
+                    <h2>⑥ 個人資料蒐集、處理及利用告知事項</h2>
+
+
+                    <div class="privacy-content">
+
+
+                        <h3>
+                            個人資料蒐集告知
+                        </h3>
+
+
+                        <p>
+
+                            囍莉旅遊及相關旅行社為辦理旅遊報名、
+                            行程安排、旅客聯繫、保險辦理及其他
+                            旅遊相關服務，將蒐集、處理及利用
+                            您所提供的個人資料。
+
+                        </p>
+
+
+                        <p>
+
+                            請您詳閱個人資料蒐集、處理及利用
+                            相關告知事項。
+
+                        </p>
+
+
+                        <h3>
+                            蒐集目的
+                        </h3>
+
+
+                        <p>
+
+                            包括旅遊報名、行程安排、旅客聯繫、
+                            交通安排、保險辦理、付款確認、
+                            旅遊服務提供及相關行政作業。
+
+                        </p>
+
+
+                        <h3>
+                            蒐集個人資料類別
+                        </h3>
+
+
+                        <p>
+
+                            依旅遊服務所需，可能包含姓名、
+                            聯絡電話、出生日期、身分資料、
+                            緊急聯絡資訊及其他必要資料。
+
+                        </p>
+
+
+                        <h3>
+                            個人資料利用期間
+                        </h3>
+
+
+                        <p>
+
+                            於旅遊服務及相關法令要求的
+                            保存期間內使用。
+
+                        </p>
+
+
+                        <h3>
+                            個人資料利用地區
+                        </h3>
+
+
+                        <p>
+
+                            依旅遊服務需要，於相關服務地區
+                            及依法需要提供的相關單位使用。
+
+                        </p>
+
+
+                        <h3>
+                            個人資料利用對象
+                        </h3>
+
+
+                        <p>
+
+                            旅行社、旅遊服務提供者、
+                            交通業者、住宿業者、保險業者
+                            及其他旅遊服務必要相關單位。
+
+                        </p>
+
+
+                        <h3>
+                            個人資料利用方式
+                        </h3>
+
+
+                        <p>
+
+                            以紙本、電子文件、系統資料
+                            或其他合法方式處理及利用。
+
+                        </p>
+
+
+                        <h3>
+                            個人資料權利
+                        </h3>
+
+
+                        <p>
+
+                            您依法可以查詢、閱覽、
+                            請求複製、補充、更正、
+                            停止蒐集、處理、利用
+                            或刪除個人資料。
+
+                        </p>
+
+
+                        <h3>
+                            未提供資料的影響
+                        </h3>
+
+
+                        <p>
+
+                            若未提供必要的個人資料，
+                            可能無法完成旅遊報名、
+                            保險辦理或相關旅遊服務。
+
+                        </p>
+
+
+                        <h3>
+                            代填資料確認
+                        </h3>
+
+
+                        <p>
+
+                            若您代其他旅客填寫資料，
+                            請確認已取得該旅客授權，
+                            並已告知相關個人資料蒐集、
+                            處理及利用事項。
+
+                        </p>
+
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+
+                            <input
+                                type="checkbox"
+                                id="privacyConsent"
+                                name="privacyConsent"
+                                required
+                            >
+
+                            <span class="required">*</span>
+
+                            我已閱讀並了解個人資料蒐集、
+                            處理及利用告知事項，
+                            並同意提供必要個人資料。
+
+                        </label>
+
+                    </div>
+
+
+                </section>
+
+
+                <!-- =========================
+                     第七部分：照片及影片同意
+                ========================= -->
+
+                <section class="card">
+
+                    <h2>⑦ 照片／影片拍攝及使用同意</h2>
+
+
+                    <p>
+
+                        旅遊活動期間可能進行照片及影片拍攝，
+                        用於活動紀錄、旅遊分享及相關宣傳用途。
+
+                    </p>
+
+
+                    <p>
+
+                        請選擇是否同意照片／影片使用。
+
+                    </p>
+
+
+                    <div class="form-group">
+
+                        <label>
+
+                            <input
+                                type="radio"
+                                name="photoConsent"
+                                value="同意"
+                                required
+                            >
+
+                            同意照片／影片拍攝及使用
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+
+                            <input
+                                type="radio"
+                                name="photoConsent"
+                                value="不同意"
+                            >
+
+                            不同意照片／影片拍攝及使用
+
+                        </label>
+
+                    </div>
+
+
+                </section>
+
+
+                <!-- =========================
+                     第八部分：代理報名確認
+                ========================= -->
+
+                <section class="card">
+
+                    <h2>⑧ 代理填寫確認</h2>
+
+
+                    <p>
+
+                        若您為其他同行旅客代填報名資料，
+                        請確認已取得同行旅客授權，
+                        並已告知其個人資料蒐集、
+                        處理及利用相關事項。
+
+                    </p>
+
+
+                    <div class="form-group">
+
+                        <label>
+
+                            <input
+                                type="checkbox"
+                                id="proxyConsent"
+                                name="proxyConsent"
+                            >
+
+                            我確認已取得同行旅客授權，
+                            並已告知相關資料使用事項。
+
+                        </label>
+
+                    </div>
+
+
+                </section>
+
+
+                <!-- =========================
+                     第九部分：報名確認
+                ========================= -->
+
+                <section class="card">
+
+                    <h2>⑨ 報名資料確認</h2>
+
+
+                    <p>
+
+                        送出前請確認所有資料正確。
+
+                    </p>
+
+
+                    <div class="form-group">
+
+                        <label>
+
+                            <input
+                                type="checkbox"
+                                id="confirmData"
+                                name="confirmData"
+                                required
+                            >
+
+                            <span class="required">*</span>
+
+                            我確認以上填寫資料正確，
+                            並了解報名相關注意事項。
+
+                        </label>
+
+                    </div>
+
+
+                </section>
+
+
+                <!-- =========================
+                     送出按鈕
+                ========================= -->
+
+                <section class="card">
+
+                    <div class="submit-area">
+
+                        <button
+                            type="submit"
+                            id="submitButton"
+                        >
+
+                            📩 送出報名資料
+
+                        </button>
+
+
+                        <p>
+
+                            送出後請加入 LINE 聯絡小幫手，
+                            確認報名資料及報名成功。
+
+                        </p>
+
+
+                        <p>
+
+                            LINE：
+                            <strong>0909686339</strong>
+
+                        </p>
+
+
+                        <p>
+
+                            聯絡人：
+                            <strong>陳莉瀅（阿冷）－悅揚旅行社</strong>
+
+                        </p>
+
+
+                    </div>
+
+                </section>
+
+
+            </form>
+
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================
+         Footer
+    ========================= -->
+
+    <footer>
+
+        <div class="container">
+
+            <h3>囍莉旅遊</h3>
+
+            <p>
+                跟著阿冷四處玩吧！！
+            </p>
+
+            <p>
+                © 2026 囍莉旅遊
+            </p>
+
+        </div>
+
+    </footer>
+
+
+    <!-- =========================
+         行程資料
+    ========================= -->
+
+    <script src="trips.js"></script>
+
+
+    <!-- =========================
+         報名功能
+    ========================= -->
+
+    <script src="registration.js"></script>
+
+
+</body>
+
+</html>
