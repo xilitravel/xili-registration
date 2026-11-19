@@ -1,160 +1,352 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>囍莉旅遊｜旅遊報名</title>
+  <title>囍莉旅遊｜線上報名</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-        body {
-            margin: 0;
-            font-family: "Microsoft JhengHei", "Noto Sans TC", sans-serif;
-            background: #fff4f8;
-            color: #5b3b46;
-        }
+    body {
+      margin: 0;
+      font-family: "Noto Sans TC", Arial, sans-serif;
+      background: #fff5f8;
+      color: #5c3547;
+    }
 
-        header {
-            padding: 30px 20px;
-            text-align: center;
-            background: linear-gradient(135deg, #ffd6e5, #f8a8c7);
-        }
+    /* 品牌 Banner */
+    .banner {
+      width: 100%;
+      padding: 30px 20px;
+      text-align: center;
+      background: linear-gradient(135deg, #f9c8dc, #e987b0);
+      color: white;
+    }
 
-        .logo {
-            font-size: 36px;
-            font-weight: bold;
-            color: white;
-            letter-spacing: 8px;
-        }
+    .banner h1 {
+      margin: 0;
+      font-size: 32px;
+    }
 
-        .subtitle {
-            margin-top: 10px;
-            font-size: 18px;
-            color: #fff;
-        }
+    .banner p {
+      font-size: 18px;
+      margin: 10px 0 0;
+    }
 
-        .container {
-            max-width: 900px;
-            margin: auto;
-            padding: 20px;
-        }
+    /* 導覽列 */
+    nav {
+      background: white;
+      padding: 15px;
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      flex-wrap: wrap;
+      box-shadow: 0 3px 10px rgba(220, 120, 160, 0.1);
+    }
 
-        .card {
-            background: white;
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(200, 100, 140, 0.12);
-        }
+    nav a {
+      color: #c75b89;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 18px;
+    }
 
-        h1 {
-            font-size: 30px;
-            color: #c94f83;
-        }
+    nav a:hover {
+      color: #e986b0;
+    }
 
-        h2 {
-            font-size: 24px;
-            color: #c94f83;
-        }
+    /* 主要內容 */
+    main {
+      max-width: 1100px;
+      margin: auto;
+      padding: 30px 20px;
+    }
 
-        p {
-            font-size: 18px;
-            line-height: 1.8;
-        }
+    section {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 5px 20px rgba(220, 120, 160, 0.1);
+    }
 
-        .button {
-            display: block;
-            width: 100%;
-            padding: 18px;
-            border: none;
-            border-radius: 15px;
-            background: #e878a5;
-            color: white;
-            font-size: 22px;
-            font-weight: bold;
-            text-align: center;
-            cursor: pointer;
-            margin-top: 20px;
-        }
+    section h2 {
+      color: #d85c91;
+      font-size: 28px;
+      margin-top: 0;
+    }
 
-        .button:hover {
-            background: #d85c8d;
-        }
+    /* 歡迎區 */
+    .welcome {
+      text-align: center;
+      padding: 50px 30px;
+    }
 
-        .notice {
-            background: #fff0f5;
-            border-left: 6px solid #e878a5;
-            padding: 18px;
-            border-radius: 10px;
-        }
+    .welcome h2 {
+      font-size: 32px;
+    }
 
-        footer {
-            text-align: center;
-            padding: 30px 20px;
-            color: #b46d89;
-        }
-    </style>
+    .welcome p {
+      font-size: 20px;
+      line-height: 1.8;
+    }
+
+    /* 報名須知 */
+    .notice {
+      background: #fff0f6;
+      border-left: 6px solid #e986b0;
+      padding: 20px;
+      border-radius: 12px;
+      font-size: 18px;
+      line-height: 2;
+    }
+
+    /* 報名流程 */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .step {
+      background: #fff0f6;
+      padding: 25px;
+      border-radius: 15px;
+      text-align: center;
+    }
+
+    .step h3 {
+      color: #d85c91;
+    }
+
+    /* 行程區 */
+    .trip-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .trip-card {
+      border: 1px solid #f5c6d9;
+      border-radius: 15px;
+      padding: 25px;
+      background: white;
+    }
+
+    .trip-card h3 {
+      color: #c75b89;
+    }
+
+    .trip-status {
+      display: inline-block;
+      background: #e6f5e7;
+      color: #398346;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 14px;
+    }
+
+    /* 按鈕 */
+    .button {
+      display: inline-block;
+      background: #e986b0;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 18px;
+      margin-top: 10px;
+    }
+
+    .button:hover {
+      background: #d85c91;
+    }
+
+    /* 聯絡資訊 */
+    .contact {
+      text-align: center;
+      line-height: 2;
+    }
+
+    /* 頁尾 */
+    footer {
+      text-align: center;
+      padding: 30px 20px;
+      color: #b87591;
+      background: #ffe5ef;
+    }
+
+    /* 手機版 */
+    @media (max-width: 600px) {
+      .banner h1 {
+        font-size: 26px;
+      }
+
+      nav {
+        gap: 15px;
+      }
+
+      nav a {
+        font-size: 16px;
+      }
+
+      main {
+        padding: 20px 12px;
+      }
+
+      section {
+        padding: 20px;
+      }
+
+      section h2 {
+        font-size: 24px;
+      }
+
+      .welcome h2 {
+        font-size: 26px;
+      }
+
+      .welcome p {
+        font-size: 18px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-    <header>
-        <div class="logo">囍莉旅遊</div>
-        <div class="subtitle">✈️ 跟著阿冷四處玩吧！！</div>
-    </header>
+  <!-- 品牌 Banner -->
+  <header class="banner">
+    <h1>囍莉旅遊</h1>
+    <p>✈️ 跟著阿冷四處玩吧！！</p>
+  </header>
 
-    <main class="container">
+  <!-- 網站導覽 -->
+  <nav>
+    <a href="#home">🏠 首頁</a>
+    <a href="#trips">🚌 旅遊行程</a>
+    <a href="#notice">📋 報名須知</a>
+    <a href="#process">📝 報名流程</a>
+    <a href="#contact">📞 聯絡我們</a>
+  </nav>
 
-        <section class="card">
-            <h1>🌸 歡迎來到囍莉旅遊</h1>
+  <main>
 
-            <p>
-                一起把平凡的日子，
-                變成值得收藏的旅行回憶！
-            </p>
+    <!-- 歡迎區 -->
+    <section id="home" class="welcome">
+      <h2>🌸 歡迎來到囍莉旅遊</h2>
 
-            <p>
-                台南出發｜遊覽車旅行｜輕鬆慢遊｜溫暖同行
-            </p>
-        </section>
+      <p>
+        一起把平凡的日子，
+        變成值得收藏的旅行回憶！
+      </p>
 
-        <section class="card">
-            <h2>📢 報名須知</h2>
+      <p>
+        台南出發｜遊覽車旅行｜輕鬆慢遊｜溫暖同行
+      </p>
+    </section>
 
-            <div class="notice">
-                <p>
-                    請在報名前仔細閱讀行程內容、
-                    費用及相關注意事項。
-                </p>
+    <!-- 報名須知 -->
+    <section id="notice">
+      <h2>📢 報名須知</h2>
 
-                <p>
-                    填寫完成後，請確認所有資料正確，
-                    再送出報名。
-                </p>
-            </div>
-        </section>
+      <div class="notice">
+        <p>📌 請在報名前仔細閱讀行程內容、費用及相關注意事項。</p>
 
-        <section class="card">
-            <h2>📍 行程報名</h2>
+        <p>📌 填寫完成後，請確認所有資料正確再送出報名。</p>
 
-            <p>
-                點擊下方按鈕開始填寫旅遊報名資料。
-            </p>
+        <p>📌 報名完成後，請依指定方式聯絡工作人員確認報名。</p>
 
-            <button class="button">
-                🌸 開始報名
-            </button>
-        </section>
+        <p>📌 出團及繳費相關資訊，將另行通知。</p>
+      </div>
+    </section>
 
-    </main>
+    <!-- 報名流程 -->
+    <section id="process">
+      <h2>📝 報名流程</h2>
 
-    <footer>
-        🌸 囍莉旅遊｜台南出發的小旅行 🌸
-    </footer>
+      <div class="steps">
+
+        <div class="step">
+          <h3>STEP 1</h3>
+          <p>🚌 選擇旅遊行程</p>
+        </div>
+
+        <div class="step">
+          <h3>STEP 2</h3>
+          <p>📝 填寫旅客資料</p>
+        </div>
+
+        <div class="step">
+          <h3>STEP 3</h3>
+          <p>📩 送出報名資料</p>
+        </div>
+
+        <div class="step">
+          <h3>STEP 4</h3>
+          <p>📱 聯絡工作人員確認</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 旅遊行程 -->
+    <section id="trips">
+      <h2>🚌 精彩旅遊行程</h2>
+
+      <div class="trip-list">
+
+        <div class="trip-card">
+          <span class="trip-status">報名中</span>
+
+          <h3>行程名稱</h3>
+
+          <p>📅 出團日期：待公布</p>
+
+          <p>📍 出發地：台南</p>
+
+          <p>💰 行程費用：待公布</p>
+
+          <p>👥 剩餘名額：待公布</p>
+
+          <p>詳細行程內容將於此處顯示。</p>
+
+          <a href="#" class="button">查看行程</a>
+
+          <a href="#" class="button">立即報名</a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 聯絡資訊 -->
+    <section id="contact" class="contact">
+      <h2>📞 聯絡我們</h2>
+
+      <p>囍莉旅遊｜悅揚旅行社</p>
+
+      <p>聯絡人：陳小姐（阿冷）</p>
+
+      <p>電話：0909686339</p>
+
+      <p>LINE：0909686339</p>
+    </section>
+
+  </main>
+
+  <!-- 頁尾 -->
+  <footer>
+    <p>🌸 囍莉旅遊</p>
+
+    <p>一起把平凡的日子，變成值得收藏的旅行回憶！</p>
+
+    <p>© 2026 囍莉旅遊</p>
+  </footer>
 
 </body>
 </html>
