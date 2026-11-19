@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>旅遊行程｜囍莉旅遊</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+
+        /* =========================
+           旅遊行程頁面
+        ========================= */
+
+        .page-banner {
+
+            background: linear-gradient(135deg, #f8bfd8, #e77eae);
+
+            color: white;
+
+            text-align: center;
+
+            padding: 60px 20px;
+
+            border-radius: 0 0 35px 35px;
+
+        }
+
+        .page-banner h1 {
+
+            font-size: 38px;
+
+            margin-bottom: 15px;
+
+        }
+
+        .page-banner p {
+
+            font-size: 18px;
+
+        }
+
+
+        /* 行程列表 */
+
+        .trip-list {
+
+            display: grid;
+
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+
+            gap: 30px;
+
+        }
+
+
+        /* 行程卡片 */
+
+        .trip-card {
+
+            background: white;
+
+            border-radius: 25px;
+
+            overflow: hidden;
+
+            box-shadow: 0 8px 25px rgba(220, 120, 160, 0.15);
+
+            transition: 0.3s;
+
+        }
+
+        .trip-card:hover {
+
+            transform: translateY(-5px);
+
+        }
+
+
+        /* 行程圖片 */
+
+        .trip-photo {
+
+            height: 220px;
+
+            background: linear-gradient(135deg, #ffd7e9, #f4a7c9);
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 80px;
+
+        }
+
+
+        .trip-content {
+
+            padding: 25px;
+
+        }
+
+
+        .trip-title {
+
+            font-size: 25px;
+
+            color: #d94f8c;
+
+            margin-bottom: 15px;
+
+        }
+
+
+        .trip-info {
+
+            background: #fff5fa;
+
+            padding: 15px;
+
+            border-radius: 15px;
+
+            margin: 20px 0;
+
+        }
+
+
+        .trip-info p {
+
+            margin: 10px 0;
+
+            line-height: 1.8;
+
+        }
+
+
+        .trip-tag {
+
+            display: inline-block;
+
+            background: #ffe4ef;
+
+            color: #d94f8c;
+
+            padding: 6px 15px;
+
+            border-radius: 20px;
+
+            font-size: 14px;
+
+            margin-bottom: 15px;
+
+        }
+
+
+        /* 行程特色 */
+
+        .trip-highlights {
+
+            margin: 20px 0;
+
+        }
+
+        .trip-highlights h4 {
+
+            color: #d94f8c;
+
+            margin-bottom: 10px;
+
+        }
+
+        .trip-highlights ul {
+
+            padding-left: 20px;
+
+            line-height: 2;
+
+        }
+
+
+        /* 行程內容 */
+
+        .trip-detail {
+
+            background: #fff8fb;
+
+            border: 1px solid #ffe0ed;
+
+            border-radius: 15px;
+
+            padding: 20px;
+
+            margin: 20px 0;
+
+        }
+
+        .trip-detail h4 {
+
+            color: #d94f8c;
+
+            margin-bottom: 15px;
+
+        }
+
+
+        /* 報名按鈕 */
+
+        .trip-button {
+
+            display: block;
+
+            text-align: center;
+
+            background: linear-gradient(135deg, #f28bb8, #d94f8c);
+
+            color: white;
+
+            text-decoration: none;
+
+            padding: 15px;
+
+            border-radius: 50px;
+
+            font-size: 18px;
+
+            font-weight: bold;
+
+            margin-top: 20px;
+
+        }
+
+        .trip-button:hover {
+
+            opacity: 0.9;
+
+        }
+
+
+        /* 尚未開放 */
+
+        .coming-soon {
+
+            background: #f5f5f5;
+
+            color: #999;
+
+        }
+
+
+        /* 注意事項 */
+
+        .notice-box {
+
+            background: #fff0f6;
+
+            border-left: 5px solid #e889b5;
+
+            border-radius: 15px;
+
+            padding: 25px;
+
+            line-height: 2;
+
+        }
+
+
+        /* 手機版 */
+
+        @media (max-width: 768px) {
+
+            .page-banner h1 {
+
+                font-size: 30px;
+
+            }
+
+            .trip-photo {
+
+                height: 180px;
+
+            }
+
+            .trip-content {
+
+                padding: 20px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         網站標題
+    ========================= -->
+
+    <header class="site-header">
+
+        <h1>囍莉旅遊</h1>
+
+        <p>✈️ 跟著阿冷四處玩吧！！</p>
+
+    </header>
+
+
+    <!-- =========================
+         導覽列
+    ========================= -->
+
+    <nav class="navbar">
+
+        <div class="nav-container">
+
+            <a href="index.html">🏠 首頁</a>
+
+            <a href="trips.html">🚌 旅遊行程</a>
+
+            <a href="notice.html">📋 報名須知</a>
+
+            <a href="process.html">📝 報名流程</a>
+
+            <a href="faq.html">❓ 常見問題</a>
+
+            <a href="boarding.html">📍 上車地點</a>
+
+            <a href="about.html">💗 關於我們</a>
+
+            <a href="registration.html">✍️ 我要報名</a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- =========================
+         頁面標題
+    ========================= -->
+
+    <section class="page-banner">
+
+        <h1>🚌 旅遊行程</h1>
+
+        <p>
+            一起出發，享受美好旅程！
+        </p>
+
+        <p>
+            台南出發｜輕鬆慢遊｜溫暖同行
+        </p>
+
+    </section>
+
+
+    <!-- =========================
+         行程列表
+    ========================= -->
+
+    <section class="container">
+
+        <h2 class="section-title">
+            🌸 最新旅遊行程
+        </h2>
+
+
+        <div class="trip-list">
+
+
+            <!-- =========================
+                 行程 1
+            ========================= -->
+
+            <div class="trip-card">
+
+                <div class="trip-photo">
+
+                    🌸
+
+                </div>
+
+
+                <div class="trip-content">
+
+
+                    <span class="trip-tag">
+
+                        ✨ 最新行程
+
+                    </span>
+
+
+                    <h3 class="trip-title">
+
+                        行程名稱（待設定）
+
+                    </h3>
+
+
+                    <div class="trip-info">
+
+
+                        <p>
+
+                            📅 <strong>出團日期：</strong>
+
+                            待設定
+
+                        </p>
+
+
+                        <p>
+
+                            💰 <strong>團費：</strong>
+
+                            待設定
+
+                        </p>
+
+
+                        <p>
+
+                            👥 <strong>報名人數：</strong>
+
+                            待設定
+
+                        </p>
+
+
+                        <p>
+
+                            ⏰ <strong>報名截止：</strong>
+
+                            待設定
+
+                        </p>
+
+
+                    </div>
+
+
+                    <div class="trip-highlights">
+
+                        <h4>✨ 行程特色</h4>
+
+                        <ul>
+
+                            <li>精選特色景點</li>
+
+                            <li>輕鬆慢遊行程</li>
+
+                            <li>台南出發</li>
+
+                            <li>專業遊覽車接送</li>
+
+                        </ul>
+
+                    </div>
+
+
+                    <div class="trip-detail">
+
+                        <h4>📍 行程內容</h4>
+
+                        <p>
+
+                            這裡將顯示完整旅遊行程。
+
+                        </p>
+
+                        <p>
+
+                            未來可以依照不同旅遊團，
+                            設定各自的行程內容。
+
+                        </p>
+
+                    </div>
+
+
+                    <a href="registration.html" class="trip-button">
+
+                        🌸 我要報名
+
+                    </a>
+
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 行程 2
+            ========================= -->
+
+            <div class="trip-card">
+
+                <div class="trip-photo">
+
+                    🚌
+
+                </div>
+
+
+                <div class="trip-content">
+
+
+                    <span class="trip-tag">
+
+                        💗 精選旅程
+
+                    </span>
+
+
+                    <h3 class="trip-title">
+
+                        精選旅遊行程
+
+                    </h3>
+
+
+                    <div class="trip-info">
+
+
+                        <p>
+
+                            📅 <strong>出團日期：</strong>
+
+                            待設定
+
+                        </p>
+
+
+                        <p>
+
+                            💰 <strong>團費：</strong>
+
+                            待設定
+
+                        </p>
+
+
+                        <p>
+
+                            👥 <strong>報名人數：</strong>
+
+                            待設定
+
+                        </p>
+
+
+                        <p>
+
+                            ⏰ <strong>報名截止：</strong>
+
+                            待設定
+
+                        </p>
+
+
+                    </div>
+
+
+                    <div class="trip-highlights">
+
+                        <h4>✨ 行程特色</h4>
+
+                        <ul>
+
+                            <li>特色景點</li>
+
+                            <li>美食探索</li>
+
+                            <li>拍照打卡</li>
+
+                            <li>舒適旅遊體驗</li>
+
+                        </ul>
+
+                    </div>
+
+
+                    <div class="trip-detail">
+
+                        <h4>📍 行程內容</h4>
+
+                        <p>
+
+                            這裡將顯示完整旅遊行程。
+
+                        </p>
+
+                    </div>
+
+
+                    <a href="registration.html" class="trip-button">
+
+                        🌸 我要報名
+
+                    </a>
+
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 行程 3
+            ========================= -->
+
+            <div class="trip-card">
+
+                <div class="trip-photo">
+
+                    💗
+
+                </div>
+
+
+                <div class="trip-content">
+
+
+                    <span class="trip-tag">
+
+                        🌿 輕鬆慢遊
+
+                    </span>
+
+
+                    <h3 class="trip-title">
+
+                        更多精彩旅程
+
+                    </h3>
+
+
+                    <div class="trip-info">
+
+
+                        <p>
+
+                            📅 <strong>出團日期：</strong>
+
+                            待設定
+
+                        </p>
+
+
+                        <p>
+
+                            💰 <strong>團費：</strong>
+
+                            待設定
+
+                        </p>
+
+
+                        <p>
+
+                            👥 <strong>報名人數：</strong>
+
+                            待設定
+
+                        </p>
+
+
+                        <p>
+
+                            ⏰ <strong>報名截止：</strong>
+
+                            待設定
+
+                        </p>
+
+
+                    </div>
+
+
+                    <div class="trip-highlights">
+
+                        <h4>✨ 行程特色</h4>
+
+                        <ul>
+
+                            <li>慢活旅行</li>
+
+                            <li>景點探索</li>
+
+                            <li>美食體驗</li>
+
+                            <li>溫暖同行</li>
+
+                        </ul>
+
+                    </div>
+
+
+                    <div class="trip-detail">
+
+                        <h4>📍 行程內容</h4>
+
+                        <p>
+
+                            這裡將顯示完整旅遊行程。
+
+                        </p>
+
+                    </div>
+
+
+                    <a href="registration.html" class="trip-button">
+
+                        🌸 我要報名
+
+                    </a>
+
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         報名前注意事項
+    ========================= -->
+
+    <section class="container">
+
+        <h2 class="section-title">
+
+            📋 報名前注意事項
+
+        </h2>
+
+
+        <div class="notice-box">
+
+
+            <p>
+
+                🌸 報名前請仔細閱讀行程內容、
+                出團日期及相關費用。
+
+            </p>
+
+
+            <p>
+
+                🌸 確認報名資料填寫正確。
+
+            </p>
+
+
+            <p>
+
+                🌸 填寫完成後，
+                請加入 LINE 確認報名是否成功。
+
+            </p>
+
+
+            <p>
+
+                🌸 若行程確認成團，
+                將另行公告繳費時間。
+
+            </p>
+
+
+            <p>
+
+                🌸 請勿提前繳費。
+
+            </p>
+
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         Footer
+    ========================= -->
+
+    <footer>
+
+        <h2>🌸 囍莉旅遊</h2>
+
+        <p>✈️ 跟著阿冷四處玩吧！！</p>
+
+        <p>
+
+            一起把平凡的日子，
+            <br>
+            變成值得收藏的旅行回憶。
+
+        </p>
+
+
+        <p>
+
+            台南出發｜遊覽車旅行｜輕鬆慢遊｜溫暖同行
+
+        </p>
+
+
+        <p>
+
+            © 2026 囍莉旅遊 All Rights Reserved.
+
+        </p>
+
+    </footer>
+
+
+</body>
+
+</html>
