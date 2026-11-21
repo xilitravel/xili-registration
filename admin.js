@@ -1,213 +1,418 @@
-// =========================
-// 囍莉旅遊管理後台
-// 目前使用 localStorage 暫存
-// 未來改接 Google Sheets API
-// =========================
+// =====================================================
+// 囍莉旅遊｜管理後台
+// Google Apps Script API 版本
+// =====================================================
 
 
-// 資料儲存
-const STORAGE_TRIPS = "xili_admin_trips";
-const STORAGE_BOARDING = "xili_admin_boarding";
+// =====================================================
+// API 設定
+// =====================================================
+
+const API_URL =
+  "https://script.google.com/macros/s/AKfycbxD1U1aQNZWLZnFc3XfAqTyKbzjAuMJ8SOGQnTVog7Q3seXk6VV8HiyH3ZNV6GGkx7V/exec";
 
 
-// =========================
-// 讀取資料
-// =========================
+// =====================================================
+// 系統資料
+// =====================================================
 
-function getTrips() {
-  return JSON.parse(localStorage.getItem(STORAGE_TRIPS) || "[]");
+let tripsData = [];
+
+let boardingData = [];
+
+let registrationData = [];
+
+let paymentData = [];
+
+
+// =====================================================
+// API 呼叫
+// =====================================================
+
+async function apiGet(action) {
+
+  const url =
+    API_URL +
+    "?action=" +
+    encodeURIComponent(action);
+
+  const response = await fetch(url);
+
+  const result = await response.json();
+
+  if (!result.success) {
+
+    throw new Error(
+      result.message || "API 讀取失敗"
+    );
+
+  }
+
+  return result.data;
+
 }
 
-function saveTrips(trips) {
-  localStorage.setItem(STORAGE_TRIPS, JSON.stringify(trips));
+
+async function apiPost(payload) {
+
+  const response = await fetch(API_URL, {
+
+    method: "POST",
+
+    headers: {
+      "Content-Type": "text/plain;charset=utf-8"
+    },
+
+    body: JSON.stringify(payload)
+
+  });
+
+  const result = await response.json();
+
+  if (!result.success) {
+
+    throw new Error(
+      result.message || "API 儲存失敗"
+    );
+
+  }
+
+  return result.data;
+
 }
 
-function getBoardingLocations() {
-  return JSON.parse(localStorage.getItem(STORAGE_BOARDING) || "[]");
+
+// =====================================================
+// HTML 安全處理
+// =====================================================
+
+function escapeHTML(value) {
+
+  return String(value ?? "")
+
+    .replace(/&/g, "&amp;")
+
+    .replace(/</g, "&lt;")
+
+    .replace(/>/g, "&gt;")
+
+    .replace(/"/g, "&quot;")
+
+    .replace(/'/g, "&#039;");
+
 }
 
-function saveBoardingLocations(locations) {
-  localStorage.setItem(STORAGE_BOARDING, JSON.stringify(locations));
-}
 
-
-// =========================
+// =====================================================
 // 頁面切換
-// =========================
+// =====================================================
 
-const navButtons = document.querySelectorAll(".admin-nav-btn");
-const adminSections = document.querySelectorAll(".admin-section");
+const navButtons =
+  document.querySelectorAll(".admin-nav-btn");
+
+const adminSections =
+  document.querySelectorAll(".admin-section");
+
 
 navButtons.forEach(button => {
 
   button.addEventListener("click", () => {
 
-    const sectionId = button.dataset.section;
+    const sectionId =
+      button.dataset.section;
 
     navButtons.forEach(btn => {
+
       btn.classList.remove("active");
+
     });
 
     adminSections.forEach(section => {
+
       section.classList.remove("active");
+
     });
 
     button.classList.add("active");
 
-    document.getElementById(sectionId).classList.add("active");
+    const targetSection =
+      document.getElementById(sectionId);
+
+    if (targetSection) {
+
+      targetSection.classList.add("active");
+
+    }
 
   });
 
 });
 
 
-// =========================
-// 總覽
-// =========================
+// =====================================================
+// 載入全部資料
+// =====================================================
+
+async function loadAllData() {
+
+  try {
+
+    await loadTrips();
+
+    await loadBoardingLocations();
+
+    updateDashboard();
+
+    populateTripFilters();
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "資料載入失敗：\n\n" +
+      error.message
+    );
+
+  }
+
+}
+
+
+// =====================================================
+// 行程管理
+// =====================================================
+
+async function loadTrips() {
+
+  tripsData = await apiGet("trips");
+
+  renderTrips();
+
+}
+
 
 function updateDashboard() {
 
-  const trips = getTrips();
+  document.getElementById("totalTrips")
+    .textContent = tripsData.length;
 
-  document.getElementById("totalTrips").textContent = trips.length;
+  document.getElementById("totalRegistrations")
+    .textContent = registrationData.length;
 
-  // 報名資料尚未連接
-  document.getElementById("totalRegistrations").textContent = "0";
+  document.getElementById("pendingRegistrations")
+    .textContent = registrationData.filter(item => {
 
-  document.getElementById("pendingRegistrations").textContent = "0";
+      return item.status === "待確認";
 
-  document.getElementById("pendingPayments").textContent = "0";
+    }).length;
+
+  document.getElementById("pendingPayments")
+    .textContent = paymentData.filter(item => {
+
+      return item.status === "未繳費";
+
+    }).length;
 
 }
 
 
-// =========================
-// 行程管理
-// =========================
+// =====================================================
+// 新增行程
+// =====================================================
 
-const tripForm = document.getElementById("tripForm");
-const tripFormCard = document.getElementById("tripFormCard");
+const tripForm =
+  document.getElementById("tripForm");
+
+const tripFormCard =
+  document.getElementById("tripFormCard");
 
 
-// 新增行程按鈕
-document.getElementById("addTripBtn").addEventListener("click", () => {
+document.getElementById("addTripBtn")
+  .addEventListener("click", () => {
 
-  tripForm.reset();
+    tripForm.reset();
 
-  document.getElementById("tripId").value = "";
+    document.getElementById("tripId").value = "";
 
-  document.getElementById("tripFormTitle").textContent = "新增行程";
+    document.getElementById("tripFormTitle")
+      .textContent = "新增行程";
 
-  tripFormCard.style.display = "block";
+    tripFormCard.style.display = "block";
 
-  tripFormCard.scrollIntoView({
-    behavior: "smooth"
+    tripFormCard.scrollIntoView({
+
+      behavior: "smooth"
+
+    });
+
   });
 
-});
 
-
+// =====================================================
 // 取消行程編輯
-document.getElementById("cancelTripBtn").addEventListener("click", () => {
+// =====================================================
 
-  tripForm.reset();
+document.getElementById("cancelTripBtn")
+  .addEventListener("click", () => {
 
-  tripFormCard.style.display = "none";
+    tripForm.reset();
 
-});
+    document.getElementById("tripId").value = "";
+
+    tripFormCard.style.display = "none";
+
+  });
 
 
+// =====================================================
 // 儲存行程
-tripForm.addEventListener("submit", event => {
+// =====================================================
+
+tripForm.addEventListener("submit", async event => {
 
   event.preventDefault();
 
-  const trips = getTrips();
-
-  const tripId = document.getElementById("tripId").value;
+  const tripId =
+    document.getElementById("tripId").value;
 
   const trip = {
 
-    id: tripId || "trip_" + Date.now(),
+    tripId:
+      tripId || "",
 
-    title: document.getElementById("tripTitle").value.trim(),
+    name:
+      document.getElementById("tripTitle")
+        .value.trim(),
 
-    type: document.getElementById("tripType").value,
+    type:
+      document.getElementById("tripType")
+        .value,
 
-    date: document.getElementById("tripDate").value,
+    date:
+      document.getElementById("tripDate")
+        .value,
 
-    price: Number(document.getElementById("tripPrice").value),
+    price:
+      Number(
+        document.getElementById("tripPrice")
+          .value || 0
+      ),
 
-    maxPeople: Number(document.getElementById("tripMaxPeople").value || 0),
+    maxPeople:
+      Number(
+        document.getElementById("tripMaxPeople")
+          .value || 0
+      ),
 
-    deadline: document.getElementById("tripDeadline").value,
+    deadline:
+      document.getElementById("tripDeadline")
+        .value,
 
-    status: document.getElementById("tripStatus").value,
+    status:
+      document.getElementById("tripStatus")
+        .value,
 
-    departure: document.getElementById("tripDeparture").value.trim(),
+    departure:
+      document.getElementById("tripDeparture")
+        .value.trim(),
 
-    description: document.getElementById("tripDescription").value.trim(),
+    description:
+      document.getElementById("tripDescription")
+        .value.trim(),
 
-    highlights: document.getElementById("tripHighlights").value
-      .split("\n")
-      .filter(item => item.trim() !== ""),
+    highlights:
+      document.getElementById("tripHighlights")
+        .value
+        .split("\n")
+        .map(item => item.trim())
+        .filter(Boolean),
 
-    boardingPoints: document.getElementById("tripBoardingPoints").value
-      .split("\n")
-      .filter(item => item.trim() !== ""),
+    boardingPoints:
+      document.getElementById("tripBoardingPoints")
+        .value
+        .split("\n")
+        .map(item => item.trim())
+        .filter(Boolean),
 
-    notes: document.getElementById("tripNotes").value
-      .split("\n")
-      .filter(item => item.trim() !== "")
+    notes:
+      document.getElementById("tripNotes")
+        .value
+        .split("\n")
+        .map(item => item.trim())
+        .filter(Boolean)
 
   };
 
 
-  if (tripId) {
+  try {
 
-    const index = trips.findIndex(item => item.id === tripId);
+    await apiPost({
 
-    if (index !== -1) {
-      trips[index] = trip;
-    }
+      action: "saveTrip",
 
-  } else {
+      trip: trip
 
-    trips.push(trip);
+    });
+
+
+    alert(
+      "行程已成功儲存至 Google Sheets！"
+    );
+
+
+    tripForm.reset();
+
+    document.getElementById("tripId").value = "";
+
+    tripFormCard.style.display = "none";
+
+
+    await loadTrips();
+
+    updateDashboard();
+
+    populateTripFilters();
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "儲存行程失敗：\n\n" +
+      error.message
+    );
 
   }
-
-
-  saveTrips(trips);
-
-  renderTrips();
-
-  updateDashboard();
-
-  tripForm.reset();
-
-  tripFormCard.style.display = "none";
-
-  alert("行程已暫存！");
 
 });
 
 
-// 顯示行程
+// =====================================================
+// 顯示行程列表
+// =====================================================
+
 function renderTrips() {
 
-  const trips = getTrips();
+  const tbody =
+    document.getElementById("tripsTableBody");
 
-  const tbody = document.getElementById("tripsTableBody");
 
-  if (trips.length === 0) {
+  if (!tripsData || tripsData.length === 0) {
 
     tbody.innerHTML = `
+
       <tr>
+
         <td colspan="6" class="empty-data">
+
           目前尚無行程資料
+
         </td>
+
       </tr>
+
     `;
 
     return;
@@ -215,40 +420,82 @@ function renderTrips() {
   }
 
 
-  tbody.innerHTML = trips.map(trip => {
+  tbody.innerHTML = tripsData.map(trip => {
+
+    const id =
+      trip.tripId || trip.id || "";
+
+    const name =
+      trip.name || trip.title || "";
+
+    const date =
+      trip.date || "";
+
+    const type =
+      trip.type || "";
+
+    const price =
+      Number(trip.price || 0);
+
+    const status =
+      trip.status || "";
+
 
     return `
+
       <tr>
 
-        <td>${escapeHTML(trip.title)}</td>
+        <td>
+          ${escapeHTML(name)}
+        </td>
 
-        <td>${trip.date || "未設定"}</td>
+        <td>
+          ${escapeHTML(date)}
+        </td>
 
-        <td>${escapeHTML(trip.type || "")}</td>
+        <td>
+          ${escapeHTML(type)}
+        </td>
 
-        <td>$${Number(trip.price || 0).toLocaleString()}</td>
+        <td>
+          $${price.toLocaleString()}
+        </td>
 
-        <td>${escapeHTML(trip.status || "")}</td>
+        <td>
+          ${escapeHTML(status)}
+        </td>
 
         <td>
 
           <button
+
             class="admin-btn admin-btn-light"
-            onclick="editTrip('${trip.id}')"
+
+            onclick="editTrip('${escapeHTML(id)}')"
+
           >
+
             編輯
+
           </button>
 
+
           <button
+
             class="admin-btn admin-btn-danger"
-            onclick="deleteTrip('${trip.id}')"
+
+            onclick="deleteTrip('${escapeHTML(id)}')"
+
           >
+
             刪除
+
           </button>
 
         </td>
 
       </tr>
+
     `;
 
   }).join("");
@@ -256,128 +503,254 @@ function renderTrips() {
 }
 
 
+// =====================================================
 // 編輯行程
+// =====================================================
+
 function editTrip(id) {
 
-  const trips = getTrips();
+  const trip = tripsData.find(item => {
 
-  const trip = trips.find(item => item.id === id);
+    return String(item.tripId || item.id) === String(id);
 
-  if (!trip) return;
-
-
-  document.getElementById("tripId").value = trip.id;
-
-  document.getElementById("tripTitle").value = trip.title || "";
-
-  document.getElementById("tripType").value = trip.type || "";
-
-  document.getElementById("tripDate").value = trip.date || "";
-
-  document.getElementById("tripPrice").value = trip.price || 0;
-
-  document.getElementById("tripMaxPeople").value = trip.maxPeople || "";
-
-  document.getElementById("tripDeadline").value = trip.deadline || "";
-
-  document.getElementById("tripStatus").value = trip.status || "報名中";
-
-  document.getElementById("tripDeparture").value = trip.departure || "";
-
-  document.getElementById("tripDescription").value = trip.description || "";
-
-  document.getElementById("tripHighlights").value =
-    (trip.highlights || []).join("\n");
-
-  document.getElementById("tripBoardingPoints").value =
-    (trip.boardingPoints || []).join("\n");
-
-  document.getElementById("tripNotes").value =
-    (trip.notes || []).join("\n");
+  });
 
 
-  document.getElementById("tripFormTitle").textContent = "修改行程";
+  if (!trip) {
+
+    alert("找不到行程資料");
+
+    return;
+
+  }
+
+
+  document.getElementById("tripId")
+    .value = trip.tripId || trip.id || "";
+
+
+  document.getElementById("tripTitle")
+    .value = trip.name || trip.title || "";
+
+
+  document.getElementById("tripType")
+    .value = trip.type || "";
+
+
+  document.getElementById("tripDate")
+    .value = trip.date || "";
+
+
+  document.getElementById("tripPrice")
+    .value = trip.price || 0;
+
+
+  document.getElementById("tripMaxPeople")
+    .value = trip.maxPeople || "";
+
+
+  document.getElementById("tripDeadline")
+    .value = trip.deadline || "";
+
+
+  document.getElementById("tripStatus")
+    .value = trip.status || "報名中";
+
+
+  document.getElementById("tripDeparture")
+    .value = trip.departure || "台南";
+
+
+  document.getElementById("tripDescription")
+    .value = trip.description || "";
+
+
+  document.getElementById("tripHighlights")
+    .value = (trip.highlights || [])
+      .join("\n");
+
+
+  document.getElementById("tripBoardingPoints")
+    .value = (trip.boardingPoints || [])
+      .join("\n");
+
+
+  document.getElementById("tripNotes")
+    .value = (trip.notes || [])
+      .join("\n");
+
+
+  document.getElementById("tripFormTitle")
+    .textContent = "修改行程";
+
 
   tripFormCard.style.display = "block";
 
+
   tripFormCard.scrollIntoView({
+
     behavior: "smooth"
+
   });
 
 }
 
 
+// =====================================================
 // 刪除行程
-function deleteTrip(id) {
+// =====================================================
+
+async function deleteTrip(id) {
 
   if (!confirm("確定要刪除此行程嗎？")) {
+
     return;
+
   }
 
-  const trips = getTrips().filter(item => item.id !== id);
 
-  saveTrips(trips);
+  try {
 
-  renderTrips();
+    await apiPost({
 
-  updateDashboard();
+      action: "deleteTrip",
+
+      tripId: id
+
+    });
+
+
+    alert(
+      "行程已刪除！"
+    );
+
+
+    await loadTrips();
+
+    updateDashboard();
+
+    populateTripFilters();
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "刪除行程失敗：\n\n" +
+      error.message
+    );
+
+  }
 
 }
 
 
-// =========================
+// =====================================================
 // 上車地點管理
-// =========================
+// =====================================================
 
-const boardingForm = document.getElementById("boardingForm");
+async function loadBoardingLocations() {
 
-boardingForm.addEventListener("submit", event => {
+  boardingData = await apiGet("boardingPoints");
+
+  renderBoardingLocations();
+
+}
+
+
+// =====================================================
+// 新增上車地點
+// =====================================================
+
+const boardingForm =
+  document.getElementById("boardingForm");
+
+
+boardingForm.addEventListener("submit", async event => {
 
   event.preventDefault();
 
-  const locations = getBoardingLocations();
 
   const location = {
 
-    id: "boarding_" + Date.now(),
+    name:
+      document.getElementById("boardingName")
+        .value.trim(),
 
-    name: document.getElementById("boardingName").value.trim(),
+    address:
+      document.getElementById("boardingAddress")
+        .value.trim(),
 
-    address: document.getElementById("boardingAddress").value.trim(),
-
-    description: document.getElementById("boardingDescription").value.trim()
+    description:
+      document.getElementById("boardingDescription")
+        .value.trim()
 
   };
 
 
-  locations.push(location);
+  try {
 
-  saveBoardingLocations(locations);
+    await apiPost({
 
-  renderBoardingLocations();
+      action: "addBoardingPoint",
 
-  boardingForm.reset();
+      boardingPoint: location
 
-  alert("上車地點已暫存！");
+    });
+
+
+    alert(
+      "上車地點已成功新增！"
+    );
+
+
+    boardingForm.reset();
+
+
+    await loadBoardingLocations();
+
+    populateTripFilters();
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "新增上車地點失敗：\n\n" +
+      error.message
+    );
+
+  }
 
 });
 
 
+// =====================================================
 // 顯示上車地點
+// =====================================================
+
 function renderBoardingLocations() {
 
-  const locations = getBoardingLocations();
+  const tbody =
+    document.getElementById("boardingTableBody");
 
-  const tbody = document.getElementById("boardingTableBody");
 
-  if (locations.length === 0) {
+  if (!boardingData || boardingData.length === 0) {
 
     tbody.innerHTML = `
+
       <tr>
+
         <td colspan="4" class="empty-data">
+
           尚無上車地點資料
+
         </td>
+
       </tr>
+
     `;
 
     return;
@@ -385,29 +758,66 @@ function renderBoardingLocations() {
   }
 
 
-  tbody.innerHTML = locations.map(location => {
+  tbody.innerHTML = boardingData.map(location => {
+
+    const name =
+      typeof location === "string"
+        ? location
+        : location.name || location.location || "";
+
+
+    const address =
+      typeof location === "string"
+        ? ""
+        : location.address || "";
+
+
+    const description =
+      typeof location === "string"
+        ? ""
+        : location.description || "";
+
+
+    const id =
+      typeof location === "string"
+        ? location
+        : location.id || name;
+
 
     return `
+
       <tr>
 
-        <td>${escapeHTML(location.name)}</td>
+        <td>
+          ${escapeHTML(name)}
+        </td>
 
-        <td>${escapeHTML(location.address || "")}</td>
+        <td>
+          ${escapeHTML(address)}
+        </td>
 
-        <td>${escapeHTML(location.description || "")}</td>
+        <td>
+          ${escapeHTML(description)}
+        </td>
 
         <td>
 
           <button
+
             class="admin-btn admin-btn-danger"
-            onclick="deleteBoardingLocation('${location.id}')"
+
+            onclick="deleteBoardingLocation('${escapeHTML(id)}')"
+
           >
+
             刪除
+
           </button>
 
         </td>
 
       </tr>
+
     `;
 
   }).join("");
@@ -415,94 +825,235 @@ function renderBoardingLocations() {
 }
 
 
+// =====================================================
 // 刪除上車地點
-function deleteBoardingLocation(id) {
+// =====================================================
+
+async function deleteBoardingLocation(id) {
 
   if (!confirm("確定要刪除此上車地點嗎？")) {
+
     return;
+
   }
 
-  const locations = getBoardingLocations()
-    .filter(location => location.id !== id);
 
-  saveBoardingLocations(locations);
+  try {
 
-  renderBoardingLocations();
+    await apiPost({
+
+      action: "deleteBoardingPoint",
+
+      boardingPointId: id
+
+    });
+
+
+    alert(
+      "上車地點已刪除！"
+    );
+
+
+    await loadBoardingLocations();
+
+    populateTripFilters();
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "刪除上車地點失敗：\n\n" +
+      error.message
+    );
+
+  }
 
 }
 
 
-// =========================
+// =====================================================
+// 報名管理
+// =====================================================
+
+function renderRegistrations() {
+
+  const tbody =
+    document.getElementById("registrationsTableBody");
+
+
+  if (!registrationData.length) {
+
+    tbody.innerHTML = `
+
+      <tr>
+
+        <td colspan="8" class="empty-data">
+
+          報名資料 API 尚未完成
+
+        </td>
+
+      </tr>
+
+    `;
+
+    return;
+
+  }
+
+}
+
+
+// =====================================================
+// 繳費管理
+// =====================================================
+
+function renderPayments() {
+
+  const tbody =
+    document.getElementById("paymentsTableBody");
+
+
+  if (!paymentData.length) {
+
+    tbody.innerHTML = `
+
+      <tr>
+
+        <td colspan="7" class="empty-data">
+
+          繳費資料 API 尚未完成
+
+        </td>
+
+      </tr>
+
+    `;
+
+    return;
+
+  }
+
+}
+
+
+// =====================================================
+// 行程下拉選單
+// =====================================================
+
+function populateTripFilters() {
+
+  const filters = [
+
+    document.getElementById("registrationTripFilter"),
+
+    document.getElementById("paymentTripFilter")
+
+  ];
+
+
+  filters.forEach(select => {
+
+    if (!select) return;
+
+
+    const currentValue =
+      select.value;
+
+
+    select.innerHTML = `
+
+      <option value="">
+        所有行程
+      </option>
+
+    `;
+
+
+    tripsData.forEach(trip => {
+
+      const id =
+        trip.tripId || trip.id || "";
+
+      const name =
+        trip.name || trip.title || "";
+
+
+      const option =
+        document.createElement("option");
+
+
+      option.value = id;
+
+      option.textContent = name;
+
+
+      select.appendChild(option);
+
+    });
+
+
+    select.value = currentValue;
+
+  });
+
+}
+
+
+// =====================================================
 // 報名資料匯出
-// =========================
+// =====================================================
 
 document.getElementById("exportRegistrationBtn")
   .addEventListener("click", () => {
 
     alert(
-      "目前尚未連接報名資料庫。\n" +
-      "完成 Google Sheets API 後，這裡會提供 Excel 匯出功能。"
+      "報名資料匯出功能需要完成報名資料 API 後才能使用。"
     );
 
   });
 
 
-// =========================
+// =====================================================
 // 系統設定
-// =========================
+// =====================================================
 
 document.getElementById("settingsForm")
   .addEventListener("submit", event => {
 
     event.preventDefault();
 
+
     alert(
-      "目前系統設定尚未連接資料庫。\n" +
-      "之後會將設定儲存至 Google Sheets 或後端資料庫。"
+      "系統設定 API 尚未完成。\n\n" +
+      "下一階段將連接 Google Sheets，" +
+      "讓網站名稱、標語、聯絡資訊及注意事項可以真正儲存。"
     );
 
   });
 
 
-// =========================
+// =====================================================
 // 登出
-// =========================
+// =====================================================
 
 document.getElementById("logoutBtn")
   .addEventListener("click", () => {
 
     alert(
-      "目前尚未建立真正的登入驗證系統。\n" +
-      "完成後台安全設定後，這裡才會提供正式登出功能。"
+      "目前尚未建立正式登入驗證系統。"
     );
 
   });
 
 
-// =========================
-// 防止 HTML 注入
-// =========================
-
-function escapeHTML(value) {
-
-  return String(value || "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-
-}
-
-
-// =========================
+// =====================================================
 // 初始化
-// =========================
+// =====================================================
 
 tripFormCard.style.display = "none";
 
-renderTrips();
 
-renderBoardingLocations();
-
-updateDashboard();
+loadAllData();
