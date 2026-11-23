@@ -237,6 +237,52 @@ function updateDashboard() {
 
 
 // =====================================================
+// 彈性行程服務設定：天數、住宿、房型、餐食
+// =====================================================
+
+function renderTripMealsConfig(days, savedMeals = []) {
+  const container = document.getElementById("tripMealsConfig");
+  if (!container) return;
+  const mealNames = ["早餐", "午餐", "晚餐"];
+  const saved = Array.isArray(savedMeals) ? savedMeals : [];
+  const safeDays = Math.max(1, Math.min(30, Number(days) || 1));
+  container.innerHTML = Array.from({ length: safeDays }, (_, index) => {
+    const day = index + 1;
+    return `<div class="meal-day-config" style="border:1px solid #f2c6dc;border-radius:12px;padding:12px;margin:10px 0;background:#fff9fc">
+      <strong>第 ${day} 天</strong>
+      <div style="display:flex;flex-wrap:wrap;gap:14px;margin-top:8px">
+        ${mealNames.map(meal => {
+          const key = `day${day}_${meal}`;
+          const item = saved.find(x => x.key === key) || {};
+          return `<label style="display:inline-flex;align-items:center;gap:6px">
+            <input type="checkbox" class="meal-provided" data-key="${key}" ${item.provided ? "checked" : ""}> ${meal}
+          </label>`;
+        }).join("")}
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function collectTripMealsConfig() {
+  return Array.from(document.querySelectorAll(".meal-provided"))
+    .map(input => ({ key: input.dataset.key, provided: input.checked }));
+}
+
+function updateLodgingSettings() {
+  const isLodging = document.getElementById("tripLodging")?.value === "true";
+  const group = document.getElementById("roomTypesGroup");
+  if (group) group.style.display = isLodging ? "block" : "none";
+  if (!isLodging) document.querySelectorAll(".room-type").forEach(cb => cb.checked = false);
+}
+
+document.getElementById("tripDays")?.addEventListener("input", event => {
+  renderTripMealsConfig(event.target.value);
+});
+document.getElementById("tripLodging")?.addEventListener("change", updateLodgingSettings);
+renderTripMealsConfig(1);
+updateLodgingSettings();
+
+// =====================================================
 // 新增行程
 // =====================================================
 
@@ -251,6 +297,10 @@ document.getElementById("addTripBtn")
   .addEventListener("click", () => {
 
     tripForm.reset();
+
+    document.getElementById("tripDays").value = 1;
+    renderTripMealsConfig(1);
+    updateLodgingSettings();
 
     document.getElementById("tripId").value = "";
 
@@ -307,6 +357,18 @@ tripForm.addEventListener("submit", async event => {
     type:
       document.getElementById("tripType")
         .value,
+
+    days:
+      Number(document.getElementById("tripDays").value || 1),
+
+    lodging:
+      document.getElementById("tripLodging").value === "true",
+
+    roomTypes:
+      Array.from(document.querySelectorAll(".room-type:checked")).map(cb => cb.value),
+
+    meals:
+      collectTripMealsConfig(),
 
     date:
       document.getElementById("tripDate")
@@ -555,6 +617,18 @@ function editTrip(id) {
   document.getElementById("tripType")
     .value = trip.type || "";
 
+  document.getElementById("tripDays")
+    .value = trip.days || (trip.type === "一日遊" ? 1 : 2);
+
+  document.getElementById("tripLodging")
+    .value = trip.lodging ? "true" : "false";
+
+  document.querySelectorAll(".room-type").forEach(cb => {
+    cb.checked = (trip.roomTypes || []).includes(cb.value);
+  });
+
+  renderTripMealsConfig(document.getElementById("tripDays").value, trip.meals || []);
+  updateLodgingSettings();
 
   document.getElementById("tripDate")
     .value = trip.date || "";
@@ -910,6 +984,18 @@ function maskIdNumber(value) {
 function renderRegistrations() {
   const tbody = document.getElementById("registrationsTableBody");
   if (!tbody) return;
+
+  // 將原本的報名團體表格改為旅客個人資料表格
+  const table = tbody.closest("table");
+  if (table) {
+    const thead = table.querySelector("thead");
+    if (thead) {
+      thead.innerHTML = `<tr>
+        <th>行程</th><th>姓名</th><th>出生年月日</th><th>身分證字號</th>
+        <th>電話</th><th>上車點1</th><th>上車點2</th><th>同意人鏡</th><th>房型</th>
+      </tr>`;
+    }
+  }
 
   const filter = document.getElementById("registrationTripFilter");
   const selectedTrip = filter ? filter.value : "";
