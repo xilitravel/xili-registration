@@ -2,149 +2,88 @@
    囍莉旅遊｜報名系統
 ===================================================== */
 
-
-/* =====================================================
-   1. 取得行程資料
-===================================================== */
-
-const registrationParams = new URLSearchParams(
-    window.location.search
-);
-
+const registrationParams = new URLSearchParams(window.location.search);
 const selectedTripId = registrationParams.get("trip");
-
-const selectedTrip = tripsData.find(function(trip) {
-
-    return trip.id === selectedTripId;
-
-});
-
-
-/* =====================================================
-   2. 取得 HTML 元素
-===================================================== */
+let selectedTrip = null;
+const TRIPS_API_URL = "https://script.google.com/macros/s/AKfycbwnN2PWqKHvWnIyTRPHkdT5a69ilwG2MUY8Iwx7IH3rzhTgj_5o6fItSYloSnk6piI4/exec?action=trips";
 
 const registrationForm = document.getElementById("registrationForm");
-
 const selectedTripContainer = document.getElementById("selectedTrip");
-
 const peopleCountSelect = document.getElementById("peopleCount");
-
 const travelerContainer = document.getElementById("travelerContainer");
-
 const boardingContainer = document.getElementById("boardingContainer");
-
 const submitButton = document.getElementById("submitButton");
 
+async function loadSelectedTrip() {
+    try {
+        const response = await fetch(TRIPS_API_URL);
+        const result = await response.json();
 
-/* =====================================================
-   3. 顯示選擇的行程
-===================================================== */
+        if (!result.success || !Array.isArray(result.data)) {
+            throw new Error("行程資料格式錯誤");
+        }
+
+        const apiTrip = result.data.find(function(trip) {
+            return String(trip.id || trip.tripId) === String(selectedTripId);
+        });
+
+        if (!apiTrip) {
+            selectedTripContainer.innerHTML = `
+                <div class="empty-trip">
+                    <h3>⚠️ 找不到旅遊行程</h3>
+                    <p>請回到旅遊行程頁面，重新選擇想報名的行程。</p>
+                    <a href="trips.html">返回旅遊行程</a>
+                </div>
+            `;
+            registrationForm.style.display = "none";
+            return;
+        }
+
+        selectedTrip = {
+            id: apiTrip.id || apiTrip.tripId,
+            title: apiTrip.title || apiTrip.name || "未命名行程",
+            date: apiTrip.date || "",
+            dateText: apiTrip.dateText || apiTrip.date || "待設定",
+            price: apiTrip.price || 0,
+            priceText: apiTrip.priceText || (apiTrip.price != null ? "$" + apiTrip.price : "待設定"),
+            status: apiTrip.status || "",
+            maxPeople: apiTrip.maxPeople || 0,
+            registeredPeople: apiTrip.registeredPeople || 0,
+            deadline: apiTrip.deadline || "",
+            departure: apiTrip.departure || "台南",
+            boardingPoints: apiTrip.boardingPoints || [],
+            description: apiTrip.description || ""
+        };
+
+        registrationForm.style.display = "";
+        renderSelectedTrip();
+
+    } catch (error) {
+        console.error("載入報名行程失敗：", error);
+        selectedTripContainer.innerHTML = `
+            <div class="empty-trip">
+                <h3>⚠️ 行程資料載入失敗</h3>
+                <p>請重新整理頁面，或稍後再試。</p>
+            </div>
+        `;
+        registrationForm.style.display = "none";
+    }
+}
 
 function renderSelectedTrip() {
-
-    if (!selectedTrip) {
-
-        selectedTripContainer.innerHTML = `
-
-            <div class="empty-trip">
-
-                <h3>⚠️ 找不到旅遊行程</h3>
-
-                <p>
-                    請先回到旅遊行程頁面，
-                    選擇想報名的行程。
-                </p>
-
-                <a href="trips.html">
-                    返回旅遊行程
-                </a>
-
-            </div>
-
-        `;
-
-        registrationForm.style.display = "none";
-
-        return;
-
-    }
-
+    if (!selectedTrip) return;
 
     selectedTripContainer.innerHTML = `
-
         <div class="selected-trip-card">
-
-            <h3>
-                🌸 ${selectedTrip.title}
-            </h3>
-
-            <p>
-                📅
-                <strong>出團日期：</strong>
-                ${selectedTrip.dateText || "待設定"}
-            </p>
-
-            <p>
-                💰
-                <strong>團費：</strong>
-                ${selectedTrip.priceText || "待設定"}
-            </p>
-
-            <p>
-                👥
-                <strong>報名人數：</strong>
-                ${selectedTrip.registeredPeople || 0}
-                /
-                ${selectedTrip.maxPeople || "不限"}
-            </p>
-
-            <p>
-                ⏰
-                <strong>報名截止：</strong>
-                ${selectedTrip.deadline || "待設定"}
-            </p>
-
-            <p>
-                📍
-                <strong>出發地：</strong>
-                ${selectedTrip.departure || "台南"}
-            </p>
-
+            <h3>🌸 ${selectedTrip.title}</h3>
+            <p>📅 <strong>出團日期：</strong>${selectedTrip.dateText || "待設定"}</p>
+            <p>💰 <strong>團費：</strong>${selectedTrip.priceText || "待設定"}</p>
+            <p>👥 <strong>報名人數：</strong>${selectedTrip.registeredPeople || 0} / ${selectedTrip.maxPeople || "不限"}</p>
+            <p>⏰ <strong>報名截止：</strong>${selectedTrip.deadline || "待設定"}</p>
+            <p>📍 <strong>出發地：</strong>${selectedTrip.departure || "台南"}</p>
         </div>
-
     `;
-
 }
-
-
-/* =====================================================
-   4. 取得上車地點
-===================================================== */
-
-function getBoardingPoints() {
-
-    if (
-        selectedTrip &&
-        selectedTrip.boardingPoints &&
-        selectedTrip.boardingPoints.length > 0
-    ) {
-
-        return selectedTrip.boardingPoints;
-
-    }
-
-
-    return [
-
-        "永康轉運站",
-
-        "虎尾寮文聖公園"
-
-    ];
-
-}
-
 
 /* =====================================================
    5. 建立旅客資料欄位
@@ -1289,7 +1228,7 @@ function showRegistrationConfirmation(data) {
    11. 初始化
 ===================================================== */
 
-renderSelectedTrip();
+loadSelectedTrip();
 
 
 /* =====================================================
@@ -1297,3 +1236,7 @@ renderSelectedTrip();
 ===================================================== */
 
 renderTravelers();
+
+
+
+
