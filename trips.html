@@ -695,7 +695,7 @@
          行程資料
     ========================= -->
 
-    <script src="trips.js"></script>
+    <!-- 行程資料改由 Apps Script API 即時讀取 -->
 
 
     <!-- =========================
@@ -704,7 +704,7 @@
 
     <script>
 
-        const tripContainer = document.getElementById("tripContainer");
+        const tripContainer = document.getElementById("tripContainer");\n        let tripsData = [];
 
 
         /* =========================
@@ -1106,7 +1106,31 @@
            執行
         ========================= */
 
-        renderTrips();
+        async function loadTrips() {
+            tripContainer.innerHTML = `<div class="empty-trip">正在載入旅遊行程...</div>`;
+
+            try {
+                const response = await fetch("https://script.google.com/macros/s/AKfycbwnN2PWqKHvWnIyTRPHkdT5a69ilwG2MUY8Iwx7IH3rzhTgj_5o6fItSYloSnk6piI4/exec?action=trips", { cache: "no-store" });
+                const result = await response.json();
+
+                if (!result.success || !Array.isArray(result.data)) {
+                    throw new Error("行程資料格式錯誤");
+                }
+
+                tripsData = result.data;
+                renderTrips();
+            } catch (error) {
+                console.error("載入行程失敗：", error);
+                tripContainer.innerHTML = `
+                    <div class="empty-trip">
+                        <h2>🌸 行程載入失敗</h2>
+                        <p>請稍後重新整理，或聯絡囍莉旅遊。</p>
+                    </div>
+                `;
+            }
+        }
+
+        loadTrips();
 
 
     </script>
@@ -1115,3 +1139,7 @@
 </body>
 
 </html>
+
+
+
+
