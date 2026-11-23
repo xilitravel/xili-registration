@@ -1,3 +1,8 @@
+
+
+
+
+
 // =====================================================
 // 囍莉旅遊｜管理後台
 // Google Apps Script API 版本
@@ -888,12 +893,24 @@ function renderRegistrations() {
   const tbody = document.getElementById("registrationsTableBody");
   if (!tbody) return;
 
+  // 將原本的報名團體表格改為旅客個人資料表格
+  const table = tbody.closest("table");
+  if (table) {
+    const thead = table.querySelector("thead");
+    if (thead) {
+      thead.innerHTML = `<tr>
+        <th>行程</th><th>姓名</th><th>出生年月日</th><th>身分證字號</th>
+        <th>電話</th><th>上車點1</th><th>上車點2</th><th>同意人鏡</th><th>房型</th>
+      </tr>`;
+    }
+  }
+
   const filter = document.getElementById("registrationTripFilter");
   const selectedTrip = filter ? filter.value : "";
   const rows = registrationData.filter(item => !selectedTrip || String(item.tripId) === String(selectedTrip) || item.tripName === selectedTrip);
 
   if (!rows.length) {
-    tbody.innerHTML = `<tr><td colspan="8" class="empty-data">目前沒有報名資料</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="9" class="empty-data">目前沒有報名資料</td></tr>`;
     return;
   }
 
@@ -904,13 +921,13 @@ function renderRegistrations() {
       <td>${escapeHTML(item.birthDate)}</td>
       <td>${escapeHTML(item.idNumber)}</td>
       <td>${escapeHTML(item.phone)}</td>
-      <td>${escapeHTML(item.age)}</td>
-      <td>${escapeHTML([item.boarding1, item.boarding2].filter(Boolean).join("／"))}</td>
+      <td>${escapeHTML(item.boarding1)}</td>
+      <td>${escapeHTML(item.boarding2)}</td>
       <td>${escapeHTML(item.photoConsent)}</td>
+      <td>${escapeHTML(item.room)}</td>
     </tr>
   `).join("");
 }
-
 
 // =====================================================
 // 繳費管理
@@ -1024,8 +1041,8 @@ document.getElementById("exportRegistrationBtn")
       alert("目前沒有可匯出的報名資料。");
       return;
     }
-    const headers = ["行程", "姓名", "出生年月日", "身分證字號", "電話", "年齡", "上車點1", "上車點2", "同意人鏡"];
-    const csvRows = [headers, ...rows.map(item => [item.tripName, item.name, item.birthDate, item.idNumber, item.phone, item.age, item.boarding1, item.boarding2, item.photoConsent])];
+    const headers = ["行程", "姓名", "出生年月日", "身分證字號", "電話", "上車點1", "上車點2", "同意人鏡", "房型"];
+    const csvRows = [headers, ...rows.map(item => [item.tripName, item.name, item.birthDate, item.idNumber, item.phone, item.boarding1, item.boarding2, item.photoConsent, item.room])];
     const csv = "\uFEFF" + csvRows.map(row => row.map(value => `"${String(value ?? "").replace(/"/g, '""')}"`).join(",")).join("\r\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(blob);
