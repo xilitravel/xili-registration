@@ -161,6 +161,8 @@ async function loadAllData() {
 
     await loadBoardingLocations();
 
+    await loadRegistrations();
+
     updateDashboard();
 
     populateTripFilters();
@@ -877,32 +879,36 @@ async function deleteBoardingLocation(id) {
 // 報名管理
 // =====================================================
 
+async function loadRegistrations() {
+  registrationData = await apiGet("registrations");
+  renderRegistrations();
+}
+
 function renderRegistrations() {
+  const tbody = document.getElementById("registrationsTableBody");
+  if (!tbody) return;
 
-  const tbody =
-    document.getElementById("registrationsTableBody");
+  const filter = document.getElementById("registrationTripFilter");
+  const selectedTrip = filter ? filter.value : "";
+  const rows = registrationData.filter(item => !selectedTrip || String(item.tripId) === String(selectedTrip) || item.tripName === selectedTrip);
 
-
-  if (!registrationData.length) {
-
-    tbody.innerHTML = `
-
-      <tr>
-
-        <td colspan="8" class="empty-data">
-
-          報名資料 API 尚未完成
-
-        </td>
-
-      </tr>
-
-    `;
-
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="8" class="empty-data">目前沒有報名資料</td></tr>`;
     return;
-
   }
 
+  tbody.innerHTML = rows.map(item => `
+    <tr>
+      <td>${escapeHTML(item.tripName)}</td>
+      <td>${escapeHTML(item.name)}</td>
+      <td>${escapeHTML(item.birthDate)}</td>
+      <td>${escapeHTML(item.idNumber)}</td>
+      <td>${escapeHTML(item.phone)}</td>
+      <td>${escapeHTML(item.age)}</td>
+      <td>${escapeHTML([item.boarding1, item.boarding2].filter(Boolean).join("／"))}</td>
+      <td>${escapeHTML(item.photoConsent)}</td>
+    </tr>
+  `).join("");
 }
 
 
@@ -1002,17 +1008,32 @@ function populateTripFilters() {
 }
 
 
+document.getElementById("registrationTripFilter")?.addEventListener("change", renderRegistrations);
+
+
 // =====================================================
 // 報名資料匯出
 // =====================================================
 
 document.getElementById("exportRegistrationBtn")
   .addEventListener("click", () => {
-
-    alert(
-      "報名資料匯出功能需要完成報名資料 API 後才能使用。"
-    );
-
+    const filter = document.getElementById("registrationTripFilter");
+    const selectedTrip = filter ? filter.value : "";
+    const rows = registrationData.filter(item => !selectedTrip || String(item.tripId) === String(selectedTrip) || item.tripName === selectedTrip);
+    if (!rows.length) {
+      alert("目前沒有可匯出的報名資料。");
+      return;
+    }
+    const headers = ["行程", "姓名", "出生年月日", "身分證字號", "電話", "年齡", "上車點1", "上車點2", "同意人鏡"];
+    const csvRows = [headers, ...rows.map(item => [item.tripName, item.name, item.birthDate, item.idNumber, item.phone, item.age, item.boarding1, item.boarding2, item.photoConsent])];
+    const csv = "\uFEFF" + csvRows.map(row => row.map(value => `"${String(value ?? "").replace(/"/g, '""')}"`).join(",")).join("\r\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "囍莉旅遊_報名資料.csv";
+    link.click();
+    URL.revokeObjectURL(url);
   });
 
 
@@ -1057,3 +1078,7 @@ tripFormCard.style.display = "none";
 
 
 loadAllData();
+
+
+
+
