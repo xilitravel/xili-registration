@@ -23,6 +23,7 @@ let boardingData = [];
 let registrationData = [];
 
 let paymentData = [];
+let adminToken = "";
 
 
 // =====================================================
@@ -81,6 +82,24 @@ async function apiPost(payload) {
 
 }
 
+
+async function adminLogin() {
+  const password = prompt("請輸入管理員密碼：");
+  if (!password) throw new Error("已取消登入。 ");
+  const result = await apiPost({ action: "adminLogin", password });
+  adminToken = result.token;
+  return adminToken;
+}
+
+async function adminGetRegistrations() {
+  if (!adminToken) await adminLogin();
+  try {
+    return await apiPost({ action: "adminGetRegistrations", token: adminToken });
+  } catch (error) {
+    adminToken = "";
+    throw error;
+  }
+}
 
 // =====================================================
 // HTML 安全處理
@@ -880,8 +899,14 @@ async function deleteBoardingLocation(id) {
 // =====================================================
 
 async function loadRegistrations() {
-  registrationData = await apiGet("registrations");
+  registrationData = await adminGetRegistrations();
   renderRegistrations();
+}
+
+function maskIdNumber(value) {
+  const id = String(value || "");
+  if (id.length <= 4) return id ? "＊".repeat(id.length) : "";
+  return id.slice(0, 3) + "＊".repeat(Math.max(0, id.length - 5)) + id.slice(-2);
 }
 
 function renderRegistrations() {
@@ -914,7 +939,7 @@ function renderRegistrations() {
       <td>${escapeHTML(item.tripName)}</td>
       <td>${escapeHTML(item.name)}</td>
       <td>${escapeHTML(item.birthDate)}</td>
-      <td>${escapeHTML(item.idNumber)}</td>
+      <td><span class="id-mask" data-full-id="${escapeHTML(item.idNumber)}">${escapeHTML(maskIdNumber(item.idNumber))}</span> <button type="button" class="admin-btn admin-btn-light reveal-id-btn">查看</button></td>
       <td>${escapeHTML(item.phone)}</td>
       <td>${escapeHTML(item.boarding1)}</td>
       <td>${escapeHTML(item.boarding2)}</td>
@@ -923,6 +948,17 @@ function renderRegistrations() {
     </tr>
   `).join("");
 }
+
+document.getElementById("registrationsTableBody")?.addEventListener("click", event => {
+  const button = event.target.closest(".reveal-id-btn");
+  if (!button) return;
+  const span = button.previousElementSibling;
+  if (!span) return;
+  const isRevealed = button.dataset.revealed === "true";
+  span.textContent = isRevealed ? maskIdNumber(span.dataset.fullId) : span.dataset.fullId;
+  button.textContent = isRevealed ? "查看" : "遮蔽";
+  button.dataset.revealed = isRevealed ? "false" : "true";
+});
 
 // =====================================================
 // 繳費管理
@@ -1037,7 +1073,7 @@ document.getElementById("exportRegistrationBtn")
       return;
     }
     const headers = ["行程", "姓名", "出生年月日", "身分證字號", "電話", "上車點1", "上車點2", "同意人鏡", "房型"];
-    const csvRows = [headers, ...rows.map(item => [item.tripName, item.name, item.birthDate, item.idNumber, item.phone, item.boarding1, item.boarding2, item.photoConsent, item.room])];
+    const csvRows = [headers, ...rows.map(item => [item.tripName, item.name, item.birthDate, maskIdNumber(item.idNumber), item.phone, item.boarding1, item.boarding2, item.photoConsent, item.room])];
     const csv = "\uFEFF" + csvRows.map(row => row.map(value => `"${String(value ?? "").replace(/"/g, '""')}"`).join(",")).join("\r\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(blob);
@@ -1075,9 +1111,10 @@ document.getElementById("settingsForm")
 document.getElementById("logoutBtn")
   .addEventListener("click", () => {
 
-    alert(
-      "目前尚未建立正式登入驗證系統。"
-    );
+    adminToken = "";
+    registrationData = [];
+    renderRegistrations();
+    alert("已登出管理員資料區。重新進入報名管理時需要再次登入。");
 
   });
 
