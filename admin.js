@@ -911,18 +911,6 @@ function renderRegistrations() {
   const tbody = document.getElementById("registrationsTableBody");
   if (!tbody) return;
 
-  // 將原本的報名團體表格改為旅客個人資料表格
-  const table = tbody.closest("table");
-  if (table) {
-    const thead = table.querySelector("thead");
-    if (thead) {
-      thead.innerHTML = `<tr>
-        <th>行程</th><th>姓名</th><th>出生年月日</th><th>身分證字號</th>
-        <th>電話</th><th>上車點1</th><th>上車點2</th><th>同意人鏡</th><th>房型</th>
-      </tr>`;
-    }
-  }
-
   const filter = document.getElementById("registrationTripFilter");
   const selectedTrip = filter ? filter.value : "";
   const rows = registrationData.filter(item => !selectedTrip || String(item.tripId) === String(selectedTrip) || item.tripName === selectedTrip);
