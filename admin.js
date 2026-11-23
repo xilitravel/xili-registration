@@ -83,9 +83,7 @@ async function apiPost(payload) {
 }
 
 
-async function adminLogin() {
-  const password = prompt("請輸入管理員密碼：");
-  if (!password) throw new Error("已取消登入。 ");
+async function adminLogin(password) {
   const result = await apiPost({ action: "adminLogin", password });
   adminToken = result.token;
   return adminToken;
@@ -1110,14 +1108,384 @@ document.getElementById("settingsForm")
 
 document.getElementById("logoutBtn")
   .addEventListener("click", () => {
-
     adminToken = "";
     registrationData = [];
-    renderRegistrations();
-    alert("已登出管理員資料區。重新進入報名管理時需要再次登入。");
-
+    lockAdminPage();
   });
 
+
+
+// =====================================================
+// 囍莉旅遊｜粉色工作人員登入頁
+// =====================================================
+
+let adminPageLocked = true;
+let originalBodyChildren = [];
+let loginOverlay = null;
+
+function lockAdminPage() {
+  adminPageLocked = true;
+
+  // 隱藏整個後台頁面內容
+  originalBodyChildren = Array.from(document.body.children)
+    .filter(element => element !== loginOverlay);
+
+  originalBodyChildren.forEach(element => {
+    element.dataset.adminOriginalDisplay = element.style.display || "";
+    element.style.display = "none";
+  });
+
+  if (loginOverlay) {
+    loginOverlay.style.display = "flex";
+  }
+}
+
+function unlockAdminPage() {
+  adminPageLocked = false;
+
+  originalBodyChildren.forEach(element => {
+    element.style.display = element.dataset.adminOriginalDisplay || "";
+    delete element.dataset.adminOriginalDisplay;
+  });
+
+  if (loginOverlay) {
+    loginOverlay.remove();
+  }
+  loginOverlay = null;
+}
+
+function initializeAdminLock() {
+  loginOverlay = document.createElement("div");
+  loginOverlay.id = "adminLoginOverlay";
+
+  loginOverlay.innerHTML = `
+    <div class="login-decoration login-star star-one">✦</div>
+    <div class="login-decoration login-star star-two">✧</div>
+    <div class="login-decoration login-heart heart-one">♡</div>
+    <div class="login-decoration login-flower flower-one">✿</div>
+    <div class="login-decoration login-heart heart-two">♡</div>
+
+    <div class="login-page-content">
+      <header class="login-brand">
+        <h1>囍莉旅遊</h1>
+        <p class="login-subtitle">電子優惠券｜工作人員後台</p>
+        <div class="login-slogan">
+          <span></span>
+          <em>Travel Happy Together</em>
+          <span>♡</span>
+          <span></span>
+        </div>
+      </header>
+
+      <section class="login-card">
+        <div class="login-lock-circle">🔐</div>
+        <h2>工作人員驗證</h2>
+        <form id="adminLoginForm">
+          <label for="adminLoginPassword">工作人員 PIN</label>
+          <input
+            id="adminLoginPassword"
+            type="password"
+            autocomplete="current-password"
+            placeholder="輸 入  P I N"
+            required
+          />
+          <button type="submit" id="adminLoginSubmit">
+            🌸 進入囍莉旅遊後台
+          </button>
+          <div id="adminLoginError" role="alert"></div>
+        </form>
+      </section>
+    </div>
+  `;
+
+  const style = document.createElement("style");
+  style.textContent = `
+    #adminLoginOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: auto;
+      background:
+        radial-gradient(circle at 12% 12%, rgba(255,255,255,.65), transparent 24%),
+        radial-gradient(circle at 88% 18%, rgba(255,255,255,.35), transparent 20%),
+        linear-gradient(135deg, #fbe8ef 0%, #f9dce8 48%, #f3c8dc 100%);
+      font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      padding: 36px 20px;
+      box-sizing: border-box;
+    }
+
+    #adminLoginOverlay * {
+      box-sizing: border-box;
+    }
+
+    .login-page-content {
+      width: min(100%, 850px);
+      position: relative;
+      z-index: 2;
+    }
+
+    .login-brand {
+      text-align: center;
+      margin: 0 auto 56px;
+    }
+
+    .login-brand h1 {
+      margin: 0;
+      font-size: clamp(42px, 7vw, 76px);
+      font-weight: 900;
+      letter-spacing: .18em;
+      color: #a95272;
+      text-shadow: 0 4px 0 rgba(255,255,255,.75), 0 8px 18px rgba(153,70,104,.15);
+    }
+
+    .login-subtitle {
+      margin: 12px 0 22px;
+      color: #88727d;
+      font-size: clamp(15px, 2vw, 20px);
+      font-weight: 800;
+      letter-spacing: .25em;
+    }
+
+    .login-slogan {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      color: #c16e91;
+      font-size: clamp(18px, 3vw, 32px);
+    }
+
+    .login-slogan em {
+      font-family: "Brush Script MT", "Segoe Script", cursive;
+      font-weight: 400;
+    }
+
+    .login-slogan span:first-child,
+    .login-slogan span:last-child {
+      width: 55px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #d88aa7);
+    }
+
+    .login-slogan span:last-child {
+      background: linear-gradient(90deg, #d88aa7, transparent);
+    }
+
+    .login-card {
+      width: min(100%, 650px);
+      margin: 0 auto;
+      padding: clamp(28px, 5vw, 55px);
+      border: 1px solid rgba(255,255,255,.85);
+      border-radius: 36px;
+      background: rgba(255,255,255,.78);
+      box-shadow: 0 24px 60px rgba(160,74,111,.12);
+      backdrop-filter: blur(12px);
+      text-align: center;
+    }
+
+    .login-lock-circle {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #f9e4ec, #f4d3e0);
+      box-shadow: 0 8px 25px rgba(191,94,132,.13);
+      font-size: 42px;
+    }
+
+    .login-card h2 {
+      color: #a95272;
+      font-size: clamp(24px, 4vw, 36px);
+      letter-spacing: .16em;
+      margin: 0 0 36px;
+      font-weight: 900;
+    }
+
+    .login-card label {
+      display: block;
+      text-align: left;
+      color: #88727d;
+      font-size: 17px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    #adminLoginPassword {
+      display: block;
+      width: 100%;
+      height: 78px;
+      border: 1px solid #efd2df;
+      border-radius: 20px;
+      background: rgba(255,255,255,.92);
+      padding: 0 24px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: .35em;
+      color: #875064;
+      outline: none;
+      box-shadow: inset 0 2px 8px rgba(190,90,130,.04);
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    #adminLoginPassword:focus {
+      border-color: #d76f98;
+      box-shadow: 0 0 0 4px rgba(215,111,152,.12);
+    }
+
+    #adminLoginPassword::placeholder {
+      color: #999;
+      letter-spacing: .2em;
+    }
+
+    #adminLoginSubmit {
+      display: block;
+      width: 100%;
+      min-height: 76px;
+      margin-top: 24px;
+      border: 0;
+      border-radius: 20px;
+      background: linear-gradient(110deg, #e783a6, #c85b82);
+      color: #fff;
+      font-size: 21px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      cursor: pointer;
+      box-shadow: 0 12px 24px rgba(197,83,126,.2);
+      transition: transform .2s, box-shadow .2s, opacity .2s;
+    }
+
+    #adminLoginSubmit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 28px rgba(197,83,126,.25);
+    }
+
+    #adminLoginSubmit:disabled {
+      opacity: .65;
+      cursor: wait;
+      transform: none;
+    }
+
+    #adminLoginError {
+      color: #c62828;
+      margin-top: 14px;
+      min-height: 24px;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .login-decoration {
+      position: absolute;
+      color: rgba(202,105,148,.18);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .login-star {
+      font-size: 42px;
+    }
+
+    .star-one {
+      top: 12%;
+      right: 8%;
+      transform: rotate(15deg);
+    }
+
+    .star-two {
+      left: 8%;
+      top: 32%;
+      font-size: 30px;
+    }
+
+    .heart-one {
+      right: 2%;
+      top: 16%;
+      font-size: 70px;
+    }
+
+    .heart-two {
+      left: 13%;
+      bottom: 10%;
+      font-size: 52px;
+    }
+
+    .flower-one {
+      right: 5%;
+      bottom: 20%;
+      font-size: 70px;
+    }
+
+    @media (max-width: 600px) {
+      #adminLoginOverlay {
+        padding: 22px 16px;
+      }
+      .login-brand {
+        margin-bottom: 32px;
+      }
+      .login-card {
+        border-radius: 26px;
+      }
+      .login-lock-circle {
+        width: 82px;
+        height: 82px;
+        font-size: 34px;
+      }
+      #adminLoginPassword {
+        height: 64px;
+        font-size: 20px;
+      }
+      #adminLoginSubmit {
+        min-height: 64px;
+        font-size: 17px;
+      }
+      .login-slogan span:first-child,
+      .login-slogan span:last-child {
+        width: 25px;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+  document.body.appendChild(loginOverlay);
+
+  lockAdminPage();
+
+  document.getElementById("adminLoginForm").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const passwordInput = document.getElementById("adminLoginPassword");
+    const submitButton = document.getElementById("adminLoginSubmit");
+    const errorBox = document.getElementById("adminLoginError");
+    const password = passwordInput.value;
+
+    submitButton.disabled = true;
+    submitButton.textContent = "驗證中...";
+    errorBox.textContent = "";
+
+    try {
+      await adminLogin(password);
+      unlockAdminPage();
+      await loadAllData();
+    } catch (error) {
+      adminToken = "";
+      errorBox.textContent = "PIN 錯誤或登入失敗，請重新輸入。";
+      passwordInput.value = "";
+      passwordInput.focus();
+    } finally {
+      if (loginOverlay) {
+        submitButton.disabled = false;
+        submitButton.textContent = "🌸 進入囍莉旅遊後台";
+      }
+    }
+  });
+
+  document.getElementById("adminLoginPassword").focus();
+}
 
 // =====================================================
 // 初始化
@@ -1125,8 +1493,8 @@ document.getElementById("logoutBtn")
 
 tripFormCard.style.display = "none";
 
-
-loadAllData();
+// 登入前不載入任何後台資料
+initializeAdminLock();
 
 
 
