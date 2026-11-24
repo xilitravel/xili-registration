@@ -5,7 +5,12 @@
 const registrationParams = new URLSearchParams(window.location.search);
 const selectedTripId = registrationParams.get("trip");
 let selectedTrip = null;
+
 const TRIPS_API_URL = "https://script.google.com/macros/s/AKfycbwnN2PWqKHvWnIyTRPHkdT5a69ilwG2MUY8Iwx7IH3rzhTgj_5o6fItSYloSnk6piI4/exec?action=trips";
+
+const BOARDING_API_URL = "https://script.google.com/macros/s/AKfycbwnN2PWqKHvWnIyTRPHkdT5a69ilwG2MUY8Iwx7IH3rzhTgj_5o6fItSYloSnk6piI4/exec?action=boardingPoints";
+
+let boardingPointsList = [];
 
 const registrationForm = document.getElementById("registrationForm");
 const selectedTripContainer = document.getElementById("selectedTrip");
@@ -14,20 +19,66 @@ const travelerContainer = document.getElementById("travelerContainer");
 const boardingContainer = document.getElementById("boardingContainer");
 const submitButton = document.getElementById("submitButton");
 
+
+/* =====================================================
+   1. 載入行程資料
+===================================================== */
+
 async function loadSelectedTrip() {
+
     try {
+
         const response = await fetch(TRIPS_API_URL);
         const result = await response.json();
 
-        if (!result.success || !Array.isArray(result.data)) {
-            throw new Error("行程資料格式錯誤");
+        /* 載入上車地點 */
+
+        try {
+
+            const boardingResponse = await fetch(BOARDING_API_URL);
+            const boardingResult = await boardingResponse.json();
+
+            if (boardingResult.success && Array.isArray(boardingResult.data)) {
+
+                boardingPointsList = boardingResult.data;
+
+            } else if (Array.isArray(boardingResult.boardingPoints)) {
+
+                boardingPointsList = boardingResult.boardingPoints;
+
+            } else {
+
+                boardingPointsList = [];
+
+            }
+
+        } catch (boardingError) {
+
+            console.error("載入上車地點失敗：", boardingError);
+
+            boardingPointsList = [];
+
         }
 
+
+        /* 確認行程 API */
+
+        if (!result.success || !Array.isArray(result.data)) {
+
+            throw new Error("行程資料格式錯誤");
+
+        }
+
+
         const apiTrip = result.data.find(function(trip) {
+
             return String(trip.id || trip.tripId) === String(selectedTripId);
+
         });
 
+
         if (!apiTrip) {
+
             selectedTripContainer.innerHTML = `
                 <div class="empty-trip">
                     <h3>⚠️ 找不到旅遊行程</h3>
@@ -35,70 +86,138 @@ async function loadSelectedTrip() {
                     <a href="trips.html">返回旅遊行程</a>
                 </div>
             `;
+
             registrationForm.style.display = "none";
+
             return;
+
         }
 
+
+        /* 整理行程資料 */
+
         selectedTrip = {
+
             id: apiTrip.id || apiTrip.tripId,
+
             title: apiTrip.title || apiTrip.name || "未命名行程",
+
             date: apiTrip.date || "",
+
             dateText: apiTrip.dateText || apiTrip.date || "待設定",
+
             price: apiTrip.price || 0,
-            priceText: apiTrip.priceText || (apiTrip.price != null ? "$" + apiTrip.price : "待設定"),
+
+            priceText: apiTrip.priceText || (
+                apiTrip.price != null
+                    ? "$" + apiTrip.price
+                    : "待設定"
+            ),
+
             status: apiTrip.status || "",
+
             maxPeople: apiTrip.maxPeople || 0,
+
             registeredPeople: apiTrip.registeredPeople || 0,
+
             deadline: apiTrip.deadline || "",
+
             departure: apiTrip.departure || "台南",
+
             boardingPoints: apiTrip.boardingPoints || [],
+
             description: apiTrip.description || "",
+
             tripDays: Number(apiTrip.tripDays || apiTrip.days || 1),
-            lodging: apiTrip.lodging === true || apiTrip.tripLodging === "true" || apiTrip.hasLodging === true,
+
+            lodging:
+                apiTrip.lodging === true ||
+                apiTrip.tripLodging === "true" ||
+                apiTrip.hasLodging === true,
+
             roomTypes: apiTrip.roomTypes || apiTrip.rooms || [],
+
             meals: apiTrip.meals || apiTrip.mealSettings || []
+
         };
 
+
         registrationForm.style.display = "";
+
         renderSelectedTrip();
 
+
     } catch (error) {
+
         console.error("載入報名行程失敗：", error);
+
         selectedTripContainer.innerHTML = `
             <div class="empty-trip">
                 <h3>⚠️ 行程資料載入失敗</h3>
                 <p>請重新整理頁面，或稍後再試。</p>
             </div>
         `;
+
         registrationForm.style.display = "none";
+
     }
+
 }
 
+
+/* =====================================================
+   2. 顯示選擇的行程
+===================================================== */
+
 function renderSelectedTrip() {
+
     if (!selectedTrip) return;
 
     selectedTripContainer.innerHTML = `
         <div class="selected-trip-card">
+
             <h3>🌸 ${selectedTrip.title}</h3>
-            <p>📅 <strong>出團日期：</strong>${selectedTrip.dateText || "待設定"}</p>
-            <p>💰 <strong>團費：</strong>${selectedTrip.priceText || "待設定"}</p>
-            <p>👥 <strong>報名人數：</strong>${selectedTrip.registeredPeople || 0} / ${selectedTrip.maxPeople || "不限"}</p>
-            <p>⏰ <strong>報名截止：</strong>${selectedTrip.deadline || "待設定"}</p>
-            <p>📍 <strong>出發地：</strong>${selectedTrip.departure || "台南"}</p>
+
+            <p>
+                📅 <strong>出團日期：</strong>
+                ${selectedTrip.dateText || "待設定"}
+            </p>
+
+            <p>
+                💰 <strong>團費：</strong>
+                ${selectedTrip.priceText || "待設定"}
+            </p>
+
+            <p>
+                👥 <strong>報名人數：</strong>
+                ${selectedTrip.registeredPeople || 0}
+                /
+                ${selectedTrip.maxPeople || "不限"}
+            </p>
+
+            <p>
+                ⏰ <strong>報名截止：</strong>
+                ${selectedTrip.deadline || "待設定"}
+            </p>
+
+            <p>
+                📍 <strong>出發地：</strong>
+                ${selectedTrip.departure || "台南"}
+            </p>
+
         </div>
     `;
+
 }
 
+
 /* =====================================================
-   5. 建立旅客資料欄位
+   3. 建立旅客資料欄位
 ===================================================== */
 
 function renderTravelers() {
 
-    const peopleCount = Number(
-        peopleCountSelect.value
-    );
-
+    const peopleCount = Number(peopleCountSelect.value);
 
     travelerContainer.innerHTML = "";
 
@@ -108,13 +227,9 @@ function renderTravelers() {
     if (!peopleCount) {
 
         travelerContainer.innerHTML = `
-
             <div class="empty-category">
-
                 請先選擇報名人數。
-
             </div>
-
         `;
 
         boardingContainer.innerHTML = "";
@@ -124,7 +239,9 @@ function renderTravelers() {
     }
 
 
-    const boardingPoints = getBoardingPoints();
+    /* 使用已載入的上車地點 */
+
+    const boardingPoints = boardingPointsList;
 
 
     /* =================================================
@@ -132,7 +249,6 @@ function renderTravelers() {
     ================================================= */
 
     for (let i = 1; i <= peopleCount; i++) {
-
 
         /* =============================================
            旅客資料卡
@@ -144,55 +260,218 @@ function renderTravelers() {
 
 
         const isMainContact = i === 1;
-        const roomOptions = Array.isArray(selectedTrip.roomTypes) && selectedTrip.roomTypes.length
-            ? selectedTrip.roomTypes
-            : ["單人房", "雙人房（一大床）", "雙人房（兩小床）", "三人房", "四人房"];
-        const mealEntries = Array.isArray(selectedTrip.meals) ? selectedTrip.meals.filter(m => m && m.provided) : [];
-        const mealFieldsHTML = mealEntries.map(meal => {
+
+
+        /* 房型選項 */
+
+        const roomOptions =
+            Array.isArray(selectedTrip.roomTypes) &&
+            selectedTrip.roomTypes.length
+                ? selectedTrip.roomTypes
+                : [
+                    "單人房",
+                    "雙人房（一大床）",
+                    "雙人房（兩小床）",
+                    "三人房",
+                    "四人房"
+                ];
+
+
+        /* 餐食設定 */
+
+        const mealEntries = Array.isArray(selectedTrip.meals)
+            ? selectedTrip.meals.filter(function(meal) {
+                return meal && meal.provided;
+            })
+            : [];
+
+
+        const mealFieldsHTML = mealEntries.map(function(meal) {
+
             const label = meal.label || meal.name || meal.key || "餐食";
+
             const key = meal.key || label.replace(/\s/g, "");
-            return `<div class="form-group">
-                <label for="travelerMeal${i}_${key}">${label}飲食需求 <span class="required">*</span></label>
-                <select id="travelerMeal${i}_${key}" name="travelerMeal${i}_${key}" required>
-                    <option value="">請選擇</option><option value="葷食">葷食</option><option value="素食">素食</option>
-                </select>
-            </div>`;
+
+
+            return `
+                <div class="form-group">
+
+                    <label for="travelerMeal${i}_${key}">
+
+                        ${label}飲食需求
+
+                        <span class="required">*</span>
+
+                    </label>
+
+                    <select
+                        id="travelerMeal${i}_${key}"
+                        name="travelerMeal${i}_${key}"
+                        required
+                    >
+
+                        <option value="">請選擇</option>
+
+                        <option value="葷食">葷食</option>
+
+                        <option value="素食">素食</option>
+
+                    </select>
+
+                </div>
+            `;
+
         }).join("");
-        const roomFieldHTML = selectedTrip.lodging ? `<div class="form-group">
-            <label for="travelerRoom${i}">房型 <span class="required">*</span></label>
-            <select id="travelerRoom${i}" name="travelerRoom${i}" required>
-                <option value="">請選擇房型</option>
-                ${roomOptions.map(room => `<option value="${room}">${room}</option>`).join("")}
-            </select>
-        </div>` : "";
+
+
+        /* 住宿房型欄位 */
+
+        const roomFieldHTML = selectedTrip.lodging
+            ? `
+                <div class="form-group">
+
+                    <label for="travelerRoom${i}">
+
+                        房型
+
+                        <span class="required">*</span>
+
+                    </label>
+
+                    <select
+                        id="travelerRoom${i}"
+                        name="travelerRoom${i}"
+                        required
+                    >
+
+                        <option value="">請選擇房型</option>
+
+                        ${roomOptions.map(function(room) {
+                            return `<option value="${room}">${room}</option>`;
+                        }).join("")}
+
+                    </select>
+
+                </div>
+            `
+            : "";
+
+
+        /* 旅客基本資料 */
 
         travelerCard.innerHTML = `
-            <h3>👤 旅客資料 ${i} ${isMainContact ? '<span class="main-contact-label">（主要聯絡人）</span>' : ''}</h3>
+
+            <h3>
+                👤 旅客資料 ${i}
+
+                ${isMainContact
+                    ? '<span class="main-contact-label">（主要聯絡人）</span>'
+                    : ''
+                }
+
+            </h3>
+
+
             <div class="form-group">
-                <label for="travelerName${i}">姓名 <span class="required">*</span></label>
-                <input type="text" id="travelerName${i}" name="travelerName${i}" required placeholder="請輸入旅客姓名">
+
+                <label for="travelerName${i}">
+
+                    姓名
+
+                    <span class="required">*</span>
+
+                </label>
+
+                <input
+                    type="text"
+                    id="travelerName${i}"
+                    name="travelerName${i}"
+                    required
+                    placeholder="請輸入旅客姓名"
+                >
+
             </div>
+
+
             <div class="form-group">
-                <label for="travelerBirth${i}">出生年月日 <span class="required">*</span></label>
-                <input type="text" id="travelerBirth${i}" name="travelerBirth${i}" required maxlength="9" placeholder="民國 XX/XX/XX" inputmode="numeric">
+
+                <label for="travelerBirth${i}">
+
+                    出生年月日
+
+                    <span class="required">*</span>
+
+                </label>
+
+                <input
+                    type="text"
+                    id="travelerBirth${i}"
+                    name="travelerBirth${i}"
+                    required
+                    maxlength="9"
+                    placeholder="民國 XX/XX/XX"
+                    inputmode="numeric"
+                >
+
             </div>
+
+
             <div class="form-group">
-                <label for="travelerID${i}">身分證字號 <span class="required">*</span></label>
-                <input type="text" id="travelerID${i}" name="travelerID${i}" required maxlength="10" autocomplete="off" placeholder="請輸入身分證字號">
+
+                <label for="travelerID${i}">
+
+                    身分證字號
+
+                    <span class="required">*</span>
+
+                </label>
+
+                <input
+                    type="text"
+                    id="travelerID${i}"
+                    name="travelerID${i}"
+                    required
+                    maxlength="10"
+                    autocomplete="off"
+                    placeholder="請輸入身分證字號"
+                >
+
             </div>
+
+
             <div class="form-group">
-                <label for="travelerPhone${i}">聯絡電話 ${isMainContact ? '<span class="required">*</span>' : '<span>（選填）</span>'}</label>
-                <input type="tel" id="travelerPhone${i}" name="travelerPhone${i}" ${isMainContact ? 'required' : ''} placeholder="請輸入聯絡電話">
+
+                <label for="travelerPhone${i}">
+
+                    聯絡電話
+
+                    ${isMainContact
+                        ? '<span class="required">*</span>'
+                        : '<span>（選填）</span>'
+                    }
+
+                </label>
+
+                <input
+                    type="tel"
+                    id="travelerPhone${i}"
+                    name="travelerPhone${i}"
+                    ${isMainContact ? 'required' : ''}
+                    placeholder="請輸入聯絡電話"
+                >
+
             </div>
+
+
             ${roomFieldHTML}
+
             ${mealFieldsHTML}
+
         `;
 
 
         travelerContainer.appendChild(travelerCard);
-
-
-        /* =============================================
+               /* =============================================
            上車地點卡
         ============================================= */
 
@@ -463,8 +742,6 @@ function renderTravelers() {
 
 
 }
-
-
 /* =====================================================
    6. 檢查上車地點是否重複
 ===================================================== */
@@ -628,24 +905,66 @@ function collectTravelerData() {
         }
 
 
-        const roomElement = document.getElementById("travelerRoom" + i);
-        const roomType = roomElement ? roomElement.value : "";
+        /* =========================
+           房型
+        ========================= */
+
+        const roomElement = document.getElementById(
+            "travelerRoom" + i
+        );
+
+        const roomType = roomElement
+            ? roomElement.value
+            : "";
+
+
+        /* =========================
+           餐食
+        ========================= */
+
         const meals = {};
-        document.querySelectorAll(`[id^="travelerMeal${i}_"]`).forEach(function(element) {
-            meals[element.id.replace(`travelerMeal${i}_`, "")] = element.value;
+
+
+        document.querySelectorAll(
+            `[id^="travelerMeal${i}_"]`
+        ).forEach(function(element) {
+
+            meals[
+                element.id.replace(
+                    `travelerMeal${i}_`,
+                    ""
+                )
+            ] = element.value;
+
         });
 
+
+        /* =========================
+           建立旅客資料
+        ========================= */
+
         travelers.push({
+
             travelerNumber: i,
+
             isMainContact: i === 1,
+
             name: travelerName,
+
             idNumber: travelerID,
+
             birthday: travelerBirth,
+
             phone: travelerPhone,
+
             boardingFirst: boardingFirst,
+
             boardingSecond: boardingSecond,
+
             roomType: roomType,
+
             meals: meals
+
         });
 
 
@@ -801,8 +1120,6 @@ registrationForm.addEventListener(
 
     }
 );
-
-
 /* =====================================================
    10. 顯示報名確認
 ===================================================== */
@@ -874,9 +1191,34 @@ function showRegistrationConfirmation(data) {
                 </p>
 
 
-                <p><strong>第二上車地點：</strong>${traveler.boardingSecond || "未選擇"}</p>
-                ${traveler.roomType ? `<p><strong>房型：</strong>${traveler.roomType}</p>` : ""}
-                ${Object.entries(traveler.meals || {}).map(([meal, choice]) => `<p><strong>${meal}：</strong>${choice || "未選擇"}</p>`).join("")}
+                <p>
+
+                    <strong>第二上車地點：</strong>
+
+                    ${traveler.boardingSecond || "未選擇"}
+
+                </p>
+
+
+                ${traveler.roomType
+                    ? `<p><strong>房型：</strong>${traveler.roomType}</p>`
+                    : ""
+                }
+
+
+                ${Object.entries(traveler.meals || {})
+                    .map(function([meal, choice]) {
+
+                        return `
+                            <p>
+                                <strong>${meal}：</strong>
+                                ${choice || "未選擇"}
+                            </p>
+                        `;
+
+                    })
+                    .join("")
+                }
 
             </div>
 
@@ -1036,6 +1378,7 @@ function showRegistrationConfirmation(data) {
             <p>
 
                 LINE：
+
                 <strong>0909686339</strong>
 
             </p>
@@ -1044,6 +1387,7 @@ function showRegistrationConfirmation(data) {
             <p>
 
                 聯絡人：
+
                 <strong>陳莉瀅（阿冷）－悅揚旅行社</strong>
 
             </p>
@@ -1117,9 +1461,3 @@ loadSelectedTrip();
 /* =====================================================
    12. 預設顯示提示
 ===================================================== */
-
-renderTravelers();
-
-
-
-
