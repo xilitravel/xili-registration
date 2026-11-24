@@ -1107,97 +1107,23 @@
            執行
         ========================= */
 
-        /* =========================
-           快取優先載入 + 背景更新
-           第一次造訪仍需向 Apps Script 取得資料；
-           第二次起先顯示上次資料，不必等 API 才看到行程。
-        ========================= */
-
-        const TRIPS_API_URL = "https://script.google.com/macros/s/AKfycbwnN2PWqKHvWnIyTRPHkdT5a69ilwG2MUY8Iwx7IH3rzhTgj_5o6fItSYloSnk6piI4/exec?action=trips";
-        const TRIPS_CACHE_KEY = "xili_trips_cache_v1";
-
-        function readTripsCache() {
-            try {
-                const raw = localStorage.getItem(TRIPS_CACHE_KEY);
-                if (!raw) return null;
-
-                const cached = JSON.parse(raw);
-                if (!cached || !Array.isArray(cached.data) || cached.data.length === 0) {
-                    return null;
-                }
-                return cached;
-            } catch (error) {
-                console.warn("讀取行程快取失敗：", error);
-                return null;
-            }
-        }
-
-        function saveTripsCache(data) {
-            try {
-                localStorage.setItem(TRIPS_CACHE_KEY, JSON.stringify({
-                    savedAt: Date.now(),
-                    data: data
-                }));
-            } catch (error) {
-                // 儲存空間不足或瀏覽器限制時，不影響正常載入 API。
-                console.warn("儲存行程快取失敗：", error);
-            }
-        }
-
-        async function refreshTripsInBackground() {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(function () {
-                controller.abort();
-            }, 20000);
-
-            try {
-                const response = await fetch(TRIPS_API_URL, {
-                    method: "GET",
-                    cache: "no-store",
-                    signal: controller.signal
-                });
-
-                if (!response.ok) {
-                    throw new Error("行程 API 回應錯誤：" + response.status);
-                }
-
-                const result = await response.json();
-                if (!result.success || !Array.isArray(result.data)) {
-                    throw new Error("行程資料格式錯誤");
-                }
-
-                tripsData = result.data;
-                saveTripsCache(tripsData);
-                renderTrips();
-                return true;
-            } catch (error) {
-                console.error("背景更新行程失敗：", error);
-                return false;
-            } finally {
-                clearTimeout(timeoutId);
-            }
-        }
-
         async function loadTrips() {
-            // 有快取就先立即顯示，API 在背景更新，不阻擋畫面。
-            const cached = readTripsCache();
-
-            if (cached) {
-                tripsData = cached.data;
-                renderTrips();
-                refreshTripsInBackground();
-                return;
-            }
-
-            // 第一次造訪沒有快取，才需要等待 API。
             tripContainer.innerHTML = `<div class="empty-trip">正在載入旅遊行程...</div>`;
-            const success = await refreshTripsInBackground();
 
-            if (!success) {
+            try {
+                const response = await fetch("trips.json?t=" + Date.now(), { cache: "no-store" });
+                if (!response.ok) throw new Error("讀取行程資料失敗（HTTP " + response.status + "）");
+                const result = await response.json();
+                if (!Array.isArray(result)) throw new Error("trips.json 格式錯誤");
+
+                tripsData = result;
+                renderTrips();
+            } catch (error) {
+                console.error("載入行程失敗：", error);
                 tripContainer.innerHTML = `
                     <div class="empty-trip">
                         <h2>🌸 行程載入失敗</h2>
-                        <p>目前無法取得最新行程，請稍後重新整理，或聯絡囍莉旅遊。</p>
+                        <p>請稍後重新整理，或聯絡囍莉旅遊。</p>
                     </div>
                 `;
             }
@@ -1212,7 +1138,3 @@
 </body>
 
 </html>
-
-
-
-
