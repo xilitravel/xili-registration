@@ -574,64 +574,9 @@
          報名功能
     ========================= -->
 
-    <script src="registration.js?v=20261124-calendar-observer-1"></script>
+    <script src="registration.js?v=20261125-fast-year-roc-no-zero-2"></script>
 
-    <!-- 出生日期日曆保險機制：不依賴 renderTravelers 內部模板是否更新 -->
-    <script>
-    (function () {
-        function toRocDate(isoDate) {
-            if (!isoDate) return "";
-            var parts = isoDate.split("-");
-            if (parts.length !== 3) return "";
-            var rocYear = Number(parts[0]) - 1911;
-            if (rocYear <= 0) return "";
-            return String(rocYear).padStart(3, "0") + "/" + parts[1] + "/" + parts[2];
-        }
 
-        function addBirthDatePickers(root) {
-            if (!root || !root.querySelectorAll) return;
-            root.querySelectorAll('input[id^="travelerBirth"]').forEach(function (textInput) {
-                if (textInput.type !== "text" || !/^travelerBirth\d+$/.test(textInput.id)) return;
-                var index = textInput.id.replace("travelerBirth", "");
-                var pickerId = "travelerBirthPicker" + index;
-                if (document.getElementById(pickerId)) return;
-
-                var wrap = document.createElement("div");
-                wrap.className = "birth-date-picker-fallback";
-                wrap.style.cssText = "display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;";
-
-                var label = document.createElement("label");
-                label.htmlFor = pickerId;
-                label.textContent = "📅 選擇日期";
-                label.style.cssText = "color:#b51d63;font-weight:600;cursor:pointer;";
-
-                var picker = document.createElement("input");
-                picker.type = "date";
-                picker.id = pickerId;
-                picker.setAttribute("aria-label", "選擇出生年月日");
-                picker.max = new Date().toISOString().slice(0, 10);
-                picker.style.cssText = "width:165px;min-height:42px;padding:7px 9px;border:1px solid #e7a1bd;border-radius:8px;background:#fff0f6;color:#71334f;font:inherit;";
-                picker.addEventListener("change", function () {
-                    var roc = toRocDate(picker.value);
-                    if (!roc) return;
-                    textInput.value = roc;
-                    textInput.dispatchEvent(new Event("input", { bubbles: true }));
-                    textInput.dispatchEvent(new Event("change", { bubbles: true }));
-                });
-
-                wrap.appendChild(label);
-                wrap.appendChild(picker);
-                textInput.insertAdjacentElement("afterend", wrap);
-            });
-        }
-
-        var container = document.getElementById("travelerContainer");
-        if (!container) return;
-        addBirthDatePickers(container);
-        new MutationObserver(function () { addBirthDatePickers(container); })
-            .observe(container, { childList: true, subtree: true });
-    })();
-    </script>
 
 </body>
 

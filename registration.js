@@ -405,7 +405,7 @@ function renderTravelers() {
 
                 </label>
 
-                <div class="birth-date-input-wrap" style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+                <div class="birth-date-input-wrap" style="display:flex; flex-direction:column; gap:8px; align-items:flex-start;">
 
                     <input
                         type="text"
@@ -413,28 +413,28 @@ function renderTravelers() {
                         name="travelerBirth${i}"
                         required
                         maxlength="9"
-                        placeholder="民國 078/05/20"
+                        placeholder="民國 84/06/24"
                         inputmode="numeric"
                         autocomplete="bday"
-                        style="flex:1 1 220px; min-width:0;"
+                        onblur="normalizeRocBirthDate(${i})"
+                        style="width:100%; max-width:310px;"
                     >
 
-                    <label for="travelerBirthPicker${i}" style="display:flex; align-items:center; gap:6px; color:#b51d63; font-weight:600;">
-                        📅 或選擇日期
-                        <input
-                            type="date"
-                            id="travelerBirthPicker${i}"
-                            aria-label="選擇出生年月日"
-                            max="${new Date().toISOString().slice(0,10)}"
-                            onchange="applyBirthDateFromPicker(${i})"
-                            style="width:150px; min-height:42px; padding:7px 9px; border:1px solid #e7a1bd; border-radius:8px; background:#fff0f6; color:#71334f;"
-                        >
-                    </label>
+                    <button
+                        type="button"
+                        onclick="toggleBirthCalendar(${i})"
+                        style="display:inline-flex; align-items:center; gap:8px; padding:9px 13px; border:1px solid #e7a1bd; border-radius:9px; background:#fff0f6; color:#b51d63; font-weight:600; cursor:pointer;"
+                    >📅 選擇日期</button>
+
+                    <div
+                        id="travelerBirthCalendar${i}"
+                        style="display:none; width:100%; max-width:320px; box-sizing:border-box; padding:12px; border:1px solid #efb5cc; border-radius:12px; background:#fff; box-shadow:0 4px 14px rgba(181,29,99,.10);"
+                    ></div>
 
                 </div>
 
                 <small style="display:block; margin-top:6px; color:#8a7180;">
-                    可直接輸入民國年，或使用右側日期欄位開啟日曆；選擇後會自動轉成民國年。
+                    可直接輸入民國年（例如 84/06/24），或使用日曆選擇；年份可直接輸入，不必逐年滑動。
                 </small>
 
             </div>
@@ -851,36 +851,153 @@ peopleCountSelect.addEventListener(
 ===================================================== */
 
 /* =========================
-   出生年月日：手動輸入 / 日曆選擇
-   日曆使用西元日期，存入表單時轉為民國年格式
-   例如 1989-05-20 -> 078/05/20
+   出生年月日：手動輸入 / 快速日曆
+   西元年份可直接輸入；轉存格式為民國年，不補前導 0
+   例如 1995/06/24 -> 84/06/24
 ========================= */
 
-function applyBirthDateFromPicker(index) {
-    const picker = document.getElementById("travelerBirthPicker" + index);
-    const textInput = document.getElementById("travelerBirth" + index);
+window.birthCalendarState = window.birthCalendarState || {};
 
-    if (!picker || !textInput || !picker.value) return;
+function normalizeRocBirthDate(index) {
+    const input = document.getElementById("travelerBirth" + index);
+    if (!input) return;
 
-    const parts = picker.value.split("-");
-    if (parts.length !== 3) return;
+    const match = input.value.trim().match(/^0*(\d{1,3})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);
+    if (!match) return;
 
-    const rocYear = Number(parts[0]) - 1911;
-    if (rocYear <= 0) {
-        alert("請選擇有效的出生日期。");
-        picker.value = "";
+    const year = Number(match[1]);
+    const month = Number(match[2]);
+    const day = Number(match[3]);
+
+    if (year <= 0 || month < 1 || month > 12 || day < 1 || day > 31) return;
+
+    input.value =
+        String(year) + "/" +
+        String(month).padStart(2, "0") + "/" +
+        String(day).padStart(2, "0");
+}
+
+function toggleBirthCalendar(index) {
+    const panel = document.getElementById("travelerBirthCalendar" + index);
+    if (!panel) return;
+
+    const isOpen = panel.style.display !== "none";
+    if (isOpen) {
+        panel.style.display = "none";
         return;
     }
 
+    const textInput = document.getElementById("travelerBirth" + index);
+    const match = textInput && textInput.value.match(/^(\d{1,3})\/(\d{1,2})\/(\d{1,2})$/);
+    let year, month;
+
+    if (match) {
+        year = Number(match[1]) + 1911;
+        month = Number(match[2]);
+    } else {
+        const now = new Date();
+        year = now.getFullYear() - 30;
+        month = now.getMonth() + 1;
+    }
+
+    window.birthCalendarState[index] = { year, month };
+    panel.style.display = "block";
+    renderBirthCalendar(index);
+}
+
+function renderBirthCalendar(index) {
+    const panel = document.getElementById("travelerBirthCalendar" + index);
+    const state = window.birthCalendarState[index];
+    if (!panel || !state) return;
+
+    const year = Number(state.year);
+    const month = Number(state.month);
+    const firstDay = new Date(year, month - 1, 1).getDay();
+    const daysInMonth = new Date(year, month, 0).getDate();
+    const today = new Date();
+    const maxDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const weekdays = ["日", "一", "二", "三", "四", "五", "六"];
+
+    let dayCells = weekdays.map(d =>
+        `<div style="text-align:center;padding:6px 0;color:#98627b;font-size:13px;">${d}</div>`
+    ).join("");
+
+    for (let blank = 0; blank < firstDay; blank++) {
+        dayCells += `<div></div>`;
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+        const candidate = new Date(year, month - 1, day);
+        const disabled = candidate > maxDate;
+        dayCells += `
+            <button type="button"
+                ${disabled ? "disabled" : ""}
+                onclick="selectBirthCalendarDate(${index},${year},${month},${day})"
+                style="min-height:34px;border:0;border-radius:7px;background:${disabled ? "#f4f0f2" : "#fff"};color:${disabled ? "#c9c0c5" : "#71334f"};cursor:${disabled ? "not-allowed" : "pointer"};font:inherit;">
+                ${day}
+            </button>`;
+    }
+
+    panel.innerHTML = `
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px;">
+            <label style="font-size:13px;color:#71334f;white-space:nowrap;">西元年</label>
+            <input type="number" min="1912" max="${today.getFullYear()}" step="1"
+                value="${year}" aria-label="輸入西元年份"
+                onchange="changeBirthCalendarYear(${index},this.value)"
+                onkeydown="if(event.key==='Enter'){changeBirthCalendarYear(${index},this.value)}"
+                style="width:105px;min-height:36px;padding:5px 7px;border:1px solid #e7a1bd;border-radius:7px;">
+            <label style="font-size:13px;color:#71334f;">月份</label>
+            <select aria-label="選擇月份"
+                onchange="changeBirthCalendarMonth(${index},this.value)"
+                style="flex:1;min-height:36px;padding:5px;border:1px solid #e7a1bd;border-radius:7px;background:#fff;">
+                ${Array.from({length:12},(_,n)=>`<option value="${n+1}" ${month===n+1?"selected":""}>${n+1} 月</option>`).join("")}
+            </select>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;">
+            ${dayCells}
+        </div>
+        <div style="margin-top:9px;text-align:right;">
+            <button type="button" onclick="document.getElementById('travelerBirthCalendar${index}').style.display='none'"
+                style="padding:6px 12px;border:1px solid #e7a1bd;border-radius:7px;background:#fff0f6;color:#b51d63;cursor:pointer;">關閉</button>
+        </div>`;
+}
+
+function changeBirthCalendarYear(index, value) {
+    const year = Number(value);
+    const currentYear = new Date().getFullYear();
+    if (!Number.isInteger(year) || year < 1912 || year > currentYear) {
+        alert("請輸入 1912 到 " + currentYear + " 之間的西元年份。");
+        renderBirthCalendar(index);
+        return;
+    }
+    window.birthCalendarState[index].year = year;
+    renderBirthCalendar(index);
+}
+
+function changeBirthCalendarMonth(index, value) {
+    const month = Number(value);
+    if (month < 1 || month > 12) return;
+    window.birthCalendarState[index].month = month;
+    renderBirthCalendar(index);
+}
+
+function selectBirthCalendarDate(index, year, month, day) {
+    const textInput = document.getElementById("travelerBirth" + index);
+    const panel = document.getElementById("travelerBirthCalendar" + index);
+    const rocYear = year - 1911;
+
+    if (!textInput || rocYear <= 0) return;
+
     textInput.value =
-        String(rocYear).padStart(3, "0") + "/" +
-        parts[1] + "/" +
-        parts[2];
+        String(rocYear) + "/" +
+        String(month).padStart(2, "0") + "/" +
+        String(day).padStart(2, "0");
 
     textInput.dispatchEvent(new Event("input", { bubbles: true }));
     textInput.dispatchEvent(new Event("change", { bubbles: true }));
-}
 
+    if (panel) panel.style.display = "none";
+}
 
 function collectTravelerData() {
 
