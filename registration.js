@@ -22,45 +22,34 @@ const boardingContainer = document.getElementById("boardingContainer");
 const submitButton = document.getElementById("submitButton");
 
 
-/* 個資完整告知書 Modal：使用 HTML inline handler，避免事件未綁定 */
-function openPrivacyModal() {
-    const modal = document.getElementById("privacyModal");
-    if (!modal) return;
-    modal.classList.add("open");
-    modal.style.display = "block";
-    modal.setAttribute("aria-hidden", "false");
-    document.body.style.overflow = "hidden";
-}
-
-function closePrivacyModal() {
-    const modal = document.getElementById("privacyModal");
-    if (!modal) return;
-    modal.classList.remove("open");
-    modal.style.display = "none";
-    modal.setAttribute("aria-hidden", "true");
-    document.body.style.overflow = "";
-}
-
-document.addEventListener("keydown", function(event) {
-    if (event.key === "Escape") closePrivacyModal();
-});
-
 /* =====================================================
    1. 載入行程資料
 ===================================================== */
 
 async function loadSelectedTrip() {
-    const selectedId = String(selectedTripId || "");
+    // Load boarding points independently so a slow Apps Script call never blocks trip display.
+    loadBoardingPointsInBackground();
 
-    function findTrip(list) {
-        if (!Array.isArray(list)) return null;
-        return list.find(function(trip) {
-            return String(trip.id || trip.tripId || "") === selectedId;
-        }) || null;
-    }
+    try {
+        const response = await fetch(TRIPS_JSON_URL + "?t=" + Date.now(), { cache: "no-store" });
+        if (!response.ok) throw new Error("讀取行程資料失敗（HTTP " + response.status + "）");
+        const trips = await response.json();
+        if (!Array.isArray(trips)) throw new Error("trips.json 格式錯誤");
 
-    function applyTrip(apiTrip) {
-        if (!apiTrip) return false;
+        const apiTrip = trips.find(function(trip) {
+            return String(trip.id || trip.tripId) === String(selectedTripId);
+        });
+
+        if (!apiTrip) {
+            selectedTripContainer.innerHTML = `
+                <div class="empty-trip">
+                    <h3>⚠️ 找不到旅遊行程</h3>
+                    <p>請回到旅遊行程頁面，重新選擇想報名的行程。</p>
+                    <a href="trips.html">返回旅遊行程</a>
+                </div>`;
+            registrationForm.style.display = "none";
+            return;
+        }
 
         selectedTrip = {
             id: apiTrip.id || apiTrip.tripId,
@@ -69,7 +58,7 @@ async function loadSelectedTrip() {
             date: apiTrip.date || "",
             dateText: apiTrip.dateText || apiTrip.date || "待設定",
             price: apiTrip.price || 0,
-            priceText: apiTrip.priceText || (apiTrip.price != null ? "$" + apiTrip.price : "待設定"),
+            priceText: apiTrip.priceText || (apiTrip.price != null ? "NT$" + Number(apiTrip.price).toLocaleString("zh-TW") : "待設定"),
             status: apiTrip.status || "",
             maxPeople: apiTrip.maxPeople || 0,
             registeredPeople: apiTrip.registeredPeople || 0,
@@ -79,65 +68,31 @@ async function loadSelectedTrip() {
             description: apiTrip.description || "",
             tripDays: Number(apiTrip.tripDays || apiTrip.days || 1),
             lodging: apiTrip.lodging === true || apiTrip.tripLodging === "true" || apiTrip.hasLodging === true,
-            roomTypes: apiTrip.roomTypes || apiTrip.rooms || [],
+            roomTypes: Array.isArray(apiTrip.roomTypes) && apiTrip.roomTypes.length ? apiTrip.roomTypes : ["單人房", "雙人房（一大床）", "雙人房（兩小床）", "三人房", "四人房"],
             meals: apiTrip.meals || apiTrip.mealSettings || []
         };
 
-        selectedTripContainer.innerHTML = "";
         registrationForm.style.display = "";
         renderSelectedTrip();
-        return true;
-    }
-
-    function showTripError(message) {
-        selectedTripContainer.innerHTML = `<div class="empty-trip"><h3>⚠️ 行程資料載入失敗</h3><p>${message}</p><a href="trips.html">返回旅遊行程</a></div>`;
+    } catch (error) {
+        console.error("載入報名行程失敗：", error);
+        selectedTripContainer.innerHTML = `<div class="empty-trip"><h3>⚠️ 行程資料載入失敗</h3><p>請重新整理頁面，或稍後再試。</p></div>`;
         registrationForm.style.display = "none";
     }
+}
 
-    // trips.js is loaded immediately before registration.js.
-    // If it contains the selected trip, render synchronously without any network wait.
+async function loadBoardingPointsInBackground() {
     try {
-        if (typeof tripsData !== "undefined" && Array.isArray(tripsData)) {
-            const localTrip = findTrip(tripsData);
-            if (localTrip) {
-                applyTrip(localTrip);
-                return;
-            }
-        }
-    } catch (e) {
-        console.warn("讀取 trips.js 行程資料失敗：", e);
+        const response = await fetch(BOARDING_API_URL, { cache: "no-store" });
+        if (!response.ok) throw new Error("上車地點 API 回應錯誤");
+        const result = await response.json();
+        if (result.success && Array.isArray(result.data)) boardingPointsList = result.data;
+        else if (Array.isArray(result.boardingPoints)) boardingPointsList = result.boardingPoints;
+        else boardingPointsList = [];
+    } catch (error) {
+        console.error("載入上車地點失敗：", error);
+        boardingPointsList = [];
     }
-
-    // Fallback only: when trips.js does not contain the selected ID, try the JSON file once.
-    try {
-        const response = await fetch(TRIPS_JSON_URL, { cache: "force-cache" });
-        if (!response.ok) throw new Error("HTTP " + response.status);
-        const trips = await response.json();
-        if (!Array.isArray(trips) || trips.length === 0) {
-            throw new Error("trips.json 目前是空資料，請確認 trips.js 是否包含這個行程編號。");
-        }
-
-        const remoteTrip = findTrip(trips);
-        if (!remoteTrip) throw new Error("找不到網址中的行程編號：" + selectedId);
-        applyTrip(remoteTrip);
-    } catch (e) {
-        console.error("載入行程資料失敗：", e);
-        showTripError("目前 trips.js／trips.json 找不到這筆行程資料。請確認行程列表與報名頁使用相同的行程編號。");
-    }
-
-    // Boarding points are not needed to render the selected trip. Load them in background.
-    (async function() {
-        try {
-            const response = await fetch(BOARDING_API_URL, { cache: "force-cache" });
-            if (!response.ok) return;
-            const result = await response.json();
-            boardingPointsList = result.success && Array.isArray(result.data)
-                ? result.data
-                : (Array.isArray(result.boardingPoints) ? result.boardingPoints : []);
-        } catch (e) {
-            console.warn("上車地點背景載入失敗：", e);
-        }
-    })();
 }
 
 /* =====================================================
@@ -378,7 +333,7 @@ function renderTravelers() {
 
                 </label>
 
-                <div class="birth-date-input-wrap" style="display:flex; flex-direction:row; align-items:center; gap:8px; width:100%; max-width:370px;">
+                <div class="birth-date-input-wrap" style="display:flex; flex-direction:column; gap:8px; align-items:flex-start;">
 
                     <input
                         type="text"
@@ -386,29 +341,28 @@ function renderTravelers() {
                         name="travelerBirth${i}"
                         required
                         maxlength="9"
-                        placeholder="民國 XX/XX/XX"
+                        placeholder="民國 84/06/24"
                         inputmode="numeric"
                         autocomplete="bday"
                         onblur="normalizeRocBirthDate(${i})"
-                        style="flex:1; min-width:0; width:100%; box-sizing:border-box;"
+                        style="width:100%; max-width:310px;"
                     >
 
-                    <input
-                        type="date"
-                        id="travelerBirthPicker${i}"
-                        aria-label="選擇出生年月日"
-                        max="${new Date().toISOString().slice(0,10)}"
-                        onchange="applyBirthDateFromPicker(${i})"
-                        title="選擇日期"
-                        style="flex:0 0 48px; width:48px; height:38px; box-sizing:border-box; padding:5px; border:1px solid #e7a1bd; border-radius:9px; background:#fff0f6; color:#b51d63; cursor:pointer;"
-                    >
+                    <button
+                        type="button"
+                        onclick="toggleBirthCalendar(${i})"
+                        style="display:inline-flex; align-items:center; gap:8px; padding:9px 13px; border:1px solid #e7a1bd; border-radius:9px; background:#fff0f6; color:#b51d63; font-weight:600; cursor:pointer;"
+                    >📅 選擇日期</button>
 
-                </div>
+                    <div
+                        id="travelerBirthCalendar${i}"
+                        style="display:none; width:100%; max-width:320px; box-sizing:border-box; padding:12px; border:1px solid #efb5cc; border-radius:12px; background:#fff; box-shadow:0 4px 14px rgba(181,29,99,.10);"
+                    ></div>
 
                 </div>
 
                 <small style="display:block; margin-top:6px; color:#8a7180;">
-                    可直接輸入民國年，或點擊右側日曆圖示選擇日期。
+                    可直接輸入民國年（例如 84/06/24），或使用日曆選擇；年份可直接輸入，不必逐年滑動。
                 </small>
 
             </div>
@@ -851,32 +805,6 @@ function normalizeRocBirthDate(index) {
         String(day).padStart(2, "0");
 }
 
-
-function applyBirthDateFromPicker(index) {
-    const picker = document.getElementById("travelerBirthPicker" + index);
-    const textInput = document.getElementById("travelerBirth" + index);
-    if (!picker || !textInput || !picker.value) return;
-
-    const parts = picker.value.split("-");
-    const year = Number(parts[0]);
-    const month = Number(parts[1]);
-    const day = Number(parts[2]);
-    const rocYear = year - 1911;
-
-    if (rocYear <= 0) {
-        alert("請選擇民國元年以後的日期。");
-        picker.value = "";
-        return;
-    }
-
-    textInput.value = String(rocYear) + "/" +
-        String(month).padStart(2, "0") + "/" +
-        String(day).padStart(2, "0");
-
-    textInput.dispatchEvent(new Event("input", { bubbles: true }));
-    textInput.dispatchEvent(new Event("change", { bubbles: true }));
-}
-
 function toggleBirthCalendar(index) {
     const panel = document.getElementById("travelerBirthCalendar" + index);
     if (!panel) return;
@@ -1172,6 +1100,7 @@ registrationForm.addEventListener(
         const peopleCount = Number(peopleCountSelect.value);
         const travelers = collectTravelerData();
         const privacyConsent = document.getElementById("privacyConsent").checked;
+        const privacyUseConsent = document.getElementById("privacyUseConsent") ? document.getElementById("privacyUseConsent").checked : privacyConsent;
         const photoConsentElement = document.querySelector('input[name="photoConsent"]:checked');
         const photoConsent = photoConsentElement ? photoConsentElement.value : "";
         const proxyConsent = document.getElementById("proxyConsent").checked;
@@ -1196,6 +1125,7 @@ registrationForm.addEventListener(
                 };
             }),
             privacyConsent: privacyConsent,
+            privacyUseConsent: privacyUseConsent,
             photoConsent: photoConsent,
             proxyConsent: proxyConsent,
             confirmData: confirmData,
@@ -1234,6 +1164,7 @@ registrationForm.addEventListener(
                 peopleCount: peopleCount,
                 travelers: travelers,
                 privacyConsent: privacyConsent,
+                privacyUseConsent: privacyUseConsent,
                 photoConsent: photoConsent,
                 proxyConsent: proxyConsent,
                 confirmData: confirmData,
@@ -1587,6 +1518,37 @@ function showRegistrationConfirmation(data) {
 
 }
 
+
+
+/* =====================================================
+   個資告知書 Modal
+===================================================== */
+function openPrivacyModal() {
+    const modal = document.getElementById("privacyModal");
+    if (!modal) return;
+    modal.classList.add("open");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    const closeButton = document.getElementById("closePrivacyModal");
+    if (closeButton) closeButton.focus();
+}
+
+function closePrivacyModal() {
+    const modal = document.getElementById("privacyModal");
+    if (!modal) return;
+    modal.classList.remove("open");
+    modal.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+    const opener = document.getElementById("openPrivacyModal");
+    if (opener) opener.focus();
+}
+
+document.addEventListener("keydown", function(event) {
+    if (event.key === "Escape") {
+        const modal = document.getElementById("privacyModal");
+        if (modal && modal.classList.contains("open")) closePrivacyModal();
+    }
+});
 
 /* =====================================================
    11. 初始化

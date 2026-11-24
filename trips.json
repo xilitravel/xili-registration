@@ -39,15 +39,42 @@
     "lodging": true,
     "roomTypes": [],
     "meals": [
-      {"key": "day1_早餐", "provided": false},
-      {"key": "day1_午餐", "provided": true},
-      {"key": "day1_晚餐", "provided": false},
-      {"key": "day2_早餐", "provided": false},
-      {"key": "day2_午餐", "provided": true},
-      {"key": "day2_晚餐", "provided": false},
-      {"key": "day3_早餐", "provided": false},
-      {"key": "day3_午餐", "provided": false},
-      {"key": "day3_晚餐", "provided": false}
+      {
+        "key": "day1_早餐",
+        "provided": false
+      },
+      {
+        "key": "day1_午餐",
+        "provided": true
+      },
+      {
+        "key": "day1_晚餐",
+        "provided": false
+      },
+      {
+        "key": "day2_早餐",
+        "provided": false
+      },
+      {
+        "key": "day2_午餐",
+        "provided": true
+      },
+      {
+        "key": "day2_晚餐",
+        "provided": false
+      },
+      {
+        "key": "day3_早餐",
+        "provided": false
+      },
+      {
+        "key": "day3_午餐",
+        "provided": false
+      },
+      {
+        "key": "day3_晚餐",
+        "provided": false
+      }
     ],
     "image": "",
     "highlights": [],
