@@ -22,52 +22,46 @@ const boardingContainer = document.getElementById("boardingContainer");
 const submitButton = document.getElementById("submitButton");
 
 
-/* 個資完整告知書 Modal 開關 */
-(function bindPrivacyModal() {
+/* 個資完整告知書 Modal：使用 HTML inline handler，避免事件未綁定 */
+function openPrivacyModal() {
     const modal = document.getElementById("privacyModal");
-    const opener = document.getElementById("openPrivacyModal");
-    const closeTop = document.getElementById("closePrivacyModal");
-    const closeBottom = document.getElementById("closePrivacyModalBottom");
-    const backdrop = document.getElementById("privacyModalBackdrop");
-    if (!modal || !opener) return;
+    if (!modal) return;
+    modal.classList.add("open");
+    modal.style.display = "block";
+    modal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+}
 
-    function openModal() {
-        modal.classList.add("open");
-        modal.setAttribute("aria-hidden", "false");
-        document.body.style.overflow = "hidden";
-        if (closeTop) closeTop.focus();
-    }
-    function closeModal() {
-        modal.classList.remove("open");
-        modal.setAttribute("aria-hidden", "true");
-        document.body.style.overflow = "";
-        opener.focus();
-    }
-    opener.addEventListener("click", openModal);
-    if (closeTop) closeTop.addEventListener("click", closeModal);
-    if (closeBottom) closeBottom.addEventListener("click", closeModal);
-    if (backdrop) backdrop.addEventListener("click", closeModal);
-    document.addEventListener("keydown", e => {
-        if (e.key === "Escape" && modal.classList.contains("open")) closeModal();
-    });
-})();
+function closePrivacyModal() {
+    const modal = document.getElementById("privacyModal");
+    if (!modal) return;
+    modal.classList.remove("open");
+    modal.style.display = "none";
+    modal.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+}
 
+document.addEventListener("keydown", function(event) {
+    if (event.key === "Escape") closePrivacyModal();
+});
 
 /* =====================================================
    1. 載入行程資料
 ===================================================== */
 
 async function loadSelectedTrip() {
-    const CACHE_KEY = "xili_registration_trips_cache_v2";
     const selectedId = String(selectedTripId || "");
 
-    function findTrip(trips) {
-        if (!Array.isArray(trips)) return null;
-        return trips.find(trip => String(trip.id || trip.tripId) === selectedId) || null;
+    function findTrip(list) {
+        if (!Array.isArray(list)) return null;
+        return list.find(function(trip) {
+            return String(trip.id || trip.tripId || "") === selectedId;
+        }) || null;
     }
 
     function applyTrip(apiTrip) {
         if (!apiTrip) return false;
+
         selectedTrip = {
             id: apiTrip.id || apiTrip.tripId,
             sheetName: apiTrip.sheetName || apiTrip.worksheetName || apiTrip.title || apiTrip.name || "",
@@ -88,6 +82,7 @@ async function loadSelectedTrip() {
             roomTypes: apiTrip.roomTypes || apiTrip.rooms || [],
             meals: apiTrip.meals || apiTrip.mealSettings || []
         };
+
         selectedTripContainer.innerHTML = "";
         registrationForm.style.display = "";
         renderSelectedTrip();
@@ -95,67 +90,54 @@ async function loadSelectedTrip() {
     }
 
     function showTripError(message) {
-        if (selectedTrip) return;
-        selectedTripContainer.innerHTML = `<div class="empty-trip"><h3>⚠️ 行程資料載入失敗</h3><p>${message}</p><button type="button" onclick="loadSelectedTrip()">重新載入</button></div>`;
+        selectedTripContainer.innerHTML = `<div class="empty-trip"><h3>⚠️ 行程資料載入失敗</h3><p>${message}</p><a href="trips.html">返回旅遊行程</a></div>`;
         registrationForm.style.display = "none";
     }
 
-    // Cache-first：曾經載入過的行程立即顯示，不等網路。
+    // trips.js is loaded immediately before registration.js.
+    // If it contains the selected trip, render synchronously without any network wait.
     try {
-        const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || "null");
-        const cachedTrip = cached && findTrip(cached.data);
-        if (cachedTrip) applyTrip(cachedTrip);
+        if (typeof tripsData !== "undefined" && Array.isArray(tripsData)) {
+            const localTrip = findTrip(tripsData);
+            if (localTrip) {
+                applyTrip(localTrip);
+                return;
+            }
+        }
     } catch (e) {
-        console.warn("行程快取讀取略過：", e);
+        console.warn("讀取 trips.js 行程資料失敗：", e);
     }
 
-    // 上車地點改為背景載入，不再卡住行程顯示。
+    // Fallback only: when trips.js does not contain the selected ID, try the JSON file once.
+    try {
+        const response = await fetch(TRIPS_JSON_URL, { cache: "force-cache" });
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        const trips = await response.json();
+        if (!Array.isArray(trips) || trips.length === 0) {
+            throw new Error("trips.json 目前是空資料，請確認 trips.js 是否包含這個行程編號。");
+        }
+
+        const remoteTrip = findTrip(trips);
+        if (!remoteTrip) throw new Error("找不到網址中的行程編號：" + selectedId);
+        applyTrip(remoteTrip);
+    } catch (e) {
+        console.error("載入行程資料失敗：", e);
+        showTripError("目前 trips.js／trips.json 找不到這筆行程資料。請確認行程列表與報名頁使用相同的行程編號。");
+    }
+
+    // Boarding points are not needed to render the selected trip. Load them in background.
     (async function() {
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 10000);
         try {
-            const response = await fetch(BOARDING_API_URL, {cache:"no-store", signal:controller.signal});
-            if (!response.ok) throw new Error("上車地點讀取失敗");
+            const response = await fetch(BOARDING_API_URL, { cache: "force-cache" });
+            if (!response.ok) return;
             const result = await response.json();
             boardingPointsList = result.success && Array.isArray(result.data)
                 ? result.data
                 : (Array.isArray(result.boardingPoints) ? result.boardingPoints : []);
-            if (peopleCountSelect && peopleCountSelect.value) renderTravelers();
         } catch (e) {
             console.warn("上車地點背景載入失敗：", e);
-            boardingPointsList = [];
-        } finally {
-            clearTimeout(timer);
         }
     })();
-
-    // 背景更新行程資料。首次無快取時，這個請求最多等待 12 秒。
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 12000);
-    try {
-        const response = await fetch(TRIPS_JSON_URL + "?v=2&t=" + Date.now(), {
-            cache:"no-store", signal:controller.signal
-        });
-        if (!response.ok) throw new Error("讀取行程資料失敗（HTTP " + response.status + "）");
-        const trips = await response.json();
-        if (!Array.isArray(trips)) throw new Error("trips.json 格式錯誤");
-        localStorage.setItem(CACHE_KEY, JSON.stringify({savedAt:Date.now(), data:trips}));
-
-        const latestTrip = findTrip(trips);
-        if (!latestTrip) {
-            if (!selectedTrip) {
-                selectedTripContainer.innerHTML = `<div class="empty-trip"><h3>⚠️ 找不到旅遊行程</h3><p>請回到旅遊行程頁面，重新選擇想報名的行程。</p><a href="trips.html">返回旅遊行程</a></div>`;
-                registrationForm.style.display = "none";
-            }
-            return;
-        }
-        applyTrip(latestTrip);
-    } catch (e) {
-        console.error("載入報名行程失敗：", e);
-        showTripError("行程資料暫時無法更新。若曾開啟過此行程，仍可使用已快取的資料。");
-    } finally {
-        clearTimeout(timer);
-    }
 }
 
 /* =====================================================
