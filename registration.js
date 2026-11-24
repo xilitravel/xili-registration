@@ -1337,7 +1337,7 @@ function showRegistrationConfirmation(data) {
 
             <p>
 
-                請加入 LINE 聯絡阿冷，
+                送出後請加 LINE，聯絡阿冷，
                 確認報名資料及報名成功。
 
             </p>
