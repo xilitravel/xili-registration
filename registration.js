@@ -10,6 +10,8 @@ const TRIPS_API_URL = "https://script.google.com/macros/s/AKfycbwnN2PWqKHvWnIyTR
 
 const BOARDING_API_URL = "https://script.google.com/macros/s/AKfycbwnN2PWqKHvWnIyTRPHkdT5a69ilwG2MUY8Iwx7IH3rzhTgj_5o6fItSYloSnk6piI4/exec?action=boardingPoints";
 
+const SUBMIT_API_URL = "https://script.google.com/macros/s/AKfycbwnN2PWqKHvWnIyTRPHkdT5a69ilwG2MUY8Iwx7IH3rzhTgj_5o6fItSYloSnk6piI4/exec";
+
 let boardingPointsList = [];
 
 const registrationForm = document.getElementById("registrationForm");
@@ -99,6 +101,8 @@ async function loadSelectedTrip() {
         selectedTrip = {
 
             id: apiTrip.id || apiTrip.tripId,
+
+            sheetName: apiTrip.sheetName || apiTrip.worksheetName || apiTrip.title || apiTrip.name || "",
 
             title: apiTrip.title || apiTrip.name || "未命名行程",
 
@@ -982,144 +986,108 @@ function collectTravelerData() {
 
 registrationForm.addEventListener(
     "submit",
-    function(event) {
-
+    async function(event) {
 
         event.preventDefault();
 
-
-        /* =========================
-           基本驗證
-        ========================= */
-
         if (!selectedTrip) {
-
-            alert(
-                "找不到報名行程，請重新選擇行程。"
-            );
-
+            alert("找不到報名行程，請重新選擇行程。");
             return;
-
         }
-
 
         if (!registrationForm.checkValidity()) {
-
             registrationForm.reportValidity();
-
             return;
-
         }
 
-
-        /* =========================
-           取得報名人資料
-        ========================= */
-
-        const peopleCount = Number(
-            peopleCountSelect.value
-        );
-
-
-        /* =========================
-           取得旅客資料
-        ========================= */
-
+        const peopleCount = Number(peopleCountSelect.value);
         const travelers = collectTravelerData();
+        const privacyConsent = document.getElementById("privacyConsent").checked;
+        const photoConsentElement = document.querySelector('input[name="photoConsent"]:checked');
+        const photoConsent = photoConsentElement ? photoConsentElement.value : "";
+        const proxyConsent = document.getElementById("proxyConsent").checked;
+        const confirmData = document.getElementById("confirmData").checked;
 
-
-        /* =========================
-           個資同意
-        ========================= */
-
-        const privacyConsent = document.getElementById(
-            "privacyConsent"
-        ).checked;
-
-
-        /* =========================
-           照片同意
-        ========================= */
-
-        const photoConsent = document.querySelector(
-            'input[name="photoConsent"]:checked'
-        ).value;
-
-
-        /* =========================
-           代理填寫確認
-        ========================= */
-
-        const proxyConsent = document.getElementById(
-            "proxyConsent"
-        ).checked;
-
-
-        /* =========================
-           確認資料
-        ========================= */
-
-        const confirmData = document.getElementById(
-            "confirmData"
-        ).checked;
-
-
-        /* =========================
-           建立報名資料
-        ========================= */
-
-        const registrationData = {
-
-            trip: {
-
-                id: selectedTrip.id,
-
-                title: selectedTrip.title,
-
-                date: selectedTrip.dateText,
-
-                price: selectedTrip.priceText
-
-            },
-
-
-            mainRegistrant: travelers[0] || {},
-
-
+        // 將目前表單資料轉成 Code.gs submitRegistration 所需格式
+        const payload = {
+            action: "submitRegistration",
+            tripName: selectedTrip.sheetName || selectedTrip.title,
             peopleCount: peopleCount,
-
-
-            travelers: travelers,
-
-
+            travelers: travelers.map(function(traveler) {
+                return {
+                    name: traveler.name,
+                    birthDate: traveler.birthday,
+                    idNumber: traveler.idNumber,
+                    phone: traveler.phone,
+                    boardingFirst: traveler.boardingFirst,
+                    boardingSecond: traveler.boardingSecond,
+                    photoConsent: photoConsent,
+                    roomType: traveler.roomType,
+                    meals: traveler.meals
+                };
+            }),
             privacyConsent: privacyConsent,
-
-
             photoConsent: photoConsent,
-
-
             proxyConsent: proxyConsent,
-
-
             confirmData: confirmData,
-
-
             submittedAt: new Date().toISOString()
-
         };
 
+        const originalButtonText = submitButton ? submitButton.textContent : "";
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.textContent = "資料送出中…";
+        }
 
-        /* =========================
-           顯示確認資料
-        ========================= */
+        try {
+            const response = await fetch(SUBMIT_API_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "text/plain;charset=utf-8"
+                },
+                body: JSON.stringify(payload)
+            });
 
-        showRegistrationConfirmation(
-            registrationData
-        );
+            const result = await response.json();
 
+            if (!result || result.success !== true) {
+                throw new Error(result && result.message ? result.message : "報名資料送出失敗");
+            }
+
+            const registrationData = {
+                trip: {
+                    id: selectedTrip.id,
+                    title: selectedTrip.title,
+                    date: selectedTrip.dateText,
+                    price: selectedTrip.priceText
+                },
+                mainRegistrant: travelers[0] || {},
+                peopleCount: peopleCount,
+                travelers: travelers,
+                privacyConsent: privacyConsent,
+                photoConsent: photoConsent,
+                proxyConsent: proxyConsent,
+                confirmData: confirmData,
+                submittedAt: new Date().toISOString(),
+                saved: true,
+                serverMessage: result.message || (result.data && result.data.message) || "報名資料已成功送出"
+            };
+
+            showRegistrationConfirmation(registrationData);
+
+        } catch (error) {
+            console.error("報名送出錯誤：", error);
+            alert("報名資料送出失敗：\n" + (error.message || "請稍後再試，或聯絡阿冷確認。"));
+        } finally {
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText || "送出報名";
+            }
+        }
 
     }
 );
+
 /* =====================================================
    10. 顯示報名確認
 ===================================================== */
@@ -1361,8 +1329,8 @@ function showRegistrationConfirmation(data) {
 
             <p>
 
-                目前網站尚未串接正式資料庫，
-                此確認畫面僅供確認資料。
+                報名資料已送出並寫入報名名單。
+                請保留此確認畫面，並依旅行社通知完成後續付款。
 
             </p>
 
@@ -1461,3 +1429,7 @@ loadSelectedTrip();
 /* =====================================================
    12. 預設顯示提示
 ===================================================== */
+
+
+
+
