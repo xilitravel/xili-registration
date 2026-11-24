@@ -405,15 +405,44 @@ function renderTravelers() {
 
                 </label>
 
-                <input
-                    type="text"
-                    id="travelerBirth${i}"
-                    name="travelerBirth${i}"
-                    required
-                    maxlength="9"
-                    placeholder="民國 XX/XX/XX"
-                    inputmode="numeric"
-                >
+                <div class="birth-date-input-wrap" style="display:flex; gap:8px; align-items:center;">
+
+                    <input
+                        type="text"
+                        id="travelerBirth${i}"
+                        name="travelerBirth${i}"
+                        required
+                        maxlength="9"
+                        placeholder="民國 078/05/20"
+                        inputmode="numeric"
+                        autocomplete="bday"
+                        style="flex:1; min-width:0;"
+                    >
+
+                    <button
+                        type="button"
+                        class="birth-date-picker-button"
+                        onclick="openBirthDatePicker(${i})"
+                        aria-label="使用日曆選擇出生年月日"
+                        title="使用日曆選擇日期"
+                        style="flex:0 0 auto; padding:10px 13px; border:1px solid #e7a1bd; border-radius:8px; background:#fff0f6; color:#b51d63; cursor:pointer;"
+                    >📅 選擇日期</button>
+
+                    <input
+                        type="date"
+                        id="travelerBirthPicker${i}"
+                        aria-label="出生年月日日曆"
+                        max="${new Date().toISOString().slice(0,10)}"
+                        onchange="applyBirthDateFromPicker(${i})"
+                        style="position:absolute; width:1px; height:1px; opacity:0; pointer-events:none;"
+                        tabindex="-1"
+                    >
+
+                </div>
+
+                <small style="display:block; margin-top:6px; color:#8a7180;">
+                    可直接輸入民國年，或按「選擇日期」使用日曆。
+                </small>
 
             </div>
 
@@ -827,6 +856,49 @@ peopleCountSelect.addEventListener(
 /* =====================================================
    8. 收集旅客資料
 ===================================================== */
+
+/* =========================
+   出生年月日：手動輸入 / 日曆選擇
+   日曆使用西元日期，存入表單時轉為民國年格式
+   例如 1989-05-20 -> 078/05/20
+========================= */
+
+function openBirthDatePicker(index) {
+    const picker = document.getElementById("travelerBirthPicker" + index);
+    if (!picker) return;
+
+    if (typeof picker.showPicker === "function") {
+        picker.showPicker();
+    } else {
+        picker.click();
+    }
+}
+
+function applyBirthDateFromPicker(index) {
+    const picker = document.getElementById("travelerBirthPicker" + index);
+    const textInput = document.getElementById("travelerBirth" + index);
+
+    if (!picker || !textInput || !picker.value) return;
+
+    const parts = picker.value.split("-");
+    if (parts.length !== 3) return;
+
+    const rocYear = Number(parts[0]) - 1911;
+    if (rocYear <= 0) {
+        alert("請選擇有效的出生日期。");
+        picker.value = "";
+        return;
+    }
+
+    textInput.value =
+        String(rocYear).padStart(3, "0") + "/" +
+        parts[1] + "/" +
+        parts[2];
+
+    textInput.dispatchEvent(new Event("input", { bubbles: true }));
+    textInput.dispatchEvent(new Event("change", { bubbles: true }));
+}
+
 
 function collectTravelerData() {
 
@@ -1335,7 +1407,7 @@ function showRegistrationConfirmation(data) {
 
             <p>
 
-                送出後請加 LINE，聯絡阿冷，
+                送出後請加入 LINE 聯絡阿冷，
                 確認報名資料及報名成功。
 
             </p>
@@ -1427,3 +1499,7 @@ loadSelectedTrip();
 /* =====================================================
    12. 預設顯示提示
 ===================================================== */
+
+
+
+
