@@ -10,6 +10,7 @@
 
 const API_URL =
   "https://script.google.com/macros/s/AKfycbwnN2PWqKHvWnIyTRPHkdT5a69ilwG2MUY8Iwx7IH3rzhTgj_5o6fItSYloSnk6piI4/exec";
+const TRIPS_JSON_URL = "https://xilitravel.github.io/xili-registration/trips.json";
 
 
 // =====================================================
@@ -203,11 +204,14 @@ async function loadAllData() {
 // =====================================================
 
 async function loadTrips() {
-
-  tripsData = await apiGet("trips");
-
+  // 登入後先執行一次舊行程遷移；之後只會讀取 GitHub 靜態 JSON。
+  await apiPost({ action: "migrateTrips", token: adminToken });
+  const response = await fetch(TRIPS_JSON_URL + "?t=" + Date.now(), { cache: "no-store" });
+  if (!response.ok) throw new Error("讀取 trips.json 失敗（HTTP " + response.status + "）");
+  const data = await response.json();
+  if (!Array.isArray(data)) throw new Error("trips.json 格式錯誤");
+  tripsData = data;
   renderTrips();
-
 }
 
 
@@ -432,13 +436,15 @@ tripForm.addEventListener("submit", async event => {
 
       action: "saveTrip",
 
+      token: adminToken,
+
       trip: trip
 
     });
 
 
     alert(
-      "行程已成功儲存至 Google Sheets！"
+      "行程已成功發布！\n\n網站行程資料已更新，不會寫入行程管理工作表。\nGitHub Pages 可能需要約 1～2 分鐘部署更新。"
     );
 
 
@@ -708,13 +714,15 @@ async function deleteTrip(id) {
 
       action: "deleteTrip",
 
+      token: adminToken,
+
       tripId: id
 
     });
 
 
     alert(
-      "行程已刪除！"
+      "行程已從網站下架！\nGitHub Pages 可能需要約 1～2 分鐘部署更新。"
     );
 
 
