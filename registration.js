@@ -405,7 +405,7 @@ function renderTravelers() {
 
                 </label>
 
-                <div class="birth-date-input-wrap" style="display:flex; gap:8px; align-items:center;">
+                <div class="birth-date-input-wrap" style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
 
                     <input
                         type="text"
@@ -416,32 +416,25 @@ function renderTravelers() {
                         placeholder="民國 078/05/20"
                         inputmode="numeric"
                         autocomplete="bday"
-                        style="flex:1; min-width:0;"
+                        style="flex:1 1 220px; min-width:0;"
                     >
 
-                    <button
-                        type="button"
-                        class="birth-date-picker-button"
-                        onclick="openBirthDatePicker(${i})"
-                        aria-label="使用日曆選擇出生年月日"
-                        title="使用日曆選擇日期"
-                        style="flex:0 0 auto; padding:10px 13px; border:1px solid #e7a1bd; border-radius:8px; background:#fff0f6; color:#b51d63; cursor:pointer;"
-                    >📅 選擇日期</button>
-
-                    <input
-                        type="date"
-                        id="travelerBirthPicker${i}"
-                        aria-label="出生年月日日曆"
-                        max="${new Date().toISOString().slice(0,10)}"
-                        onchange="applyBirthDateFromPicker(${i})"
-                        style="position:absolute; width:1px; height:1px; opacity:0; pointer-events:none;"
-                        tabindex="-1"
-                    >
+                    <label for="travelerBirthPicker${i}" style="display:flex; align-items:center; gap:6px; color:#b51d63; font-weight:600;">
+                        📅 選擇日期
+                        <input
+                            type="date"
+                            id="travelerBirthPicker${i}"
+                            aria-label="選擇出生年月日"
+                            max="${new Date().toISOString().slice(0,10)}"
+                            onchange="applyBirthDateFromPicker(${i})"
+                            style="width:155px; min-height:42px; padding:7px 9px; border:1px solid #e7a1bd; border-radius:8px; background:#fff0f6; color:#71334f;"
+                        >
+                    </label>
 
                 </div>
 
                 <small style="display:block; margin-top:6px; color:#8a7180;">
-                    可直接輸入民國年，或按「選擇日期」使用日曆。
+                    可直接輸入民國年，或使用日期欄位選擇；選擇後會自動轉成民國年。
                 </small>
 
             </div>
