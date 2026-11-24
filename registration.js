@@ -420,21 +420,21 @@ function renderTravelers() {
                     >
 
                     <label for="travelerBirthPicker${i}" style="display:flex; align-items:center; gap:6px; color:#b51d63; font-weight:600;">
-                        📅 選擇日期
+                        📅 或選擇日期
                         <input
                             type="date"
                             id="travelerBirthPicker${i}"
                             aria-label="選擇出生年月日"
                             max="${new Date().toISOString().slice(0,10)}"
                             onchange="applyBirthDateFromPicker(${i})"
-                            style="width:155px; min-height:42px; padding:7px 9px; border:1px solid #e7a1bd; border-radius:8px; background:#fff0f6; color:#71334f;"
+                            style="width:150px; min-height:42px; padding:7px 9px; border:1px solid #e7a1bd; border-radius:8px; background:#fff0f6; color:#71334f;"
                         >
                     </label>
 
                 </div>
 
                 <small style="display:block; margin-top:6px; color:#8a7180;">
-                    可直接輸入民國年，或使用日期欄位選擇；選擇後會自動轉成民國年。
+                    可直接輸入民國年，或使用右側日期欄位開啟日曆；選擇後會自動轉成民國年。
                 </small>
 
             </div>
@@ -855,17 +855,6 @@ peopleCountSelect.addEventListener(
    日曆使用西元日期，存入表單時轉為民國年格式
    例如 1989-05-20 -> 078/05/20
 ========================= */
-
-function openBirthDatePicker(index) {
-    const picker = document.getElementById("travelerBirthPicker" + index);
-    if (!picker) return;
-
-    if (typeof picker.showPicker === "function") {
-        picker.showPicker();
-    } else {
-        picker.click();
-    }
-}
 
 function applyBirthDateFromPicker(index) {
     const picker = document.getElementById("travelerBirthPicker" + index);
