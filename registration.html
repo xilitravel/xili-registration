@@ -17,7 +17,7 @@
 .privacy-modal{display:none;position:fixed;inset:0;z-index:2147483000;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .privacy-modal.open{display:block!important}
 .privacy-modal-backdrop{position:absolute;inset:0;background:rgba(45,20,35,.58)}
-.privacy-modal-dialog{position:relative;background:#fff;width:min(900px,94vw);height:min(88vh,900px);margin:5vh auto;border-radius:20px;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.25);overflow:hidden}
+.privacy-modal-dialog{position:relative;background:#fff;width:min(900px,94vw);height:min(88vh,900px);margin:5vh auto;border-radius:20px;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.25)}
 .privacy-modal-header,.privacy-modal-footer{padding:16px 22px;border-bottom:1px solid #f1d5e3;display:flex;align-items:center;justify-content:space-between}
 .privacy-modal-header h2{margin:0;font-size:22px}
 .privacy-modal-close{border:0;background:none;font-size:32px;cursor:pointer;color:#a04c76}
@@ -25,27 +25,6 @@
 .privacy-modal-body h2,.privacy-modal-body h3,.privacy-modal-body h4{color:#9b456f}
 .privacy-modal-footer{border-top:1px solid #f1d5e3;border-bottom:0;justify-content:center}
 @media(max-width:600px){.privacy-modal-dialog{width:96vw;height:92vh;margin:4vh auto}.privacy-modal-body{padding:16px}}
-</style>
-<style>
-
-/* 出生日期右側的原生日曆按鈕 */
-.birth-date-input-wrap input[type="date"] {
-    appearance: auto;
-    -webkit-appearance: auto;
-}
-.birth-date-input-wrap input[type="date"]::-webkit-datetime-edit {
-    display: none;
-}
-.birth-date-input-wrap input[type="date"]::-webkit-calendar-picker-indicator {
-    display: block;
-    opacity: 1;
-    cursor: pointer;
-    width: 24px;
-    height: 24px;
-    margin: 0 auto;
-    padding: 0;
-}
-
 </style>
 </head>
 
@@ -310,7 +289,7 @@
                             <li>使用期間：旅遊業務執行期間及依法應保存之期限。</li>
                         </ul>
                     </div>
-                    <button type="button" class="btn btn-outline" id="openPrivacyModal" onclick="openPrivacyModal()">📖 閱讀完整告知及同意書</button>
+                    <button type="button" class="btn btn-outline" id="openPrivacyModal">📖 閱讀完整告知及同意書</button>
                     <div class="form-group">
                         <label><input type="checkbox" id="privacyConsent" name="privacyConsent" required>
                         <span class="required">*</span> 本人已知悉上述個人資料蒐集、處理及利用事項。</label>
@@ -321,7 +300,48 @@
                     </div>
                 </section>
 
-
+                <!-- 個資告知書 Modal -->
+                <div class="privacy-modal" id="privacyModal" aria-hidden="true">
+                    <div class="privacy-modal-backdrop" id="privacyModalBackdrop"></div>
+                    <div class="privacy-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="privacyModalTitle">
+                        <div class="privacy-modal-header">
+                            <h2 id="privacyModalTitle">旅遊報名暨個人資料告知與同意書</h2>
+                            <button type="button" id="closePrivacyModal" class="privacy-modal-close" aria-label="關閉">×</button>
+                        </div>
+                        <div class="privacy-modal-body">
+                            <h2>囍莉旅遊</h2>
+                            <h3>旅遊報名暨個人資料蒐集、處理及利用告知與影像使用同意書</h3>
+                            <p><strong>囍莉旅遊重視每位旅客的個人資料安全與隱私權益。</strong></p>
+                            <p>親愛的旅客您好：</p>
+                            <p>本報名平台以「囍莉旅遊」品牌提供旅遊行程推廣及報名服務，相關旅遊業務由「悅揚旅行社」正式承辦。</p>
+                            <p>為辦理本次旅遊報名及提供相關旅遊服務，囍莉旅遊將依《個人資料保護法》及相關法令規定，蒐集、處理及利用旅客所提供之個人資料。</p>
+                            <p>若本次報名由主要聯絡人協助同行旅客共同填寫，請於填寫前確認已取得同行旅客必要之授權，並依各旅客本人意願選擇照片／影片使用之同意或不同意。</p>
+                            <hr>
+                            <h3>依據《個人資料保護法》第8條規定，特此告知：</h3>
+                            <h4>一、個人資料蒐集者</h4><p><strong>團體名稱：囍莉旅遊</strong><br>聯絡方式：陳小姐 0909686339</p>
+                            <h4>二、蒐集之個人資料</h4><p>姓名、身分證字號、出生日期、聯絡電話、報名資料及辦理旅遊所需之其他必要資訊。</p>
+                            <h4>三、蒐集及使用目的</h4>
+                            <ul><li>旅遊行程報名及聯絡</li><li>交通、住宿及餐飲安排</li><li>門票及活動安排</li><li>旅遊保險辦理</li><li>旅遊費用及相關行政作業</li><li>行程通知、異動及必要之聯絡</li><li>緊急事件處理</li><li>其他提供本次旅遊服務所必要之事項</li></ul>
+                            <p>僅限於國內外旅遊報名、旅遊契約履行、旅遊保險投保、行程安排、旅客聯繫、費用核對，以及依法辦理會計、稅務及相關資料保存事項。</p>
+                            <h4>四、個人資料利用期間、地區、對象及方式</h4><p>於旅遊業務執行期間及依法應保存之期限內，原則上於臺灣地區，以電子或紙本方式，供承辦旅行社、授權業務人員、必要之旅遊服務合作業者、保險公司及依法有權調閱之機關，在業務必要範圍內使用。</p>
+                            <h4>五、個人資料保護承諾</h4><p>除依法令規定或取得旅客另行同意外，不會將個人資料用於與本次旅遊無關之商業行銷、廣告推銷，亦不會任意出售或提供予無關第三人。</p>
+                            <h4>六、旅客個人資料權利</h4><p>旅客得依《個人資料保護法》第3條規定，依法向本旅行社行使：</p><ul><li>查詢或請求閱覽</li><li>請求製給複製本</li><li>請求補充或更正</li><li>請求停止蒐集、處理或利用</li><li>請求刪除</li></ul><p>如欲行使上述權利，請依本旅行社提供之聯絡方式提出申請。</p>
+                            <h4>七、不提供個人資料之影響</h4><p>旅客可自由決定是否提供個人資料，惟未提供必要資料者，可能無法完成旅遊報名、保險投保或相關服務。</p>
+                            <h4>八、同行旅客資料</h4><p>如由一人代為報名同行旅客，報名人應確認已取得同行旅客提供個人資料之適當授權，並向其轉達本告知事項。</p>
+                            <hr>
+                            <h2>二、多人報名及代填確認</h2><p>本次報名得由一名主要聯絡人協助本人及同行旅客填寫報名資料。</p>
+                            <ul><li>本人已取得同行旅客之授權，得協助同行旅客提供辦理本次旅遊所必要之個人資料。</li><li>本人已將本同意書所載之個人資料蒐集、處理及利用相關事項告知同行旅客。</li><li>本人確認所提供之同行旅客資料係由同行旅客提供或經其授權提供，並已盡合理注意確認資料正確性。</li><li>本人確認所提供之同行旅客資料，係為辦理本次旅遊服務所必要之資料。</li></ul>
+                            <p><strong>重要說明：</strong>主要聯絡人之代填確認，不表示主要聯絡人可以代替所有同行旅客作成其本人之個人資料同意意思表示。主要聯絡人應依其與同行旅客間實際存在之授權或同意關係提供資料。如法律另有要求應由個人資料本人作成之意思表示，仍應由本人依法為之。</p>
+                            <hr>
+                            <h2>三、旅遊照片及影片之拍攝與使用</h2><p>為記錄本次旅遊活動，囍莉旅遊可能於行程期間進行照片或影片拍攝。如照片或影片可以直接或間接識別特定旅客，可能涉及個人資料之處理或利用。</p><p>如旅行社欲將旅客影像使用於旅遊行程紀錄以外之公開宣傳用途，例如 Facebook、Instagram、LINE、YouTube、短影音平台、官方網站、旅遊文宣、海報、廣告及其他旅遊相關宣傳，將依旅客之選擇辦理。</p>
+                            <p><strong>同意：</strong>本人同意囍莉旅遊於本次旅遊活動期間拍攝包含本人影像之照片或影片，並同意將相關影像於上述旅遊相關紀錄及宣傳用途之範圍內使用、公開展示及發布。</p>
+                            <p><strong>不同意：</strong>本人不同意囍莉旅遊將可辨識本人之照片或影片用於上述公開宣傳、廣告、社群媒體或其他對外發布用途。</p><p>囍莉旅遊將於合理及可行範圍內，避免以選擇「不同意」之旅客作為主要拍攝或公開宣傳之對象。</p><p><strong>照片／影片使用之同意與否，與本次旅遊報名之個人資料必要使用分開處理。</strong></p>
+                            <hr>
+                            <h2>四、旅客最終確認</h2><p>本人已閱讀並了解本告知及同意書內容。</p><p><strong>個人資料</strong><br>本人已知悉上述個人資料蒐集、處理及利用事項。<br>本人同意囍莉旅遊於辦理及提供本次旅遊服務所必要之範圍內，蒐集、處理及利用本人之個人資料。</p><p><strong>照片／影片</strong><br>本人同意囍莉旅遊依本同意書第三項內容使用本人照片／影片，或本人不同意囍莉旅遊依本同意書第三項內容使用本人照片／影片。</p><p><strong>多人代填</strong><br>如本人為代填人，本人確認已取得同行旅客之必要授權，並已將本同意書相關內容告知同行旅客。</p>
+                        </div>
+                        <div class="privacy-modal-footer"><button type="button" class="btn" id="closePrivacyModalBottom">關閉</button></div>
+                    </div>
+                </div>
 
                 <!-- =========================
                      第七部分：照片及影片同意
@@ -514,85 +534,6 @@
 
             </form>
 
-                <!-- 個資告知書 Modal -->
-                <div class="privacy-modal" id="privacyModal" aria-hidden="true">
-                    <div class="privacy-modal-backdrop" id="privacyModalBackdrop" onclick="closePrivacyModal()"></div>
-                    <div class="privacy-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="privacyModalTitle">
-                        <div class="privacy-modal-header">
-                            <h2 id="privacyModalTitle">旅遊報名暨個人資料告知與同意書</h2>
-                            <button type="button" id="closePrivacyModal" class="privacy-modal-close" onclick="closePrivacyModal()" aria-label="關閉">×</button>
-                        </div>
-                        <div class="privacy-modal-body">
-
-                            <h2>囍莉旅遊</h2>
-                            <h3>旅遊報名暨個人資料蒐集、處理及利用告知與影像使用同意書</h3>
-                            <h3>囍莉旅遊重視每位旅客的個人資料安全與隱私權益。</h3>
-                            <p>親愛的旅客您好：</p>
-                            <p>本報名平台以「囍莉旅遊」品牌提供旅遊行程推廣及報名服務，相關旅遊業務由「悅揚旅行社」正式承辦。</p>
-                            <p>為辦理本次旅遊報名及提供相關旅遊服務，囍莉旅遊將依《個人資料保護法》及相關法令規定，蒐集、處理及利用旅客所提供之個人資料。</p>
-                            <p>若本次報名由主要聯絡人協助同行旅客共同填寫，請於填寫前確認已取得同行旅客必要之授權，並依各旅客本人意願選擇照片／影片使用之同意或不同意。</p>
-                            <hr>
-                            <h3>依據《個人資料保護法》第8條規定，特此告知：</h3>
-                            <h4>一、個人資料蒐集者</h4>
-                            <p><strong>團體名稱：囍莉旅遊</strong></p><p>聯絡方式：陳小姐 0909686339</p>
-                            <h4>二、蒐集之個人資料</h4>
-                            <p>姓名、身分證字號、出生日期、聯絡電話、報名資料及辦理旅遊所需之其他必要資訊。</p>
-                            <h4>三、蒐集及使用目的</h4>
-                            <p>為辦理及履行本次旅遊相關服務，包括：</p>
-                            <ul><li>旅遊行程報名及聯絡</li><li>交通、住宿及餐飲安排</li><li>門票及活動安排</li><li>旅遊保險辦理</li><li>旅遊費用及相關行政作業</li><li>行程通知、異動及必要之聯絡</li><li>緊急事件處理</li><li>其他提供本次旅遊服務所必要之事項</li></ul>
-                            <p>僅限於國內外旅遊報名、旅遊契約履行、旅遊保險投保、行程安排、旅客聯繫、費用核對，以及依法辦理會計、稅務及相關資料保存事項。</p>
-                            <h4>四、個人資料利用期間、地區、對象及方式</h4>
-                            <p>於旅遊業務執行期間及依法應保存之期限內，原則上於臺灣地區，以電子或紙本方式，供承辦旅行社、授權業務人員、必要之旅遊服務合作業者、保險公司及依法有權調閱之機關，在業務必要範圍內使用。</p>
-                            <h4>五、個人資料保護承諾</h4>
-                            <p>除依法令規定或取得旅客另行同意外，不會將個人資料用於與本次旅遊無關之商業行銷、廣告推銷，亦不會任意出售或提供予無關第三人。</p>
-                            <h4>六、旅客個人資料權利</h4>
-                            <p>旅客得依《個人資料保護法》第3條規定，得依法向本旅行社行使：</p>
-                            <ul><li>查詢或請求閱覽</li><li>請求製給複製本</li><li>請求補充或更正</li><li>請求停止蒐集、處理或利用</li><li>請求刪除</li></ul>
-                            <p>如欲行使上述權利，請依本旅行社提供之聯絡方式提出申請。</p>
-                            <h4>七、不提供個人資料之影響</h4>
-                            <p>旅客可自由決定是否提供個人資料，惟未提供必要資料者，可能無法完成旅遊報名、保險投保或相關服務。</p>
-                            <h4>八、同行旅客資料</h4>
-                            <p>如由一人代為報名同行旅客，報名人應確認已取得同行旅客提供個人資料之適當授權，並向其轉達本告知事項。</p>
-                            <p>請於確認瞭解上述事項後，再進行報名。</p>
-                            <hr>
-                            <h2>二、多人報名及代填確認</h2>
-                            <p>本次報名得由一名主要聯絡人協助本人及同行旅客填寫報名資料。</p>
-                            <h4>主要聯絡人／代填人確認</h4>
-                            <ul><li>□ 本人已取得同行旅客之授權，得協助同行旅客提供辦理本次旅遊所必要之個人資料。</li><li>□ 本人已將本同意書所載之個人資料蒐集、處理及利用相關事項告知同行旅客。</li><li>□ 本人確認所提供之同行旅客資料係由同行旅客提供或經其授權提供，並已盡合理注意確認資料正確性。</li><li>□ 本人確認所提供之同行旅客資料，係為辦理本次旅遊服務所必要之資料。</li></ul>
-                            <p><strong>重要說明：</strong></p>
-                            <p>主要聯絡人之代填確認，不表示主要聯絡人可以代替所有同行旅客作成其本人之個人資料同意意思表示。</p>
-                            <p>主要聯絡人應依其與同行旅客間實際存在之授權或同意關係提供資料。</p>
-                            <p>如法律另有要求應由個人資料本人作成之意思表示，仍應由本人依法為之。</p>
-                            <hr>
-                            <h2>三、旅遊照片及影片之拍攝與使用</h2>
-                            <p>為記錄本次旅遊活動，囍莉旅遊可能於行程期間進行照片或影片拍攝。</p>
-                            <p>如照片或影片可以直接或間接識別特定旅客，可能涉及個人資料之處理或利用。</p>
-                            <p>如旅行社欲將旅客影像使用於旅遊行程紀錄以外之公開宣傳用途，例如：</p>
-                            <ul><li>Facebook</li><li>Instagram</li><li>LINE</li><li>YouTube</li><li>短影音平台</li><li>官方網站</li><li>旅遊文宣</li><li>海報</li><li>廣告</li><li>其他旅遊相關宣傳</li></ul>
-                            <p>將依旅客之選擇辦理。</p>
-                            <h4>請旅客擇一：</h4>
-                            <p>□ <strong>同意</strong></p>
-                            <p>本人同意囍莉旅遊於本次旅遊活動期間拍攝包含本人影像之照片或影片，並同意將相關影像於上述旅遊相關紀錄及宣傳用途之範圍內使用、公開展示及發布。</p>
-                            <p>□ <strong>不同意</strong></p>
-                            <p>本人不同意囍莉旅遊將可辨識本人之照片或影片用於上述公開宣傳、廣告、社群媒體或其他對外發布用途。</p>
-                            <p>囍莉旅遊將於合理及可行範圍內，避免以選擇「不同意」之旅客作為主要拍攝或公開宣傳之對象。</p>
-                            <p><strong>照片／影片使用之同意與否，與本次旅遊報名之個人資料必要使用分開處理。</strong></p>
-                            <hr>
-                            <h2>四、旅客最終確認</h2>
-                            <p>本人已閱讀並了解本告知及同意書內容。</p>
-                            <h4>個人資料</h4>
-                            <ul><li>□ 本人已知悉上述個人資料蒐集、處理及利用事項。</li><li>□ 本人同意囍莉旅遊於辦理及提供本次旅遊服務所必要之範圍內，蒐集、處理及利用本人之個人資料。</li></ul>
-                            <h4>照片／影片</h4>
-                            <ul><li>□ 本人同意囍莉旅遊依本同意書第三項內容使用本人照片／影片。</li><li>□ 本人不同意囍莉旅遊依本同意書第三項內容使用本人照片／影片。</li></ul>
-                            <h4>多人代填</h4>
-                            <ul><li>□ 如本人為代填人，本人確認已取得同行旅客之必要授權，並已將本同意書相關內容告知同行旅客。</li></ul>
-
-                        </div>
-                        <div class="privacy-modal-footer"><button type="button" class="btn" id="closePrivacyModalBottom" onclick="closePrivacyModal()">關閉</button></div>
-                    </div>
-                </div>
-
-
 
         </section>
 
@@ -622,13 +563,18 @@
     </footer>
 
 
-    <!-- 行程資料由 registration.js 直接讀取 trips.json -->
+    <!-- =========================
+         行程資料
+    ========================= -->
+
+    <script src="trips.js"></script>
+
 
     <!-- =========================
          報名功能
     ========================= -->
 
-    <script src="registration.js?v=20261125-json-unified-modal-roc-1"></script>
+    <script src="registration.js?v=20261125-privacy-modal-click-fix-1"></script>
 
 
 

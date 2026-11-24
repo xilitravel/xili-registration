@@ -21,79 +21,201 @@ const travelerContainer = document.getElementById("travelerContainer");
 const boardingContainer = document.getElementById("boardingContainer");
 const submitButton = document.getElementById("submitButton");
 
+/* =====================================================
+   個資告知書視窗：明確綁定事件，避免按鈕點擊無反應
+===================================================== */
+function openPrivacyModal() {
+    const modal = document.getElementById("privacyModal");
+    if (!modal) {
+        console.error("找不到個資視窗：#privacyModal");
+        return;
+    }
+    modal.classList.add("open");
+    modal.style.display = "block";
+    modal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+}
+
+function closePrivacyModal() {
+    const modal = document.getElementById("privacyModal");
+    if (!modal) return;
+    modal.classList.remove("open");
+    modal.style.display = "none";
+    modal.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+}
+
+// 同時提供全域函式，讓舊版 HTML inline onclick 也能正常使用。
+window.openPrivacyModal = openPrivacyModal;
+window.closePrivacyModal = closePrivacyModal;
+
+function bindPrivacyModalEvents() {
+    const openButton = document.getElementById("openPrivacyModal");
+    const closeButton = document.getElementById("closePrivacyModal");
+    const closeBottomButton = document.getElementById("closePrivacyModalBottom");
+    const backdrop = document.getElementById("privacyModalBackdrop");
+
+    if (openButton) openButton.addEventListener("click", openPrivacyModal);
+    if (closeButton) closeButton.addEventListener("click", closePrivacyModal);
+    if (closeBottomButton) closeBottomButton.addEventListener("click", closePrivacyModal);
+    if (backdrop) backdrop.addEventListener("click", closePrivacyModal);
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bindPrivacyModalEvents, { once: true });
+} else {
+    bindPrivacyModalEvents();
+}
+
+document.addEventListener("keydown", function(event) {
+    if (event.key === "Escape") closePrivacyModal();
+});
+
 
 /* =====================================================
    1. 載入行程資料
 ===================================================== */
 
 async function loadSelectedTrip() {
-    // Load boarding points independently so a slow Apps Script call never blocks trip display.
-    loadBoardingPointsInBackground();
 
     try {
+
         const response = await fetch(TRIPS_JSON_URL + "?t=" + Date.now(), { cache: "no-store" });
         if (!response.ok) throw new Error("讀取行程資料失敗（HTTP " + response.status + "）");
         const trips = await response.json();
-        if (!Array.isArray(trips)) throw new Error("trips.json 格式錯誤");
+
+        /* 載入上車地點 */
+
+        try {
+
+            const boardingResponse = await fetch(BOARDING_API_URL);
+            const boardingResult = await boardingResponse.json();
+
+            if (boardingResult.success && Array.isArray(boardingResult.data)) {
+
+                boardingPointsList = boardingResult.data;
+
+            } else if (Array.isArray(boardingResult.boardingPoints)) {
+
+                boardingPointsList = boardingResult.boardingPoints;
+
+            } else {
+
+                boardingPointsList = [];
+
+            }
+
+        } catch (boardingError) {
+
+            console.error("載入上車地點失敗：", boardingError);
+
+            boardingPointsList = [];
+
+        }
+
+
+        /* 確認行程 API */
+
+        if (!Array.isArray(trips)) {
+            throw new Error("trips.json 格式錯誤");
+        }
 
         const apiTrip = trips.find(function(trip) {
+
             return String(trip.id || trip.tripId) === String(selectedTripId);
+
         });
 
+
         if (!apiTrip) {
+
             selectedTripContainer.innerHTML = `
                 <div class="empty-trip">
                     <h3>⚠️ 找不到旅遊行程</h3>
                     <p>請回到旅遊行程頁面，重新選擇想報名的行程。</p>
                     <a href="trips.html">返回旅遊行程</a>
-                </div>`;
+                </div>
+            `;
+
             registrationForm.style.display = "none";
+
             return;
+
         }
 
+
+        /* 整理行程資料 */
+
         selectedTrip = {
+
             id: apiTrip.id || apiTrip.tripId,
+
             sheetName: apiTrip.sheetName || apiTrip.worksheetName || apiTrip.title || apiTrip.name || "",
+
             title: apiTrip.title || apiTrip.name || "未命名行程",
+
             date: apiTrip.date || "",
+
             dateText: apiTrip.dateText || apiTrip.date || "待設定",
+
             price: apiTrip.price || 0,
-            priceText: apiTrip.priceText || (apiTrip.price != null ? "NT$" + Number(apiTrip.price).toLocaleString("zh-TW") : "待設定"),
+
+            priceText: apiTrip.priceText || (
+                apiTrip.price != null
+                    ? "$" + apiTrip.price
+                    : "待設定"
+            ),
+
             status: apiTrip.status || "",
+
             maxPeople: apiTrip.maxPeople || 0,
+
             registeredPeople: apiTrip.registeredPeople || 0,
+
             deadline: apiTrip.deadline || "",
+
             departure: apiTrip.departure || "台南",
+
             boardingPoints: apiTrip.boardingPoints || [],
+
             description: apiTrip.description || "",
+
             tripDays: Number(apiTrip.tripDays || apiTrip.days || 1),
-            lodging: apiTrip.lodging === true || apiTrip.tripLodging === "true" || apiTrip.hasLodging === true,
-            roomTypes: Array.isArray(apiTrip.roomTypes) && apiTrip.roomTypes.length ? apiTrip.roomTypes : ["單人房", "雙人房（一大床）", "雙人房（兩小床）", "三人房", "四人房"],
+
+            lodging:
+                apiTrip.lodging === true ||
+                apiTrip.tripLodging === "true" ||
+                apiTrip.hasLodging === true,
+
+            roomTypes: apiTrip.roomTypes || apiTrip.rooms || [],
+
             meals: apiTrip.meals || apiTrip.mealSettings || []
+
         };
 
+
         registrationForm.style.display = "";
+
         renderSelectedTrip();
+
+
     } catch (error) {
+
         console.error("載入報名行程失敗：", error);
-        selectedTripContainer.innerHTML = `<div class="empty-trip"><h3>⚠️ 行程資料載入失敗</h3><p>請重新整理頁面，或稍後再試。</p></div>`;
+
+        selectedTripContainer.innerHTML = `
+            <div class="empty-trip">
+                <h3>⚠️ 行程資料載入失敗</h3>
+                <p>請重新整理頁面，或稍後再試。</p>
+            </div>
+        `;
+
         registrationForm.style.display = "none";
+
     }
+
 }
 
-async function loadBoardingPointsInBackground() {
-    try {
-        const response = await fetch(BOARDING_API_URL, { cache: "no-store" });
-        if (!response.ok) throw new Error("上車地點 API 回應錯誤");
-        const result = await response.json();
-        if (result.success && Array.isArray(result.data)) boardingPointsList = result.data;
-        else if (Array.isArray(result.boardingPoints)) boardingPointsList = result.boardingPoints;
-        else boardingPointsList = [];
-    } catch (error) {
-        console.error("載入上車地點失敗：", error);
-        boardingPointsList = [];
-    }
-}
 
 /* =====================================================
    2. 顯示選擇的行程
@@ -1100,7 +1222,6 @@ registrationForm.addEventListener(
         const peopleCount = Number(peopleCountSelect.value);
         const travelers = collectTravelerData();
         const privacyConsent = document.getElementById("privacyConsent").checked;
-        const privacyUseConsent = document.getElementById("privacyUseConsent") ? document.getElementById("privacyUseConsent").checked : privacyConsent;
         const photoConsentElement = document.querySelector('input[name="photoConsent"]:checked');
         const photoConsent = photoConsentElement ? photoConsentElement.value : "";
         const proxyConsent = document.getElementById("proxyConsent").checked;
@@ -1125,7 +1246,6 @@ registrationForm.addEventListener(
                 };
             }),
             privacyConsent: privacyConsent,
-            privacyUseConsent: privacyUseConsent,
             photoConsent: photoConsent,
             proxyConsent: proxyConsent,
             confirmData: confirmData,
@@ -1164,7 +1284,6 @@ registrationForm.addEventListener(
                 peopleCount: peopleCount,
                 travelers: travelers,
                 privacyConsent: privacyConsent,
-                privacyUseConsent: privacyUseConsent,
                 photoConsent: photoConsent,
                 proxyConsent: proxyConsent,
                 confirmData: confirmData,
@@ -1518,37 +1637,6 @@ function showRegistrationConfirmation(data) {
 
 }
 
-
-
-/* =====================================================
-   個資告知書 Modal
-===================================================== */
-function openPrivacyModal() {
-    const modal = document.getElementById("privacyModal");
-    if (!modal) return;
-    modal.classList.add("open");
-    modal.setAttribute("aria-hidden", "false");
-    document.body.style.overflow = "hidden";
-    const closeButton = document.getElementById("closePrivacyModal");
-    if (closeButton) closeButton.focus();
-}
-
-function closePrivacyModal() {
-    const modal = document.getElementById("privacyModal");
-    if (!modal) return;
-    modal.classList.remove("open");
-    modal.setAttribute("aria-hidden", "true");
-    document.body.style.overflow = "";
-    const opener = document.getElementById("openPrivacyModal");
-    if (opener) opener.focus();
-}
-
-document.addEventListener("keydown", function(event) {
-    if (event.key === "Escape") {
-        const modal = document.getElementById("privacyModal");
-        if (modal && modal.classList.contains("open")) closePrivacyModal();
-    }
-});
 
 /* =====================================================
    11. 初始化
