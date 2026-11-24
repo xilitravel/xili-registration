@@ -911,6 +911,25 @@
             `;
 
 
+            // 點擊報名前，先把目前已載入的行程資料暫存在瀏覽器
+            // registration.js 可先讀取暫存資料，讓報名頁立即顯示行程
+            const registrationLink = card.querySelector(
+                '.registration-button[href^="registration.html"]'
+            );
+
+            if (registrationLink) {
+                registrationLink.addEventListener("click", function() {
+                    try {
+                        sessionStorage.setItem(
+                            "xiliSelectedTrip",
+                            JSON.stringify(trip)
+                        );
+                    } catch (storageError) {
+                        console.warn("暫存行程資料失敗：", storageError);
+                    }
+                });
+            }
+
             return card;
 
         }
