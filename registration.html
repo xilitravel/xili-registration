@@ -26,6 +26,27 @@
 .privacy-modal-footer{border-top:1px solid #f1d5e3;border-bottom:0;justify-content:center}
 @media(max-width:600px){.privacy-modal-dialog{width:96vw;height:92vh;margin:4vh auto}.privacy-modal-body{padding:16px}}
 </style>
+<style>
+
+/* 出生日期右側的原生日曆按鈕 */
+.birth-date-input-wrap input[type="date"] {
+    appearance: auto;
+    -webkit-appearance: auto;
+}
+.birth-date-input-wrap input[type="date"]::-webkit-datetime-edit {
+    display: none;
+}
+.birth-date-input-wrap input[type="date"]::-webkit-calendar-picker-indicator {
+    display: block;
+    opacity: 1;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+</style>
 </head>
 
 
@@ -609,7 +630,7 @@
          報名功能
     ========================= -->
 
-    <script src="registration.js?v=20261125-trip-fast-consent-modal-2"></script>
+    <script src="registration.js?v=20261125-birth-picker-inline-1"></script>
 
 
 

@@ -396,7 +396,7 @@ function renderTravelers() {
 
                 </label>
 
-                <div class="birth-date-input-wrap" style="display:flex; flex-direction:column; gap:8px; align-items:flex-start;">
+                <div class="birth-date-input-wrap" style="display:flex; flex-direction:row; align-items:center; gap:8px; width:100%; max-width:370px;">
 
                     <input
                         type="text"
@@ -404,28 +404,29 @@ function renderTravelers() {
                         name="travelerBirth${i}"
                         required
                         maxlength="9"
-                        placeholder="民國 84/06/24"
+                        placeholder="民國 XX/XX/XX"
                         inputmode="numeric"
                         autocomplete="bday"
                         onblur="normalizeRocBirthDate(${i})"
-                        style="width:100%; max-width:310px;"
+                        style="flex:1; min-width:0; width:100%; box-sizing:border-box;"
                     >
 
-                    <button
-                        type="button"
-                        onclick="toggleBirthCalendar(${i})"
-                        style="display:inline-flex; align-items:center; gap:8px; padding:9px 13px; border:1px solid #e7a1bd; border-radius:9px; background:#fff0f6; color:#b51d63; font-weight:600; cursor:pointer;"
-                    >📅 選擇日期</button>
+                    <input
+                        type="date"
+                        id="travelerBirthPicker${i}"
+                        aria-label="選擇出生年月日"
+                        max="${new Date().toISOString().slice(0,10)}"
+                        onchange="applyBirthDateFromPicker(${i})"
+                        title="選擇日期"
+                        style="flex:0 0 48px; width:48px; height:38px; box-sizing:border-box; padding:5px; border:1px solid #e7a1bd; border-radius:9px; background:#fff0f6; color:#b51d63; cursor:pointer;"
+                    >
 
-                    <div
-                        id="travelerBirthCalendar${i}"
-                        style="display:none; width:100%; max-width:320px; box-sizing:border-box; padding:12px; border:1px solid #efb5cc; border-radius:12px; background:#fff; box-shadow:0 4px 14px rgba(181,29,99,.10);"
-                    ></div>
+                </div>
 
                 </div>
 
                 <small style="display:block; margin-top:6px; color:#8a7180;">
-                    可直接輸入民國年（例如 84/06/24），或使用日曆選擇；年份可直接輸入，不必逐年滑動。
+                    可直接輸入民國年，或點擊右側日曆圖示選擇日期。
                 </small>
 
             </div>
@@ -866,6 +867,32 @@ function normalizeRocBirthDate(index) {
         String(year) + "/" +
         String(month).padStart(2, "0") + "/" +
         String(day).padStart(2, "0");
+}
+
+
+function applyBirthDateFromPicker(index) {
+    const picker = document.getElementById("travelerBirthPicker" + index);
+    const textInput = document.getElementById("travelerBirth" + index);
+    if (!picker || !textInput || !picker.value) return;
+
+    const parts = picker.value.split("-");
+    const year = Number(parts[0]);
+    const month = Number(parts[1]);
+    const day = Number(parts[2]);
+    const rocYear = year - 1911;
+
+    if (rocYear <= 0) {
+        alert("請選擇民國元年以後的日期。");
+        picker.value = "";
+        return;
+    }
+
+    textInput.value = String(rocYear) + "/" +
+        String(month).padStart(2, "0") + "/" +
+        String(day).padStart(2, "0");
+
+    textInput.dispatchEvent(new Event("input", { bubbles: true }));
+    textInput.dispatchEvent(new Event("change", { bubbles: true }));
 }
 
 function toggleBirthCalendar(index) {
