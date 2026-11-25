@@ -186,6 +186,8 @@ async function loadAllData() {
     updateDashboard();
 
     populateTripFilters();
+    const updatedAt = document.getElementById("dashboardLastUpdated");
+    if (updatedAt) updatedAt.textContent = new Date().toLocaleString("zh-TW", { hour12: false, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" });
 
   } catch (error) {
 
@@ -1425,6 +1427,21 @@ function initializeAdminLock() {
   const desktopInput = document.getElementById("adminLoginPassword");
   if (window.matchMedia("(min-width: 701px)").matches) desktopInput.focus();
   else document.getElementById("adminLoginPasswordMobile").focus();
+}
+
+// 總覽重新整理：沿用既有資料載入流程，不另造 API。
+const dashboardRefreshButton = document.getElementById("dashboardRefreshBtn");
+if (dashboardRefreshButton) {
+  dashboardRefreshButton.addEventListener("click", async () => {
+    dashboardRefreshButton.disabled = true;
+    const original = dashboardRefreshButton.innerHTML;
+    dashboardRefreshButton.innerHTML = '<span aria-hidden="true">⟳</span> 更新中…';
+    try { await loadAllData(); }
+    finally {
+      dashboardRefreshButton.disabled = false;
+      dashboardRefreshButton.innerHTML = original;
+    }
+  });
 }
 
 // =====================================================
