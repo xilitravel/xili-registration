@@ -1832,3 +1832,25 @@
   .registration-donut { width: 150px !important; height: 150px !important; flex-basis: 150px !important; }
   .dashboard-quick-card { height: 130px !important; min-height: 130px !important; }
 }
+
+/* ==========================================================
+   囍莉旅遊｜指定原圖背景正式套用
+   使用 admin-background.png（使用者提供的原始櫻花大理石圖）
+   保留完整左上、右下櫻花，不裁切、不另外繪製波浪。
+========================================================== */
+html {
+  min-height: 100%;
+}
+body.admin-body {
+  min-height: 100vh !important;
+  background-color: #fff7f6 !important;
+  background-image: url("./admin-background.png") !important;
+  background-position: center center !important;
+  background-size: 100% 100% !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+}
+body.admin-body::after {
+  content: none !important;
+  display: none !important;
+}
