@@ -1644,3 +1644,17 @@
   border-radius: 8px;
   background: #fbe8ed;
 }
+
+
+/* ==========================================================
+   獨立主背景素材｜玫瑰奶油金
+   背景圖只負責裝飾；所有後台按鈕、卡片與功能仍由 HTML/CSS 呈現
+========================================================== */
+.admin-body {
+  background-color: #fff8f6 !important;
+  background-image: url("./admin-page-background.png") !important;
+  background-position: center top !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+}
