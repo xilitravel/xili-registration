@@ -26,7 +26,9 @@ function renderSeatMap(occupied) {
     const pending = pendingSeats.has(id);
     const confirmed = confirmedSeats.has(id);
     const ownPending = pending && (occupied || []).some(x => String(x.seatId) === id && x.mine);
-    const chosen = selectedSeatIds.includes(id) && !(hasSubmittedOrder && ownPending);
+    // 第一次送出只會建立待確認報名單；在使用者按下「確認無誤，完成報名」前，
+    // 自己選取的座位仍維持橘色。只有最終確認後才結束本次暫選畫面。
+    const chosen = selectedSeatIds.includes(id) && !registrationFinalized;
     // 座位表先立即顯示；行程設定尚未載入前暫時不能點選，
     // 避免 2-1／2-2 等工作人員座位在設定讀取前被誤選。
     const tripReady = !!selectedTrip;
@@ -75,8 +77,9 @@ function renderSeatMap(occupied) {
 
     try {
       const action = wasSelected ? "releaseSeatSelection" : "selectSeat";
+      // 本機已先更新橘色／取消狀態；成功後不立刻再查整張座位表，
+      // 避免每次點選都連續佔用兩次 Apps Script 鎖。背景同步會補上其他人的變動。
       await postSeatAction(action, id);
-      await loadSeatStatus();
     } catch (error) {
       // 只回復這一個座位，避免覆蓋使用者在等待期間選取的其他座位。
       if (wasSelected) {
@@ -86,7 +89,6 @@ function renderSeatMap(occupied) {
       }
       refreshSeatSelection();
       saveRegistrationDraft();
-      await loadSeatStatus();
       alert(error.message || "座位同步失敗，請重新選擇");
     } finally {
       seatActionsInFlight.delete(id);
@@ -114,7 +116,8 @@ async function postSeatAction(action, seatId) {
 
 let seatStatusLoading = false;
 async function loadSeatStatus(){
-  if(!selectedTrip?.id || seatStatusLoading) return;
+  // 有座位操作正在送出時，暫停背景查詢，避免與後端共用的 ScriptLock 互相排隊。
+  if(!selectedTrip?.id || seatStatusLoading || seatActionsInFlight.size > 0) return;
   seatStatusLoading = true;
   try {
     const response = await fetch(SUBMIT_API_URL, {
@@ -1923,13 +1926,13 @@ peopleCountSelect?.addEventListener("change", function(){
   if(selectedSeatIds.length>Number(this.value||1)){selectedSeatIds=selectedSeatIds.slice(0,Number(this.value||1));refreshSeatSelection();}
 });
 
-// 座位狀態近即時同步：頁面開啟時每 3 秒更新；切到背景分頁時降低頻率。
+// 座位狀態定期同步；避免過密查詢與選位／取消共用後端鎖。
 let seatSyncTimer = null;
 function startSeatStatusSync(){
   if(seatSyncTimer) clearInterval(seatSyncTimer);
   seatSyncTimer = setInterval(() => {
     if(document.visibilityState === "visible") loadSeatStatus();
-  }, 2000);
+  }, 5000);
 }
 document.addEventListener("visibilitychange", () => {
   if(document.visibilityState === "visible") loadSeatStatus();
