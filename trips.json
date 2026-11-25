@@ -1,27 +1,5 @@
 [
   {
-    "id": "237abbbd-bb86-4ac7-bbc6-81af5bde54c0",
-    "title": "測試行程",
-    "date": "2026-11-28",
-    "dateText": "2026-11-28",
-    "type": "一日遊",
-    "price": 999,
-    "priceText": "NT$999",
-    "deadline": "2026-11-26",
-    "maxPeople": 0,
-    "registeredPeople": 0,
-    "status": "報名中",
-    "sheetName": "測試行程",
-    "departure": "台南",
-    "days": 1,
-    "lodging": false,
-    "roomTypes": [],
-    "meals": [],
-    "image": "",
-    "highlights": [],
-    "description": ""
-  },
-  {
     "tripId": "b41868d2-6f3e-43f3-b1aa-e15276761cfb",
     "id": "b41868d2-6f3e-43f3-b1aa-e15276761cfb",
     "name": "測試行程",
