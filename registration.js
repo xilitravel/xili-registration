@@ -131,6 +131,7 @@ document.addEventListener("keydown", function(event) {
 ===================================================== */
 
 const TRIPS_CACHE_KEY = "xili_trips_cache_v1";
+const SELECTED_TRIP_CACHE_KEY = "xili_selected_trip_v1";
 
 function normalizeSelectedTrip(apiTrip) {
     return {
@@ -185,12 +186,23 @@ async function loadBoardingPointsInBackground() {
 async function loadSelectedTrip() {
     let renderedFromCache = false;
 
-    // 先用上次成功載入的行程快取立即顯示，避免每次進頁面都停在載入畫面。
+    // 由行程列表頁點選時，先讀取該行程完整資料，第一時間直接顯示，不必等待 trips.json 網路請求。
+    try {
+        const handedOffTrip = JSON.parse(localStorage.getItem(SELECTED_TRIP_CACHE_KEY) || "null");
+        if (handedOffTrip && String(handedOffTrip.id || handedOffTrip.tripId) === String(selectedTripId)) {
+            renderedFromCache = showSelectedTrip(handedOffTrip);
+            if (renderedFromCache) loadSeatStatus();
+        }
+    } catch (error) {
+        console.warn("讀取選取行程快取失敗：", error);
+    }
+
+    // 若沒有單筆行程快取，再使用完整行程清單快取。
     try {
         const cached = JSON.parse(localStorage.getItem(TRIPS_CACHE_KEY) || "null");
         if (Array.isArray(cached)) {
             const cachedTrip = cached.find(trip => String(trip.id || trip.tripId) === String(selectedTripId));
-            if (cachedTrip) {
+            if (cachedTrip && !renderedFromCache) {
                 renderedFromCache = showSelectedTrip(cachedTrip);
                 if (renderedFromCache) loadSeatStatus();
             }
