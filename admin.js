@@ -1333,6 +1333,13 @@ function initializeAdminLock() {
   `;
 
   document.body.appendChild(loginOverlay);
+
+  // 設計稿本身已包含 PIN 外框；輸入欄只負責接收文字，不再繪製第二層框線。
+  const desktopPinInput = document.getElementById("adminLoginPassword");
+  ["border", "outline", "box-shadow", "background", "border-radius", "appearance"].forEach(prop => {
+    desktopPinInput.style.setProperty(prop, prop === "background" ? "transparent" : "none", "important");
+  });
+
   lockAdminPage();
 
   const bindLoginForm = (formId, inputId, buttonId, errorId) => {
