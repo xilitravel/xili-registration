@@ -83,25 +83,32 @@ async function postSeatAction(action, seatId) {
 
 let seatStatusLoading = false;
 async function loadSeatStatus(){
-  if(!selectedTrip?.id || seatStatusLoading)return;
+  if(!selectedTrip?.id || seatStatusLoading) return;
   seatStatusLoading = true;
-  try{
-    const url = `${SUBMIT_API_URL}?action=seatStatus&tripId=${encodeURIComponent(selectedTrip.id)}&sessionId=${encodeURIComponent(seatSessionId)}&orderId=${encodeURIComponent(currentOrderId || "")}&_=${Date.now()}`;
-    const r = await fetch(url, { cache: "no-store" });
-    const j = await r.json();
-    if(j.success) {
-      const status = j.data || [];
-      selectedTrip.staffSeatIds = status.filter(x => x.status === "staff").map(x => String(x.seatId));
-      renderSeatMap(status);
-    }
-    else console.warn("座位狀態讀取失敗：", j.message || "API 回傳失敗");
-  }catch(e){
-    console.warn("座位狀態讀取失敗",e);
-  }finally{
+  try {
+    const response = await fetch(SUBMIT_API_URL, {
+      method: "POST",
+      cache: "no-store",
+      headers: {"Content-Type":"text/plain;charset=utf-8"},
+      body: JSON.stringify({
+        action: "seatStatus",
+        tripId: selectedTrip.id,
+        sessionId: seatSessionId,
+        orderId: currentOrderId || "",
+        requestId: (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random())
+      })
+    });
+    const result = await response.json();
+    if (!result || result.success !== true) throw new Error(result?.message || "座位狀態讀取失敗");
+    const status = result.data || [];
+    selectedTrip.staffSeatIds = status.filter(x => x.status === "staff").map(x => String(x.seatId));
+    renderSeatMap(status);
+  } catch (error) {
+    console.warn("座位狀態同步失敗：", error);
+  } finally {
     seatStatusLoading = false;
   }
 }
-
 
 const TRIPS_JSON_URL = "https://xilitravel.github.io/xili-registration/trips.json";
 
@@ -1443,6 +1450,8 @@ registrationForm.addEventListener(
             saveRegistrationDraft();
             // 報名成功後，座位狀態由後端訂單保留紀錄決定；此時已不是橘色暫選。
             await loadSeatStatus();
+            await new Promise(resolve => setTimeout(resolve, 350));
+            await loadSeatStatus();
 
             const registrationData = {
                 trip: {
@@ -1889,7 +1898,7 @@ function startSeatStatusSync(){
   if(seatSyncTimer) clearInterval(seatSyncTimer);
   seatSyncTimer = setInterval(() => {
     if(document.visibilityState === "visible") loadSeatStatus();
-  }, 3000);
+  }, 2000);
 }
 document.addEventListener("visibilitychange", () => {
   if(document.visibilityState === "visible") loadSeatStatus();
