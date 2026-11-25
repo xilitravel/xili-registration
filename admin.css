@@ -394,3 +394,365 @@
 .dashboard-warning { margin-top:0; font-size:12px; }
 @media (max-width:1100px) { .dashboard-panels { grid-template-columns:1fr; } .dashboard-quick-actions { grid-template-columns:repeat(3,minmax(0,1fr)); } }
 @media (max-width:650px) { .dashboard-stats { grid-template-columns:repeat(2,minmax(0,1fr)); } .dashboard-stats .admin-stat-card { min-height:92px; padding:13px 11px; gap:9px; } .dashboard-stats .stat-icon { flex-basis:40px; width:40px; height:40px; font-size:23px; } .dashboard-stats .admin-stat-title { font-size:12px; } .dashboard-stats .admin-stat-number { font-size:27px; } .registration-chart-layout { flex-direction:column; padding:10px 0; } .registration-legend { width:100%; } .dashboard-quick-actions { grid-template-columns:repeat(2,minmax(0,1fr)); } .dashboard-heading { align-items:flex-start; flex-direction:column; } }
+
+
+/* ==========================================================
+   囍莉旅遊｜玫瑰奶油精緻版 v3
+   以使用者指定的玫瑰奶油風參考圖重新調整整體版面
+   不修改既有資料邏輯與各管理功能
+========================================================== */
+.admin-body {
+  background:
+    radial-gradient(ellipse at 96% 7%, rgba(247,194,211,.28), transparent 34%),
+    radial-gradient(ellipse at 4% 80%, rgba(238,222,218,.34), transparent 30%),
+    linear-gradient(135deg,#fbf4f1 0%,#fff8f8 48%,#f9edf1 100%);
+  color:#49383a;
+}
+
+/* 頂端品牌橫幅：使用指定參考圖裁切出的品牌視覺 */
+.admin-header {
+  height:116px;
+  min-height:116px;
+  padding:0;
+  border:0;
+  border-bottom:1px solid rgba(194,126,139,.25);
+  box-shadow:0 5px 18px rgba(111,63,73,.10);
+  background-image:url("assets/admin-header-banner.jpg");
+  background-position:center center;
+  background-size:cover;
+  background-repeat:no-repeat;
+}
+.admin-header::after { content:none; }
+.admin-header-inner {
+  max-width:none;
+  width:100%;
+  height:100%;
+  padding:0 3.1%;
+}
+.admin-header-inner > div:first-child { visibility:hidden; }
+.admin-header-actions { gap:12px; }
+.admin-header-actions .admin-btn {
+  opacity:0;
+  min-width:112px;
+  height:48px;
+  cursor:pointer;
+}
+
+/* 主體：寬版側欄 + 清楚的內容區 */
+.admin-container {
+  width:calc(100% - 34px);
+  max-width:1640px;
+  margin:16px auto 42px;
+  padding:0;
+  grid-template-columns:258px minmax(0,1fr);
+  gap:18px;
+  align-items:stretch;
+}
+.admin-sidebar {
+  position:relative;
+  min-height:calc(100vh - 150px);
+  padding:18px 14px 270px;
+  overflow:visible;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+}
+.admin-sidebar::before {
+  content:"";
+  position:absolute;
+  inset:0 0 auto;
+  height:440px;
+  border:1px solid #ead4d1;
+  border-radius:24px;
+  background:linear-gradient(160deg,rgba(255,255,255,.97),rgba(255,249,248,.92));
+  box-shadow:0 8px 22px rgba(117,75,77,.10), inset 0 1px 0 #fff;
+  z-index:0;
+}
+.admin-sidebar-character {
+  position:absolute;
+  z-index:1;
+  left:-4px;
+  bottom:0;
+  width:250px;
+  height:255px;
+  object-fit:contain;
+  object-position:center bottom;
+  pointer-events:none;
+  filter:drop-shadow(0 5px 5px rgba(108,68,74,.08));
+}
+.admin-nav-btn {
+  position:relative;
+  z-index:2;
+  display:flex;
+  align-items:center;
+  min-height:62px;
+  margin:0 0 3px;
+  padding:13px 15px;
+  border-radius:14px;
+  color:#60494d;
+  font-size:17px;
+  font-weight:650;
+  letter-spacing:.015em;
+  transition:background .18s ease,transform .18s ease,box-shadow .18s ease;
+}
+.admin-nav-btn:hover {
+  background:#fbecf0;
+  color:#a74463;
+  transform:translateX(2px);
+}
+.admin-nav-btn.active {
+  background:linear-gradient(110deg,#b84e66,#d66f83);
+  color:#fff;
+  box-shadow:0 5px 12px rgba(155,64,84,.22),inset 0 1px 0 rgba(255,255,255,.35);
+}
+
+/* 總覽標題列 */
+.dashboard-premium .dashboard-heading {
+  min-height:52px;
+  margin:2px 0 16px;
+  padding:0 3px 8px;
+  border-bottom:1px solid rgba(198,145,151,.25);
+}
+.dashboard-premium .dashboard-heading h2 {
+  color:#8d3f55;
+  font-size:27px;
+  letter-spacing:.045em;
+}
+.dashboard-premium .dashboard-heading h2::before {
+  content:"⌂";
+  color:#a64a60;
+  text-shadow:0 2px 0 rgba(255,255,255,.9);
+}
+.dashboard-premium .admin-description {
+  color:#806b6c;
+  font-size:15px;
+}
+.dashboard-updated {
+  color:#8e6d70;
+  font-size:13px;
+}
+
+/* 四張不同色系的統計卡 */
+.dashboard-stats {
+  gap:14px;
+  margin-bottom:20px;
+}
+.dashboard-stats .admin-stat-card {
+  min-height:136px;
+  padding:20px 18px;
+  gap:15px;
+  border-radius:22px;
+  box-shadow:0 7px 18px rgba(91,57,59,.08),inset 0 1px 0 rgba(255,255,255,.85);
+}
+.dashboard-stats .admin-stat-card::after {
+  width:90px;
+  height:90px;
+  right:8px;
+  background:rgba(255,255,255,.33);
+}
+.dashboard-stats .stat-icon {
+  flex-basis:76px;
+  width:76px;
+  height:76px;
+  border-radius:22px;
+  background:rgba(255,255,255,.76);
+  font-size:39px;
+  text-shadow:0 2px 0 rgba(255,255,255,.7);
+}
+.dashboard-stats .admin-stat-title {
+  font-size:16px;
+  color:#584348;
+  font-weight:800;
+}
+.dashboard-stats .admin-stat-number {
+  font-size:47px;
+  line-height:1.05;
+  font-family:Georgia,"Noto Sans TC",serif;
+  font-weight:800;
+}
+.dashboard-stats .stat-rose {
+  background:linear-gradient(135deg,#fff7f6 0%,#f8e4e5 100%);
+  border:1px solid #e9c5c4;
+}
+.dashboard-stats .stat-gold {
+  background:linear-gradient(135deg,#fffaf0 0%,#f5ead8 100%);
+  border:1px solid #e8d2ad;
+}
+.dashboard-stats .stat-blue {
+  background:linear-gradient(135deg,#f5fbfc 0%,#e5f0f2 100%);
+  border:1px solid #c9dfe2;
+}
+.dashboard-stats .stat-green {
+  background:linear-gradient(135deg,#f8fbf1 0%,#eaf0dc 100%);
+  border:1px solid #d5e1bf;
+}
+
+/* 中段資訊卡：玫瑰奶油色、細金線、柔和陰影 */
+.dashboard-panels {
+  grid-template-columns:minmax(390px,.82fr) minmax(560px,1.25fr);
+  gap:16px;
+  margin-bottom:17px;
+}
+.dashboard-premium .dashboard-panel,
+.dashboard-quick-card {
+  border:1px solid #e7d0ca;
+  border-radius:24px;
+  background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(255,249,247,.96));
+  box-shadow:0 7px 20px rgba(99,65,64,.075),inset 0 1px 0 #fff;
+}
+.dashboard-premium .dashboard-panel {
+  min-height:305px;
+  padding:22px 23px;
+}
+.dashboard-panel-heading {
+  padding-bottom:14px;
+  margin-bottom:14px;
+  border-bottom:1px solid #eadbd6;
+}
+.dashboard-panel-heading h3 {
+  color:#963f56;
+  font-size:21px;
+  letter-spacing:.025em;
+}
+.panel-heading-icon {
+  color:#b64e68;
+  font-size:25px;
+}
+.registration-chart-layout {
+  min-height:215px;
+  gap:22px;
+}
+.registration-donut {
+  width:218px;
+  height:218px;
+  flex-basis:218px;
+  background:conic-gradient(#c95176 0deg,#e28ba0 100deg,#c95176 360deg);
+  box-shadow:0 4px 12px rgba(160,69,94,.12);
+}
+.registration-donut::before { inset:20px; }
+.donut-center span { color:#594448; font-size:16px; font-weight:700; }
+.donut-center strong { color:#9e3f59; font-size:43px; }
+.registration-legend > div {
+  padding:14px 0;
+  grid-template-columns:14px 1fr auto auto;
+  gap:9px;
+  font-size:15px;
+}
+.registration-legend strong { font-size:15px; }
+.registration-legend small { font-size:13px; }
+.dashboard-recent-table {
+  min-width:520px;
+  font-size:14px;
+}
+.dashboard-recent-table th {
+  padding:12px 10px;
+  background:linear-gradient(90deg,#bd5c75,#a94761);
+  font-size:14px;
+}
+.dashboard-recent-table td {
+  padding:12px 10px;
+  font-size:14px;
+}
+.dashboard-recent-table tbody tr:nth-child(even) { background:#fcf4f2; }
+.payment-pill {
+  background:#f9e0e3;
+  color:#b33f4e;
+}
+.payment-pill.all-paid {
+  background:#e9f0e2;
+  color:#64834f;
+}
+.dashboard-more-btn {
+  border-color:#d9b9b0;
+  color:#974a5d;
+  padding:8px 15px;
+  font-size:13px;
+}
+
+/* 快速功能列 */
+.dashboard-quick-card {
+  padding:20px 22px 22px;
+  margin-bottom:18px;
+}
+.dashboard-quick-card .dashboard-panel-heading {
+  border-bottom:1px solid #e6d1c5;
+  margin-bottom:15px;
+}
+.dashboard-quick-actions { gap:12px; }
+.quick-action {
+  min-height:112px;
+  border:1px solid #d9bda9;
+  border-radius:18px;
+  background:linear-gradient(145deg,#fffdfa,#f8eee8);
+  box-shadow:0 3px 8px rgba(104,70,59,.06),inset 0 1px 0 #fff;
+}
+.quick-action span {
+  color:#b34f69;
+  font-size:35px;
+}
+.quick-action strong {
+  color:#4f393c;
+  font-size:16px;
+}
+.quick-action:hover {
+  border-color:#c58c8c;
+  box-shadow:0 7px 15px rgba(124,75,74,.12);
+}
+
+/* 底部波浪裝飾，僅為視覺層次 */
+.admin-main { position:relative; }
+.dashboard-warning {
+  border-color:#ead6c8;
+  background:#fff9ef;
+  color:#806b50;
+}
+
+/* 其他管理頁面沿用既有功能，只統一玫瑰奶油色調 */
+.admin-section:not(.dashboard-premium) h2 { color:#91445a; }
+.admin-section:not(.dashboard-premium) .admin-card,
+.admin-section:not(.dashboard-premium) .admin-filter {
+  border-color:#ead8d3;
+  box-shadow:0 6px 18px rgba(99,65,64,.055);
+}
+.admin-section:not(.dashboard-premium) .admin-table th {
+  background:#f5e4e3;
+  color:#874858;
+}
+.admin-section:not(.dashboard-premium) .admin-table tbody tr:hover { background:#fff5f3; }
+
+@media (max-width:1100px) {
+  .admin-container { grid-template-columns:220px minmax(0,1fr); }
+  .dashboard-panels { grid-template-columns:1fr; }
+}
+@media (max-width:700px) {
+  .admin-header { height:82px; min-height:82px; background-position:left center; }
+  .admin-container {
+    width:calc(100% - 20px);
+    margin:10px auto 28px;
+    grid-template-columns:1fr;
+    gap:12px;
+  }
+  .admin-sidebar {
+    min-height:0;
+    padding:10px;
+    overflow:hidden;
+    border:1px solid #ead4d1;
+    border-radius:18px;
+    background:rgba(255,255,255,.94);
+  }
+  .admin-sidebar::before,.admin-sidebar-character { display:none; }
+  .admin-nav-btn {
+    display:inline-flex;
+    width:auto;
+    min-height:42px;
+    margin:2px;
+    padding:9px 12px;
+    font-size:13px;
+  }
+  .dashboard-stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .dashboard-panels { grid-template-columns:1fr; }
+  .dashboard-stats .admin-stat-card { min-height:100px; }
+  .registration-chart-layout { flex-direction:column; }
+  .dashboard-quick-actions { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
