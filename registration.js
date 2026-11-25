@@ -24,11 +24,11 @@ function renderSeatMap(occupied) {
     const taken = unavailable.has(id);
     const pending = pendingSeats.has(id);
     const confirmed = confirmedSeats.has(id);
-    const chosen = selectedSeatIds.includes(id);
+    const ownPending = pending && (occupied || []).some(x => String(x.seatId) === id && x.mine);
+    const chosen = selectedSeatIds.includes(id) && !(hasSubmittedOrder && ownPending);
     // 座位表先立即顯示；行程設定尚未載入前暫時不能點選，
     // 避免 2-1／2-2 等工作人員座位在設定讀取前被誤選。
     const tripReady = !!selectedTrip;
-    const ownPending = pending && (occupied || []).some(x => String(x.seatId) === id && x.mine);
     const disabled = !tripReady || staff || (taken && !ownPending);
     const cls = [staff ? 'staff-only' : '', confirmed ? 'taken' : '', pending && !chosen ? 'pending' : '', chosen ? 'selected' : '', !tripReady ? 'seat-loading' : ''].filter(Boolean).join(' ');
     const title = !tripReady ? '行程資料載入中' : staff ? '工作人員專用' : confirmed ? '已結清' : pending ? '已送出報名／待付款' : id;
@@ -51,16 +51,33 @@ function renderSeatMap(occupied) {
 
   root.innerHTML = html + cells.join('');
   root.querySelectorAll('button[data-seat]').forEach(btn => btn.addEventListener('click', async () => {
+    if (btn.dataset.busy === "1") return;
     const id = btn.dataset.seat;
     const wasSelected = selectedSeatIds.includes(id);
     if (wasSelected) selectedSeatIds = selectedSeatIds.filter(x => x !== id);
     else if (selectedSeatIds.length < Number(peopleCountSelect.value || 1)) selectedSeatIds.push(id);
     else { alert('選擇座位數不可超過報名人數'); return; }
+
     refreshSeatSelection();
     saveRegistrationDraft();
-    // 橘色只代表目前這位客人在本頁暫選；尚未送出報名，不寫入後端、不占用他人座位。
-    refreshSeatSelection();
-    saveRegistrationDraft();
+    btn.dataset.busy = "1";
+    btn.disabled = true;
+    try {
+      const action = wasSelected ? "releaseSeatSelection" : "selectSeat";
+      await postSeatAction(action, id);
+      await loadSeatStatus();
+    } catch (error) {
+      // 後端判定已被別人先選時，還原本頁暫選並立即同步最新狀態。
+      if (wasSelected) selectedSeatIds.push(id);
+      else selectedSeatIds = selectedSeatIds.filter(x => x !== id);
+      refreshSeatSelection();
+      saveRegistrationDraft();
+      await loadSeatStatus();
+      alert(error.message || "座位同步失敗，請重新選擇");
+    } finally {
+      btn.dataset.busy = "0";
+      await loadSeatStatus();
+    }
   }));
   refreshSeatSelection();
 }
