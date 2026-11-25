@@ -5,6 +5,44 @@
 const registrationParams = new URLSearchParams(window.location.search);
 const selectedTripId = registrationParams.get("trip");
 let selectedTrip = null;
+let selectedSeatIds = [];
+const SEAT_IDS = [
+  "1-1","1-2","1-3","1-4","2-1","2-2","2-3","2-4","3-1","3-2","3-3","3-4","4-1","4-2","4-3","4-4","5-1","5-2","5-3","5-4","6-1","6-2","7-1","7-2","8-1","8-2","9-3","9-4","10-1","10-2","10-3","10-4","11-1","11-2","11-3","11-4","12-1","12-2","12-5","12-3","12-4"
+];
+function renderSeatMap(occupied) {
+  const root=document.getElementById("seatMap"); if(!root)return;
+  const unavailable=new Set((occupied||[]).map(x=>x.seatId));
+  const cells=[];
+  const add=(id,grid)=>{const taken=unavailable.has(id);const chosen=selectedSeatIds.includes(id);cells.push(`<button type="button" data-seat="${id}" class="${taken?'taken ':''}${chosen?'selected':''}" ${taken?'disabled':''} style="${grid}">${id}</button>`)};
+  // rows 1-7: paired left and right; row 8 is safety door; rows 8-12 left and rows 9-12 right
+  root.innerHTML=`<div class="door front">前門</div><div class="door safety">安全門</div><div class="door middle">中門</div><div class="aisle">走道</div>`;
+  const positions={};
+  for(let r=1;r<=7;r++){positions[`${r}-1`]=`${r}`;positions[`${r}-2`]=`${r}`;positions[`${r}-3`]=`${r}`;positions[`${r}-4`]=`${r}`}
+  for(let r=8;r<=12;r++){positions[`${r}-1`]=`${r}`;positions[`${r}-2`]=`${r}`}
+  for(let r=9;r<=12;r++){positions[`${r}-3`]=`${r}`;positions[`${r}-4`]=`${r}`}
+  const seats=SEAT_IDS;
+  seats.forEach(id=>{const [row,col]=id.split('-').map(Number);let grid='';
+    if(row<=7 && col<=2) grid=`grid-column:${col};grid-row:${row}`;
+    else if(row<=5 && col>=3) grid=`grid-column:${col+1};grid-row:${row+1}`;
+    else if(row>=9 && col>=3) grid=`grid-column:${col+1};grid-row:${row-1}`;
+    else if(row>=8 && col<=2) grid=`grid-column:${col};grid-row:${row+1}`;
+    else if(id==='12-5') grid='grid-column:3;grid-row:14';
+    add(id,grid);
+  });
+  root.innerHTML += cells.join("");
+  // Put the three door labels in the intended map rows; the center aisle remains vertical.
+  root.querySelectorAll('button[data-seat]').forEach(btn=>btn.addEventListener('click',()=>{const id=btn.dataset.seat;if(selectedSeatIds.includes(id))selectedSeatIds=selectedSeatIds.filter(x=>x!==id);else if(selectedSeatIds.length<Number(peopleCountSelect.value||1))selectedSeatIds.push(id);else alert('選擇座位數不可超過報名人數');refreshSeatSelection();}));
+  refreshSeatSelection();
+}
+function refreshSeatSelection(){
+  document.querySelectorAll('#seatMap button[data-seat]').forEach(b=>b.classList.toggle('selected',selectedSeatIds.includes(b.dataset.seat)));
+  const el=document.getElementById('seatSelectionText');if(el)el.textContent=selectedSeatIds.length?`已選座位：${selectedSeatIds.join('、')}`:'尚未選擇座位';
+}
+async function loadSeatStatus(){
+  if(!selectedTrip?.id)return;
+  try{const r=await fetch(`${SUBMIT_API_URL}?action=seatStatus&tripId=${encodeURIComponent(selectedTrip.id)}`);const j=await r.json();if(j.success)renderSeatMap(j.data||[]);else renderSeatMap([]);}catch(e){console.warn('座位狀態讀取失敗',e);renderSeatMap([]);}
+}
+
 
 const TRIPS_JSON_URL = "https://xilitravel.github.io/xili-registration/trips.json";
 
@@ -197,6 +235,7 @@ async function loadSelectedTrip() {
         registrationForm.style.display = "";
 
         renderSelectedTrip();
+        loadSeatStatus();
 
 
     } catch (error) {
@@ -1230,7 +1269,10 @@ registrationForm.addEventListener(
         // 將目前表單資料轉成 Code.gs submitRegistration 所需格式
         const payload = {
             action: "submitRegistration",
+            tripId: selectedTrip.id,
             tripName: selectedTrip.sheetName || selectedTrip.title,
+            seatIds: selectedSeatIds,
+            paymentMethod: document.getElementById("paymentMethod").value,
             peopleCount: peopleCount,
             travelers: travelers.map(function(traveler) {
                 return {
@@ -1246,6 +1288,7 @@ registrationForm.addEventListener(
                 };
             }),
             privacyConsent: privacyConsent,
+            privacyUseConsent: document.getElementById("privacyUseConsent").checked,
             photoConsent: photoConsent,
             proxyConsent: proxyConsent,
             confirmData: confirmData,
@@ -1289,6 +1332,9 @@ registrationForm.addEventListener(
                 confirmData: confirmData,
                 submittedAt: new Date().toISOString(),
                 saved: true,
+                orderId: result.data && result.data.orderId,
+                amountDue: result.data && result.data.amountDue,
+                holdUntil: result.data && result.data.holdUntil,
                 serverMessage: result.message || (result.data && result.data.message) || "報名資料已成功送出"
             };
 
@@ -1648,3 +1694,10 @@ loadSelectedTrip();
 /* =====================================================
    12. 預設顯示提示
 ===================================================== */
+// 人數變更時同步限制選位數量
+peopleCountSelect?.addEventListener("change", function(){
+  if(selectedSeatIds.length>Number(this.value||1)){selectedSeatIds=selectedSeatIds.slice(0,Number(this.value||1));refreshSeatSelection();}
+});
+
+// 每 20 秒更新一次座位狀態，降低多人同時選位時看到舊狀態的機率。
+setInterval(loadSeatStatus, 20000);

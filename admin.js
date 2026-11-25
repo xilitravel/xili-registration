@@ -181,6 +181,8 @@ async function loadAllData() {
 
     await loadRegistrations();
 
+    await loadPayments();
+
     updateDashboard();
 
     populateTripFilters();
@@ -1044,33 +1046,42 @@ document.getElementById("registrationsTableBody")?.addEventListener("click", eve
 // 繳費管理
 // =====================================================
 
-function renderPayments() {
-
-  const tbody =
-    document.getElementById("paymentsTableBody");
-
-
-  if (!paymentData.length) {
-
-    tbody.innerHTML = `
-
-      <tr>
-
-        <td colspan="7" class="empty-data">
-
-          繳費資料 API 尚未完成
-
-        </td>
-
-      </tr>
-
-    `;
-
-    return;
-
-  }
-
+async function loadPayments() {
+  paymentData = await apiPost({ action: "adminGetOrders", token: adminToken });
+  renderPayments();
 }
+
+function renderPayments() {
+  const tbody = document.getElementById("paymentsTableBody");
+  if (!tbody) return;
+  const tripFilter = document.getElementById("paymentTripFilter")?.value || "";
+  const statusFilter = document.getElementById("paymentStatusFilter")?.value || "";
+  const rows = paymentData.filter(x => (!tripFilter || String(x.tripId)===String(tripFilter)) && (!statusFilter || x.paymentStatus===statusFilter));
+  if (!rows.length) { tbody.innerHTML = `<tr><td colspan="7" class="empty-data">目前沒有報名／繳費資料</td></tr>`; return; }
+  tbody.innerHTML = rows.map(x => `
+    <tr>
+      <td>${escapeHTML(x.orderId)}</td><td>${escapeHTML(x.tripName)}</td><td>${escapeHTML(x.mainName)}（${Number(x.travelerCount)||0}人）<br><small>${escapeHTML(x.paymentMethod)}｜座位：${escapeHTML(x.seatIds||"未選")}</small></td>
+      <td>應繳 $${Number(x.amountDue||0).toLocaleString()}<br>實收 $${Number(x.amountPaid||0).toLocaleString()}</td>
+      <td>${escapeHTML(x.paymentStatus)}<br><small>保留至：${escapeHTML(formatAdminDate(x.holdUntil))}</small></td>
+      <td>${escapeHTML(formatAdminDate(x.paidAt))}</td>
+      <td>
+        ${x.paymentStatus!=="已結清" && x.paymentStatus!=="已取消" ? `<button class="admin-btn admin-btn-primary" data-pay="${escapeHTML(x.orderId)}">標記已結清</button><button class="admin-btn admin-btn-light" data-extend="${escapeHTML(x.orderId)}">延長24小時</button>` : ""}
+        ${x.paymentStatus!=="已取消" ? `<button class="admin-btn admin-btn-light" data-cancel="${escapeHTML(x.orderId)}">取消</button>` : ""}
+      </td>
+    </tr>`).join("");
+}
+function formatAdminDate(value) { if(!value)return "—"; const d=new Date(value); return isNaN(d)?String(value):d.toLocaleString("zh-TW",{timeZone:"Asia/Taipei",hour12:false}); }
+document.getElementById("paymentsTableBody")?.addEventListener("click", async event => {
+  const b=event.target.closest("button"); if(!b)return;
+  try {
+    if(b.dataset.pay){ const order=paymentData.find(x=>x.orderId===b.dataset.pay); await apiPost({action:"adminUpdatePayment",token:adminToken,orderId:b.dataset.pay,amountPaid:order.amountDue,status:"已結清"}); alert("已更新為已結清"); }
+    if(b.dataset.extend){ await apiPost({action:"adminExtendHold",token:adminToken,orderId:b.dataset.extend,hours:24}); alert("已延長保留 24 小時"); }
+    if(b.dataset.cancel){ const reason=prompt("請輸入取消原因（必填）"); if(reason===null)return; const unexcused=confirm("是否屬於無故取消？按「確定」會累計一次，達兩次列入黑名單。"); await apiPost({action:"adminCancelRegistration",token:adminToken,orderId:b.dataset.cancel,reason,unexcused}); alert("報名已取消，座位已釋出"); }
+    await loadPayments();
+  } catch(error){alert("操作失敗："+error.message);}
+});
+document.getElementById("paymentTripFilter")?.addEventListener("change",renderPayments);
+document.getElementById("paymentStatusFilter")?.addEventListener("change",renderPayments);
 
 
 // =====================================================
@@ -1577,7 +1588,3 @@ tripFormCard.style.display = "none";
 
 // 登入前不載入任何後台資料
 initializeAdminLock();
-
-
-
-

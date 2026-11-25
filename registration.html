@@ -25,6 +25,9 @@
 .privacy-modal-body h2,.privacy-modal-body h3,.privacy-modal-body h4{color:#9b456f}
 .privacy-modal-footer{border-top:1px solid #f1d5e3;border-bottom:0;justify-content:center}
 @media(max-width:600px){.privacy-modal-dialog{width:96vw;height:92vh;margin:4vh auto}.privacy-modal-body{padding:16px}}
+
+.seat-picker{border:1px solid #e6c6d4;border-radius:14px;padding:14px;background:#fffafc}.seat-map{display:grid;grid-template-columns:1fr 1fr .48fr 1fr 1fr;gap:5px;max-width:720px;margin:12px auto}.seat-map button{min-height:38px;border:1px solid #8f1020;border-radius:4px;background:#980d20;color:#fff;font-weight:700;cursor:pointer}.seat-map button.selected{background:#e99a20;border-color:#b76a00;color:#241500}.seat-map button.taken{background:#777;border-color:#555;cursor:not-allowed}.seat-map .aisle{grid-column:3;grid-row:1 / span 12;background:#e7efff;border:1px solid #9fb3d8;display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;font-weight:bold;letter-spacing:8px}.seat-map .door{background:#e7efff;border:1px solid #9fb3d8;color:#17243b;display:flex;align-items:center;justify-content:center;font-weight:bold;min-height:38px}.seat-map .door.front{grid-column:4 / span 2;grid-row:1}.seat-map .door.safety{grid-column:1 / span 2;grid-row:8}.seat-map .door.middle{grid-column:4 / span 2;grid-row:7}.seat-legend{display:flex;gap:12px;flex-wrap:wrap;font-size:13px}.seat-legend span:before{content:'';display:inline-block;width:12px;height:12px;margin-right:5px;border-radius:2px;background:#980d20}.seat-legend .chosen:before{background:#e99a20}.seat-legend .unavailable:before{background:#777}.payment-info{background:#fff5fa;border:1px solid #f0c8dc;border-radius:12px;padding:16px;line-height:1.9}.payment-info a{overflow-wrap:anywhere}
+@media(max-width:560px){.seat-map{gap:3px}.seat-map button{font-size:11px;min-height:31px;padding:3px 1px}.seat-map .door{font-size:12px}}
 </style>
 </head>
 
@@ -275,6 +278,32 @@
                 </section>
 
 
+                
+                <!-- 遊覽車座位選擇（選填） -->
+                <section class="card">
+                    <h2>⑤ 遊覽車座位選擇（選填）</h2>
+                    <p>可依座位表選擇座位；不選座位也可以完成報名。每位旅客最多選一個座位，座位以成功送出報名的時間為準。</p>
+                    <div class="seat-picker">
+                      <div class="seat-legend"><span>可選</span><span class="chosen">已選擇</span><span class="unavailable">已被選／保留</span></div>
+                      <div id="seatMap" class="seat-map" aria-label="遊覽車座位表"></div>
+                      <p id="seatSelectionText">尚未選擇座位</p>
+                    </div>
+                    <p><strong>每台車會有部分差異，若現場車輛有所差異請聽從導遊安排</strong><br>導遊電話：0909686339　陳莉瀅</p>
+                </section>
+
+                <section class="card">
+                  <h2>⑥ 繳費方式</h2>
+                  <div class="form-group"><label for="paymentMethod">請選擇繳費方式 <span class="required">*</span></label>
+                    <select id="paymentMethod" name="paymentMethod" required><option value="">請選擇</option><option value="銀行轉帳">銀行轉帳</option><option value="面交繳費">面交繳費</option><option value="LINE Pay">LINE Pay</option></select></div>
+                  <div class="payment-info">
+                    <strong>💳 繳費方式</strong><br>
+                    <strong>1️⃣ 銀行轉帳</strong><br>銀行代碼：012（台北富邦）<br>帳號：00730168502204<br>戶名：陳莉瀅<br>【若要打備註請打自己名字謝謝，不然小幫手對不到帳喔，如：阿冷百香果】<br><br>
+                    <strong>2️⃣ 面交繳費</strong><br>常態時間1800-2000<br>全家便利商店－仁德太乙店<br><a href="https://share.google/fyFXGUdE4h3NwRncN" target="_blank" rel="noopener">Google Maps／分享連結</a><br>【採統一時間繳費，敬請見諒。】<br><br>
+                    <strong>3️⃣ LINE Pay</strong><br>個人 LINE Pay，請聯絡阿冷確認付款方式。
+                  </div>
+                  <p>送出報名後，若有選擇座位將保留 24 小時；請依所選方式付款，阿冷核對款項後會於後台標記「已結清」。若已付款但尚未核帳，請聯絡阿冷申請延長保留。</p>
+                </section>
+
                 <!-- 第六部分：個資告知事項 -->
                 <section class="card">
                     <h2>⑤ 個人資料蒐集、處理及利用告知事項</h2>
@@ -349,7 +378,7 @@
 
                 <section class="card">
 
-                    <h2>⑦ 照片／影片拍攝及使用同意</h2>
+                    <h2>⑧ 照片／影片拍攝及使用同意</h2>
 
 
                     <p>
@@ -411,7 +440,7 @@
 
                 <section class="card">
 
-                    <h2>⑧ 多人報名及代填確認</h2>
+                    <h2>⑨ 多人報名及代填確認</h2>
 
 
                     <p>
@@ -451,7 +480,7 @@
 
                 <section class="card">
 
-                    <h2>⑨ 報名資料確認</h2>
+                    <h2>⑩ 報名資料確認</h2>
 
 
                     <p>
