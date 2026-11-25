@@ -29,7 +29,14 @@
 .seat-picker{border:1px solid #e6c6d4;border-radius:14px;padding:14px;background:#fffafc}.seat-map{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(34px,.48fr) minmax(0,1fr) minmax(0,1fr);grid-template-rows:repeat(15,minmax(34px,auto));gap:4px;max-width:760px;margin:12px auto;align-items:stretch}.seat-map button{min-width:0;min-height:38px;border:1px solid #8f1020;border-radius:5px;background:#980d20;color:#fff;font-weight:700;cursor:pointer}.seat-map button.selected{background:#e99a20;border-color:#b76a00;color:#241500}.seat-map button.taken{background:#777;border-color:#555;cursor:not-allowed}.seat-map button.staff-only{background:#777;border-color:#555;color:#fff;cursor:not-allowed;opacity:.9}
 .seat-map .aisle{background:#e7efff;border:1px solid #9fb3d8;display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;font-weight:bold;letter-spacing:8px;color:#805064}.seat-map .door{background:#e7efff;border:1px solid #9fb3d8;color:#17243b;display:flex;align-items:center;justify-content:center;font-weight:bold;min-height:38px}.seat-map .door.front{font-size:22px}.seat-map .door.safety,.seat-map .door.middle{font-size:22px}.seat-legend{display:flex;gap:12px;flex-wrap:wrap;font-size:13px}.seat-legend span:before{content:'';display:inline-block;width:12px;height:12px;margin-right:5px;border-radius:2px;background:#980d20}.seat-legend .chosen:before{background:#e99a20}.seat-legend .unavailable:before{background:#777}.payment-info{background:#fff5fa;border:1px solid #f0c8dc;border-radius:12px;padding:16px;line-height:1.9}.payment-info a{overflow-wrap:anywhere}
 @media(max-width:560px){.seat-map{gap:3px}.seat-map button{font-size:11px;min-height:31px;padding:3px 1px}.seat-map .door{font-size:12px}}
-</style>
+
+        .seat-sync-note {
+            margin-top: 6px;
+            color: #8b6877;
+            font-size: 0.92em;
+        }
+
+    </style>
 </head>
 
 
@@ -282,8 +289,9 @@
                 
                 <!-- 遊覽車座位選擇（選填） -->
                 <section class="card">
-                    <h2>⑤ 遊覽車座位選擇（選填）</h2>
-                    <p>可依座位表選擇座位；不選座位也可以完成報名。每位旅客最多選一個座位，座位以成功送出報名的時間為準。</p>
+                    <h2>⑤ 遊覽車座位選擇</h2>
+                    <p>可依座位表選擇座位；每位旅客最多選一個座位，座位以成功送出報名的時間為準。</p>
+<p class="seat-sync-note">座位狀態每 3 秒自動更新一次，其他旅客選位或取消後，畫面可能有最多約 3 秒的同步延遲。</p>
                     <div class="seat-picker">
                       <div class="seat-legend"><span>可選</span><span class="chosen">已選擇</span><span class="unavailable">已被選／保留／工作人員專用</span></div>
                       <div id="seatMap" class="seat-map" aria-label="遊覽車座位表"></div>
@@ -604,7 +612,7 @@
          報名功能
     ========================= -->
 
-    <script src="registration.js?v=20261125-seat-sync-3s"></script>
+    <script src="registration.js?v=20261125-seat-sync-note"></script>
 
 
 
