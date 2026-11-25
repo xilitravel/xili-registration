@@ -312,10 +312,13 @@ function renderStaffSeatOptions(selected = []) {
     positions[`${row}-1`] = [1, row + 1];
     positions[`${row}-2`] = [2, row + 1];
   }
-  for (let row = 9; row <= 12; row++) {
+  for (let row = 9; row <= 11; row++) {
     positions[`${row}-3`] = [4, row - 1];
     positions[`${row}-4`] = [5, row - 1];
   }
+  // 最後一排右側 12-3、12-4 必須與左側 12-1、12-2 及中央 12-5 同列。
+  positions["12-3"] = [4, 13];
+  positions["12-4"] = [5, 13];
   positions["12-5"] = [3, 13];
 
   const doors = `
