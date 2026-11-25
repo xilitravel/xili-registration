@@ -12,20 +12,24 @@ const SEAT_IDS = [
 function renderSeatMap(occupied) {
   const root = document.getElementById("seatMap");
   if (!root) return;
-  const unavailable = new Set((occupied || []).filter(x => x.status !== "staff" && !x.mine).map(x => x.seatId));
+  const unavailable = new Set((occupied || []).filter(x => (x.status === "pending" || x.status === "confirmed") && !x.mine).map(x => String(x.seatId)));
+  const pendingSeats = new Set((occupied || []).filter(x => x.status === "pending" && !x.mine).map(x => String(x.seatId)));
+  const confirmedSeats = new Set((occupied || []).filter(x => x.status === "confirmed").map(x => String(x.seatId)));
   const apiStaffSeats = (occupied || []).filter(x => x.status === "staff").map(x => String(x.seatId));
   const staffSeats = new Set([...(selectedTrip?.staffSeatIds || []).map(String), ...apiStaffSeats]);
   const cells = [];
   const add = (id, col, row) => {
     const staff = staffSeats.has(id);
     const taken = unavailable.has(id);
+    const pending = pendingSeats.has(id);
+    const confirmed = confirmedSeats.has(id);
     const chosen = selectedSeatIds.includes(id);
     // 座位表先立即顯示；行程設定尚未載入前暫時不能點選，
     // 避免 2-1／2-2 等工作人員座位在設定讀取前被誤選。
     const tripReady = !!selectedTrip;
     const disabled = !tripReady || staff || taken;
-    const cls = [staff ? 'staff-only' : '', taken ? 'taken' : '', chosen ? 'selected' : '', !tripReady ? 'seat-loading' : ''].filter(Boolean).join(' ');
-    const title = !tripReady ? '行程資料載入中' : staff ? '工作人員專用' : taken ? '已被選／保留' : id;
+    const cls = [staff ? 'staff-only' : '', confirmed ? 'taken' : '', pending ? 'pending' : '', chosen ? 'selected' : '', !tripReady ? 'seat-loading' : ''].filter(Boolean).join(' ');
+    const title = !tripReady ? '行程資料載入中' : staff ? '工作人員專用' : confirmed ? '已結清' : pending ? '已送出報名／待付款' : id;
     cells.push(`<button type="button" data-seat="${id}" class="${cls}" ${disabled ? 'disabled' : ''} title="${title}" style="grid-column:${col};grid-row:${row}">${id}</button>`);
   };
   const door = (label, cls, col, row, rowSpan = 1) =>
@@ -52,17 +56,9 @@ function renderSeatMap(occupied) {
     else { alert('選擇座位數不可超過報名人數'); return; }
     refreshSeatSelection();
     saveRegistrationDraft();
-    try {
-      await postSeatAction(wasSelected ? "releaseSeatSelection" : "selectSeat", id);
-      if (wasSelected) seatHeldByThisTab.delete(id); else seatHeldByThisTab.add(id);
-      loadSeatStatus();
-    } catch (error) {
-      selectedSeatIds = wasSelected ? [...selectedSeatIds, id] : selectedSeatIds.filter(x => x !== id);
-      refreshSeatSelection();
-      saveRegistrationDraft();
-      alert(error.message || "座位同步失敗，請重新選擇");
-      loadSeatStatus();
-    }
+    // 橘色只代表目前這位客人在本頁暫選；尚未送出報名，不寫入後端、不占用他人座位。
+    refreshSeatSelection();
+    saveRegistrationDraft();
   }));
   refreshSeatSelection();
 }
@@ -172,16 +168,7 @@ function restoreRegistrationDraft() {
     draftRestored = true;
     saveRegistrationDraft();
     loadSeatStatus();
-    if (!currentOrderId && selectedSeatIds.length) {
-        selectedSeatIds.forEach(async seatId => {
-            try { await postSeatAction("selectSeat", seatId); seatHeldByThisTab.add(seatId); }
-            catch (error) {
-                selectedSeatIds = selectedSeatIds.filter(x => x !== seatId);
-                refreshSeatSelection();
-                saveRegistrationDraft();
-            }
-        });
-    }
+
 }
 
 registrationForm.addEventListener("input", saveRegistrationDraft);
@@ -1441,6 +1428,8 @@ registrationForm.addEventListener(
             currentOrderId = (result.data && result.data.orderId) || currentOrderId;
             seatHeldByThisTab.clear();
             saveRegistrationDraft();
+            // 報名成功後，座位狀態由後端訂單保留紀錄決定；此時已不是橘色暫選。
+            await loadSeatStatus();
 
             const registrationData = {
                 trip: {
