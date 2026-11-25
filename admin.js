@@ -293,8 +293,47 @@ const ADMIN_SEAT_IDS = ["1-1","1-2","1-3","1-4","2-1","2-2","2-3","2-4","3-1","3
 function renderStaffSeatOptions(selected = []) {
   const root = document.getElementById("tripStaffSeats");
   if (!root) return;
+
   const chosen = new Set((selected || []).map(String));
-  root.innerHTML = ADMIN_SEAT_IDS.map(id => `<label><input type="checkbox" class="staff-seat-option" value="${id}" ${chosen.has(id) ? "checked" : ""}> ${id}</label>`).join("");
+  root.classList.add("admin-seat-map");
+
+  // 欄位：左側 1、2｜走道 3｜右側 3、4
+  // 位置依前台遊覽車座位表排列；2-1、2-2 仍可依每團勾選／取消。
+  const positions = {};
+  for (let row = 1; row <= 7; row++) {
+    positions[`${row}-1`] = [1, row];
+    positions[`${row}-2`] = [2, row];
+  }
+  for (let row = 1; row <= 5; row++) {
+    positions[`${row}-3`] = [4, row + 1];
+    positions[`${row}-4`] = [5, row + 1];
+  }
+  for (let row = 8; row <= 12; row++) {
+    positions[`${row}-1`] = [1, row + 1];
+    positions[`${row}-2`] = [2, row + 1];
+  }
+  for (let row = 9; row <= 12; row++) {
+    positions[`${row}-3`] = [4, row - 1];
+    positions[`${row}-4`] = [5, row - 1];
+  }
+  positions["12-5"] = [3, 13];
+
+  const doors = `
+    <div class="admin-seat-door front">前門</div>
+    <div class="admin-seat-door safety">安全門</div>
+    <div class="admin-seat-door middle">中門</div>
+    <div class="admin-seat-aisle">走道</div>
+  `;
+
+  const seats = ADMIN_SEAT_IDS.map(id => {
+    const [column, row] = positions[id] || [1, 1];
+    return `<label class="admin-seat-option" style="grid-column:${column};grid-row:${row}" title="${id}">
+      <input type="checkbox" class="staff-seat-option" value="${id}" ${chosen.has(id) ? "checked" : ""}>
+      <span>${id}</span>
+    </label>`;
+  }).join("");
+
+  root.innerHTML = doors + seats;
 }
 function getStaffSeatIds() {
   return Array.from(document.querySelectorAll(".staff-seat-option:checked")).map(x => x.value);
