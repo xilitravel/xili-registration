@@ -1571,83 +1571,63 @@
   .dashboard-premium .dashboard-heading { height:auto !important; }
 }
 
+
 /* ==========================================================
-   v7｜依指定右圖校正圖示、按鈕與首屏比例
-   只重整總覽視覺；所有 data-section / data-jump-section 行為保留
+   FINAL REFERENCE MATCH — exact dashboard icon treatment
+   Desktop layout follows the approved 1645 × 900 reference.
 ========================================================== */
-@media (min-width: 701px) {
-  .admin-header { height:118px !important; min-height:118px !important; }
-  .admin-container {
-    width:calc(100% - 30px) !important;
-    margin:14px 15px 20px !important;
-    grid-template-columns:258px minmax(0,1fr) !important;
-    gap:18px !important;
-  }
-  .admin-sidebar { height:465px !important; min-height:465px !important; padding:12px 9px 10px !important; }
-  .admin-sidebar::before { height:465px !important; }
-  .admin-nav-btn {
-    height:66px !important; min-height:66px !important;
-    margin:0 0 3px !important; padding:10px 18px !important;
-    border:0 !important; border-radius:0 !important;
-    display:flex !important; align-items:center !important; gap:13px !important;
-    color:#4b3739 !important; background:transparent !important;
-    font-size:20px !important; font-weight:700 !important;
-    box-shadow:none !important;
-  }
-  .admin-nav-btn:first-of-type { border-radius:17px !important; }
-  .admin-nav-btn.active {
-    border:0 !important; border-radius:17px !important;
-    background:linear-gradient(105deg,#b94d68,#d66e83) !important;
-    color:#fff !important;
-    box-shadow:0 5px 12px rgba(150,57,78,.22),inset 0 1px 0 rgba(255,255,255,.32) !important;
-  }
-  .admin-nav-btn:hover:not(.active) { background:#fff0f2 !important; transform:none !important; }
-  .nav-icon { width:30px; height:30px; flex:0 0 30px; display:grid; place-items:center; color:#c45c79; }
-  .nav-icon svg { width:29px; height:29px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
-  .admin-nav-btn.active .nav-icon { color:#fff; }
-  .admin-nav-btn .icon-pencil { color:#27933d !important; }
-  .admin-nav-btn .icon-coins { color:#c89437 !important; }
-  .admin-nav-btn .icon-pin { color:#bd526c !important; }
-  .admin-nav-btn .icon-gear { color:#b45c7e !important; }
-  .admin-sidebar-character {
-    top:465px !important; left:0 !important; bottom:auto !important;
-    width:258px !important; height:300px !important;
-    object-fit:contain !important; object-position:center top !important;
-  }
-  .dashboard-premium .dashboard-heading { height:70px !important; min-height:70px !important; margin:0 0 10px !important; }
-  .dashboard-stats { gap:14px !important; margin-bottom:20px !important; }
-  .dashboard-stats .admin-stat-card { height:141px !important; min-height:141px !important; }
-  .dashboard-stats .stat-icon { border-radius:20px !important; }
-  .stat-svg { display:grid; place-items:center; width:100%; height:100%; }
-  .stat-svg svg { width:54px; height:54px; fill:none; stroke:currentColor; stroke-width:3; stroke-linecap:round; stroke-linejoin:round; }
-  .stat-rose .stat-svg svg { stroke:#cf557d; }
-  .stat-gold .stat-svg svg { stroke:#c18a3e; }
-  .stat-blue .stat-svg svg { stroke:#58a2bd; }
-  .stat-green .stat-svg svg { stroke:#4d9a48; }
-  .dashboard-panels { grid-template-columns:minmax(0,.70fr) minmax(0,1fr) !important; gap:16px !important; margin-bottom:16px !important; }
-  .dashboard-premium .dashboard-panel { height:303px !important; min-height:303px !important; padding:18px 20px !important; }
-  .registration-chart-layout { height:222px !important; min-height:222px !important; }
-  .registration-donut { width:215px !important; height:215px !important; flex:0 0 215px !important; }
-  .dashboard-quick-card { height:182px !important; min-height:182px !important; padding:17px 20px 16px !important; }
-  .dashboard-quick-actions { grid-template-columns:repeat(6,minmax(0,1fr)) !important; gap:13px !important; }
-  .quick-action { height:112px !important; min-height:112px !important; }
-  .quick-svg { width:45px; height:45px; display:grid; place-items:center; color:#bd5570 !important; }
-  .quick-svg svg { width:42px; height:42px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
-  .quick-action:nth-child(2) .quick-svg { color:#c55a70 !important; }
-  .quick-action:nth-child(4) .quick-svg { color:#c28d3e !important; }
-  .quick-action:nth-child(5) .quick-svg { color:#bb536d !important; }
-  .quick-action:nth-child(6) .quick-svg { color:#ad5975 !important; }
-  .panel-svg { display:inline-flex; width:30px; height:30px; align-items:center; justify-content:center; vertical-align:middle; color:#c45673; }
-  .panel-svg svg { width:28px; height:28px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.admin-body { overflow-x:hidden; }
+.admin-header { height:116px !important; min-height:116px !important; background-size:cover !important; background-position:center center !important; }
+.admin-container { width:calc(100% - 30px) !important; max-width:none !important; margin:16px 15px 24px !important; grid-template-columns:258px minmax(0,1fr) !important; gap:16px !important; }
+.admin-sidebar { min-height:calc(100vh - 140px) !important; padding:16px 12px 20px !important; }
+.admin-sidebar::before { height:440px !important; border-radius:24px !important; }
+.admin-nav-btn { display:flex !important; align-items:center !important; gap:13px !important; min-height:62px !important; height:62px !important; padding:10px 16px !important; font-size:18px !important; font-weight:700 !important; }
+.admin-nav-btn:first-of-type { margin-top:0 !important; }
+.admin-nav-btn span { display:inline-block; }
+.admin-nav-btn .ui-icon { width:32px; height:32px; flex:0 0 32px; stroke-width:2.7; }
+.admin-nav-btn[data-section="dashboard"] .ui-icon { color:#b84e68; }
+.admin-nav-btn[data-section="trips"] .ui-icon { color:#c45b73; }
+.admin-nav-btn[data-section="registrations"] .ui-icon { color:#23933f; }
+.admin-nav-btn[data-section="payments"] .ui-icon { color:#d59a2d; }
+.admin-nav-btn[data-section="boarding"] .ui-icon { color:#b64e68; }
+.admin-nav-btn[data-section="settings"] .ui-icon { color:#a94e68; }
+.admin-nav-btn.active .ui-icon { color:#fff !important; }
+.admin-sidebar-character { top:430px !important; bottom:auto !important; left:-2px !important; width:250px !important; height:280px !important; object-fit:contain !important; object-position:center top !important; }
+.dashboard-premium .dashboard-heading h2 { display:flex !important; align-items:center !important; gap:12px !important; }
+.dashboard-premium .dashboard-heading h2::before { content:none !important; }
+.dashboard-premium .dashboard-heading h2 .ui-icon { width:44px; height:44px; color:#a34358; stroke-width:2.7; }
+.dashboard-premium .dashboard-heading h2 span { display:inline-block; }
+.dashboard-updated .calendar-small { display:inline-flex; width:28px; height:28px; vertical-align:middle; margin-right:6px; }
+.dashboard-updated .calendar-small .ui-icon { width:28px; height:28px; stroke:#8f4c4c; stroke-width:2.7; }
+.dashboard-refresh-btn span { font-size:30px !important; }
+.dashboard-stats .stat-icon { background:rgba(255,255,255,.78) !important; }
+.dashboard-stats .stat-icon .ui-icon { width:58px; height:58px; stroke:currentColor; stroke-width:2.35; fill:none; stroke-linecap:round; stroke-linejoin:round; filter:drop-shadow(0 1px 1px rgba(80,40,40,.12)); }
+.dashboard-stats .stat-rose .stat-icon .ui-icon { color:#c65376; }
+.dashboard-stats .stat-gold .stat-icon .ui-icon { color:#bd8b48; }
+.dashboard-stats .stat-blue .stat-icon .ui-icon { color:#5c9cab; }
+.dashboard-stats .stat-green .stat-icon .ui-icon { color:#4e8c3d; }
+.panel-heading-icon { display:inline-flex !important; vertical-align:middle; width:31px; height:31px; margin-right:8px !important; }
+.panel-heading-icon .ui-icon { width:31px; height:31px; stroke:currentColor; stroke-width:2.6; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+.dashboard-quick-card .panel-heading-icon { width:34px; height:34px; color:#b27a3d; }
+.dashboard-quick-actions { grid-template-columns:repeat(6,minmax(0,1fr)) !important; }
+.quick-action { display:flex !important; flex-direction:column !important; align-items:center !important; justify-content:center !important; }
+.quick-action span { display:flex !important; align-items:center !important; justify-content:center !important; width:50px !important; height:50px !important; color:#b84f69 !important; }
+.quick-action span .ui-icon { width:48px; height:48px; stroke:currentColor; stroke-width:2.35; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+.quick-action:nth-child(4) span { color:#bd8b48 !important; }
+.quick-action strong { font-size:18px !important; line-height:1.2 !important; }
+.dashboard-premium .dashboard-panel, .dashboard-quick-card { border-color:#dfc5b5 !important; }
+@media (min-width:1251px) and (max-width:1750px) {
+  .dashboard-panels { grid-template-columns:minmax(0,.70fr) minmax(0,1fr) !important; }
+  .registration-donut { width:190px !important; height:190px !important; flex-basis:190px !important; }
+  .registration-chart-layout { gap:10px !important; }
 }
-@media (min-width:1251px) {
-  .dashboard-premium .dashboard-heading { height:70px !important; }
-  .dashboard-premium .dashboard-heading h2 { font-size:27px !important; }
-  .dashboard-stats .admin-stat-title { font-size:17px !important; }
-  .dashboard-stats .admin-stat-number { font-size:55px !important; }
+@media (max-width:1250px) and (min-width:701px) {
+  .admin-nav-btn { font-size:16px !important; gap:8px !important; }
+  .admin-nav-btn .ui-icon { width:25px; height:25px; flex-basis:25px; }
+  .dashboard-premium .dashboard-heading h2 .ui-icon { width:32px; height:32px; }
 }
-@media (min-width:701px) {
-  .dashboard-premium .dashboard-heading { height:57px !important; min-height:57px !important; margin-bottom:10px !important; }
-  .admin-sidebar { padding-top:30px !important; }
-  .admin-nav-btn { height:63px !important; min-height:63px !important; }
+@media (max-width:700px) {
+  .admin-nav-btn { display:inline-flex !important; width:auto !important; height:auto !important; min-height:42px !important; }
+  .admin-nav-btn .ui-icon { width:22px; height:22px; flex-basis:22px; }
+  .admin-sidebar-character { display:none !important; }
 }
