@@ -2189,3 +2189,136 @@ body.admin-body::after { content: none !important; display: none !important; }
     z-index: 1 !important;
   }
 }
+
+/* ==========================================================
+   最終版：後台桌面版面收整
+   - 左側白色選單卡片只包住六個選單，不再留下多餘空白格
+   - 人物縮小並獨立放在選單卡片下方
+   - 桌面版內容不產生整頁水平捲動
+   - 保留原有配色、圖示、功能與資料結構
+========================================================== */
+@media (min-width: 1251px) {
+  html, body.admin-body {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  .admin-container {
+    width: calc(100% - 30px) !important;
+    max-width: none !important;
+    margin: 12px 15px 24px !important;
+    padding: 0 !important;
+    grid-template-columns: 230px minmax(0, 1fr) !important;
+    gap: 14px !important;
+    align-items: start !important;
+  }
+
+  .admin-sidebar {
+    width: 230px !important;
+    height: 408px !important;
+    min-height: 408px !important;
+    padding: 12px 10px !important;
+    overflow: visible !important;
+  }
+
+  .admin-sidebar::before {
+    inset: 0 !important;
+    height: 408px !important;
+  }
+
+  .admin-sidebar .admin-nav-btn {
+    width: 100% !important;
+    height: 62px !important;
+    min-height: 62px !important;
+    margin: 0 !important;
+    padding: 8px 12px !important;
+  }
+
+  .admin-sidebar-character {
+    position: absolute !important;
+    top: 416px !important;
+    bottom: auto !important;
+    left: 12px !important;
+    width: 168px !important;
+    height: 190px !important;
+    max-width: calc(100% - 24px) !important;
+    object-fit: contain !important;
+    object-position: center top !important;
+    z-index: 2 !important;
+    pointer-events: none !important;
+  }
+
+  .admin-main,
+  .dashboard-premium {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+}
+
+@media (min-width: 701px) and (max-width: 1250px) {
+  html, body.admin-body {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  .admin-container {
+    width: calc(100% - 24px) !important;
+    max-width: none !important;
+    margin: 10px 12px 24px !important;
+    padding: 0 !important;
+    grid-template-columns: 195px minmax(0, 1fr) !important;
+    gap: 12px !important;
+    align-items: start !important;
+  }
+
+  .admin-sidebar {
+    width: 195px !important;
+    height: 390px !important;
+    min-height: 390px !important;
+    padding: 10px 8px !important;
+    overflow: visible !important;
+  }
+
+  .admin-sidebar::before {
+    inset: 0 !important;
+    height: 390px !important;
+  }
+
+  .admin-sidebar .admin-nav-btn {
+    width: 100% !important;
+    height: 60px !important;
+    min-height: 60px !important;
+    margin: 0 !important;
+    padding: 7px 8px !important;
+    font-size: 14px !important;
+  }
+
+  .admin-sidebar .admin-nav-btn > svg.ui-icon {
+    width: 28px !important;
+    height: 28px !important;
+    margin-right: 6px !important;
+    flex: 0 0 28px !important;
+  }
+
+  .admin-sidebar-character {
+    position: absolute !important;
+    top: 398px !important;
+    bottom: auto !important;
+    left: 8px !important;
+    width: 150px !important;
+    height: 170px !important;
+    max-width: calc(100% - 16px) !important;
+    object-fit: contain !important;
+    object-position: center top !important;
+    z-index: 2 !important;
+    pointer-events: none !important;
+  }
+
+  .admin-main,
+  .dashboard-premium {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+}
