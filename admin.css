@@ -330,3 +330,264 @@
   padding-bottom: 0 !important;
   line-height: normal !important;
 }
+
+
+/* =====================================================
+   囍莉旅遊｜成熟輕奢玫瑰粉後台（主內容區）
+   設計原則：保留既有左上品牌區、左側導覽與登入封面；
+   僅精緻化右側管理內容、統計卡、表單與資料表。
+===================================================== */
+
+.admin-main {
+  color: #51434a;
+}
+
+.admin-main .admin-section > h2,
+.admin-main .admin-section-header h2 {
+  color: #8f405e;
+  letter-spacing: .025em;
+  font-weight: 850;
+}
+
+.admin-main .admin-description {
+  color: #8c777e;
+  line-height: 1.75;
+}
+
+/* 統計卡：保留四種不同色系，降低飽和度與裝飾感 */
+.admin-main .admin-stats {
+  gap: 16px;
+  margin: 20px 0 26px;
+}
+
+.admin-main .admin-stat-card {
+  min-height: 124px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: left;
+  padding: 21px 22px;
+  border-radius: 17px;
+  border: 1px solid rgba(220, 194, 204, .72);
+  box-shadow: 0 5px 16px rgba(99, 63, 78, .055);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.admin-main .admin-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 9px 22px rgba(99, 63, 78, .09);
+}
+
+.admin-main .admin-stat-card::after {
+  content: "";
+  width: 76px;
+  height: 76px;
+  right: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: rgba(255,255,255,.28);
+  font-size: 0;
+}
+
+.admin-main .admin-stat-card:nth-child(1) {
+  background: linear-gradient(135deg, #fff7f8, #f8e4e9);
+  border-color: #efd1da;
+}
+.admin-main .admin-stat-card:nth-child(1) .admin-stat-number { color: #bd5579; }
+
+.admin-main .admin-stat-card:nth-child(2) {
+  background: linear-gradient(135deg, #fffaf1, #f7edda);
+  border-color: #eadfc7;
+}
+.admin-main .admin-stat-card:nth-child(2) .admin-stat-number { color: #a77a3f; }
+
+.admin-main .admin-stat-card:nth-child(3) {
+  background: linear-gradient(135deg, #f6fbfd, #e6f0f5);
+  border-color: #d5e4eb;
+}
+.admin-main .admin-stat-card:nth-child(3) .admin-stat-number { color: #527f9b; }
+
+.admin-main .admin-stat-card:nth-child(4) {
+  background: linear-gradient(135deg, #f7fbf5, #e8f1e4);
+  border-color: #d8e7d1;
+}
+.admin-main .admin-stat-card:nth-child(4) .admin-stat-number { color: #638b61; }
+
+.admin-main .admin-stat-title {
+  position: relative;
+  z-index: 1;
+  color: #78666d;
+  font-size: 14px;
+  letter-spacing: .04em;
+  margin-bottom: 7px;
+}
+
+.admin-main .admin-stat-number {
+  position: relative;
+  z-index: 1;
+  font-size: 36px;
+  line-height: 1.1;
+  font-weight: 850;
+}
+
+/* 內容卡片：細邊框、柔和陰影，避免過度粉色 */
+.admin-main .admin-card,
+.admin-main .admin-filter {
+  background: rgba(255,255,255,.94);
+  border: 1px solid #eadde1;
+  border-radius: 17px;
+  box-shadow: 0 5px 18px rgba(86, 58, 69, .055);
+}
+
+.admin-main .admin-card {
+  padding: 24px 25px;
+  margin-bottom: 22px;
+}
+
+.admin-main .admin-card h3 {
+  color: #914760;
+  font-size: 18px;
+  font-weight: 850;
+  letter-spacing: .02em;
+  margin-bottom: 18px;
+}
+
+.admin-main .admin-filter {
+  padding: 20px 22px;
+  gap: 18px;
+}
+
+.admin-main .admin-form-group label {
+  color: #66515a;
+  font-size: 14px;
+  font-weight: 750;
+}
+
+.admin-main .admin-form-group input,
+.admin-main .admin-form-group select,
+.admin-main .admin-form-group textarea {
+  border: 1px solid #e5d6dc;
+  border-radius: 10px;
+  background: #fffefd;
+  color: #51434a;
+  min-height: 43px;
+  transition: border-color .18s ease, box-shadow .18s ease;
+}
+
+.admin-main .admin-form-group input:focus,
+.admin-main .admin-form-group select:focus,
+.admin-main .admin-form-group textarea:focus {
+  border-color: #c77a96;
+  box-shadow: 0 0 0 3px rgba(199,122,150,.12);
+}
+
+/* 按鈕：沉穩玫瑰色與中性色 */
+.admin-main .admin-btn {
+  border-radius: 9px;
+  padding: 10px 16px;
+  box-shadow: none;
+  font-weight: 750;
+  letter-spacing: .015em;
+}
+
+.admin-main .admin-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(86,58,69,.09);
+}
+
+.admin-main .admin-btn-primary {
+  background: linear-gradient(135deg, #bd6684, #a94f70);
+  color: #fff;
+}
+.admin-main .admin-btn-primary:hover {
+  background: linear-gradient(135deg, #ad5877, #954461);
+}
+
+.admin-main .admin-btn-light {
+  background: #fff;
+  color: #86566a;
+  border: 1px solid #e5cfd8;
+}
+
+.admin-main .admin-btn-danger {
+  background: #b96d72;
+  color: #fff;
+}
+
+.admin-main .admin-btn-success {
+  background: #668b78;
+  color: #fff;
+}
+
+/* 表格：清楚、成熟，避免大面積亮粉 */
+.admin-main .admin-table {
+  border-spacing: 0;
+  border-collapse: separate;
+  min-width: 700px;
+}
+
+.admin-main .admin-table th {
+  background: #f4e8ec;
+  color: #805267;
+  font-weight: 800;
+  padding: 13px 14px;
+  border-bottom: 1px solid #e8d7de;
+}
+
+.admin-main .admin-table td {
+  color: #594b51;
+  padding: 13px 14px;
+  border-bottom: 1px solid #f0e8eb;
+}
+
+.admin-main .admin-table tbody tr:nth-child(even) {
+  background: #fdfafb;
+}
+
+.admin-main .admin-table tbody tr:hover {
+  background: #f8f0f3;
+}
+
+.admin-main .admin-table th:first-child { border-radius: 9px 0 0 0; }
+.admin-main .admin-table th:last-child { border-radius: 0 9px 0 0; }
+
+.admin-main .empty-data {
+  color: #9b8a90;
+  padding: 32px 16px !important;
+}
+
+.admin-main .admin-warning {
+  background: #fbf6ec;
+  border: 1px solid #eadfc9;
+  color: #806c4b;
+  border-radius: 12px;
+  line-height: 1.75;
+}
+
+/* 工作人員座位圖維持原本功能與色彩 */
+.admin-main #tripStaffSeats.admin-seat-map {
+  box-shadow: none;
+}
+
+/* 小螢幕 */
+@media (max-width: 900px) {
+  .admin-main .admin-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 520px) {
+  .admin-main .admin-card {
+    padding: 18px 15px;
+  }
+  .admin-main .admin-filter {
+    grid-template-columns: 1fr;
+  }
+  .admin-main .admin-stat-card {
+    min-height: 108px;
+    padding: 17px 15px;
+  }
+  .admin-main .admin-stat-number {
+    font-size: 30px;
+  }
+}
