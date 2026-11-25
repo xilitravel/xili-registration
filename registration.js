@@ -31,13 +31,13 @@ function renderSeatMap(occupied) {
   let html = door('前門', 'front', '4 / span 2', 1, 2)
     + door('安全門', 'safety', '1 / span 2', 8, 2)
     + door('中門', 'middle', '4 / span 2', 8, 3)
-    + '<div class="aisle" style="grid-column:3;grid-row:1 / span 14">走道</div>';
+    + '<div class="aisle" style="grid-column:3;grid-row:1 / span 13">走道</div>';
 
   for (let r = 1; r <= 7; r++) { add(`${r}-1`, 1, r); add(`${r}-2`, 2, r); }
   for (let r = 8; r <= 12; r++) { add(`${r}-1`, 1, r + 2); add(`${r}-2`, 2, r + 2); }
   for (let r = 1; r <= 5; r++) { add(`${r}-3`, 4, r + 2); add(`${r}-4`, 5, r + 2); }
   for (let r = 9; r <= 12; r++) { add(`${r}-3`, 4, r + 2); add(`${r}-4`, 5, r + 2); }
-  add('12-5', 3, 15);
+  add('12-5', 3, 14);
 
   root.innerHTML = html + cells.join('');
   root.querySelectorAll('button[data-seat]').forEach(btn => btn.addEventListener('click', () => {
@@ -130,136 +130,121 @@ document.addEventListener("keydown", function(event) {
    1. 載入行程資料
 ===================================================== */
 
-async function loadSelectedTrip() {
+const TRIPS_CACHE_KEY = "xili_trips_cache_v1";
 
+function normalizeSelectedTrip(apiTrip) {
+    return {
+        id: apiTrip.id || apiTrip.tripId,
+        sheetName: apiTrip.sheetName || apiTrip.worksheetName || apiTrip.title || apiTrip.name || "",
+        title: apiTrip.title || apiTrip.name || "未命名行程",
+        date: apiTrip.date || "",
+        dateText: apiTrip.dateText || apiTrip.date || "待設定",
+        price: apiTrip.price || 0,
+        priceText: apiTrip.priceText || (apiTrip.price != null ? "$" + Number(apiTrip.price).toLocaleString() : "待設定"),
+        status: apiTrip.status || "",
+        maxPeople: apiTrip.maxPeople || 0,
+        registeredPeople: apiTrip.registeredPeople || 0,
+        deadline: apiTrip.deadline || "",
+        departure: apiTrip.departure || "台南",
+        boardingPoints: apiTrip.boardingPoints || [],
+        description: apiTrip.description || "",
+        tripDays: Number(apiTrip.tripDays || apiTrip.days || 1),
+        lodging: apiTrip.lodging === true || apiTrip.tripLodging === "true" || apiTrip.hasLodging === true,
+        roomTypes: apiTrip.roomTypes || apiTrip.rooms || [],
+        meals: apiTrip.meals || apiTrip.mealSettings || [],
+        staffSeatIds: Array.isArray(apiTrip.staffSeatIds) ? apiTrip.staffSeatIds.map(String) : []
+    };
+}
+
+function showSelectedTrip(apiTrip) {
+    if (!apiTrip) return false;
+    selectedTrip = normalizeSelectedTrip(apiTrip);
+    registrationForm.style.display = "";
+    renderSelectedTrip();
+    return true;
+}
+
+async function loadBoardingPointsInBackground() {
     try {
-
-        // 行程 JSON 與上車地點彼此獨立，平行讀取避免兩次網路等待相加。
-        // 不再每次加上時間戳強制繞過快取，減少 GitHub Pages 的重複下載。
-        const [tripResponse, boardingResult] = await Promise.all([
-            fetch(TRIPS_JSON_URL, { cache: "no-cache" }).then(response => {
-                if (!response.ok) throw new Error("讀取行程資料失敗（HTTP " + response.status + "）");
-                return response.json();
-            }),
-            fetch(BOARDING_API_URL).then(response => response.json()).catch(error => {
-                console.error("載入上車地點失敗：", error);
-                return null;
-            })
-        ]);
-        const trips = tripResponse;
-        if (boardingResult?.success && Array.isArray(boardingResult.data)) {
-            boardingPointsList = boardingResult.data;
-        } else if (Array.isArray(boardingResult?.boardingPoints)) {
-            boardingPointsList = boardingResult.boardingPoints;
+        const response = await fetch(BOARDING_API_URL);
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        const result = await response.json();
+        if (result?.success && Array.isArray(result.data)) {
+            boardingPointsList = result.data;
+        } else if (Array.isArray(result?.boardingPoints)) {
+            boardingPointsList = result.boardingPoints;
         } else {
             boardingPointsList = [];
         }
+    } catch (error) {
+        console.warn("載入上車地點失敗：", error);
+        boardingPointsList = [];
+    }
+}
 
+async function loadSelectedTrip() {
+    let renderedFromCache = false;
 
-        /* 確認行程 API */
-
-        if (!Array.isArray(trips)) {
-            throw new Error("trips.json 格式錯誤");
+    // 先用上次成功載入的行程快取立即顯示，避免每次進頁面都停在載入畫面。
+    try {
+        const cached = JSON.parse(localStorage.getItem(TRIPS_CACHE_KEY) || "null");
+        if (Array.isArray(cached)) {
+            const cachedTrip = cached.find(trip => String(trip.id || trip.tripId) === String(selectedTripId));
+            if (cachedTrip) {
+                renderedFromCache = showSelectedTrip(cachedTrip);
+                if (renderedFromCache) loadSeatStatus();
+            }
         }
+    } catch (error) {
+        console.warn("行程快取讀取失敗：", error);
+    }
 
-        const apiTrip = trips.find(function(trip) {
+    // 上車地點與座位狀態都在背景載入，不阻擋行程卡片顯示。
+    loadBoardingPointsInBackground();
 
-            return String(trip.id || trip.tripId) === String(selectedTripId);
+    try {
+        const response = await fetch(TRIPS_JSON_URL, { cache: "default" });
+        if (!response.ok) throw new Error("讀取行程資料失敗（HTTP " + response.status + "）");
+        const trips = await response.json();
+        if (!Array.isArray(trips)) throw new Error("trips.json 格式錯誤");
 
-        });
+        // 保存最新行程快取，下一次進入報名頁即可先顯示。
+        try { localStorage.setItem(TRIPS_CACHE_KEY, JSON.stringify(trips)); }
+        catch (error) { console.warn("無法保存行程快取：", error); }
 
-
+        const apiTrip = trips.find(trip => String(trip.id || trip.tripId) === String(selectedTripId));
         if (!apiTrip) {
-
             selectedTripContainer.innerHTML = `
                 <div class="empty-trip">
                     <h3>⚠️ 找不到旅遊行程</h3>
                     <p>請回到旅遊行程頁面，重新選擇想報名的行程。</p>
                     <a href="trips.html">返回旅遊行程</a>
-                </div>
-            `;
-
+                </div>`;
             registrationForm.style.display = "none";
-
             return;
-
         }
 
-
-        /* 整理行程資料 */
-
-        selectedTrip = {
-
-            id: apiTrip.id || apiTrip.tripId,
-
-            sheetName: apiTrip.sheetName || apiTrip.worksheetName || apiTrip.title || apiTrip.name || "",
-
-            title: apiTrip.title || apiTrip.name || "未命名行程",
-
-            date: apiTrip.date || "",
-
-            dateText: apiTrip.dateText || apiTrip.date || "待設定",
-
-            price: apiTrip.price || 0,
-
-            priceText: apiTrip.priceText || (
-                apiTrip.price != null
-                    ? "$" + apiTrip.price
-                    : "待設定"
-            ),
-
-            status: apiTrip.status || "",
-
-            maxPeople: apiTrip.maxPeople || 0,
-
-            registeredPeople: apiTrip.registeredPeople || 0,
-
-            deadline: apiTrip.deadline || "",
-
-            departure: apiTrip.departure || "台南",
-
-            boardingPoints: apiTrip.boardingPoints || [],
-
-            description: apiTrip.description || "",
-
-            tripDays: Number(apiTrip.tripDays || apiTrip.days || 1),
-
-            lodging:
-                apiTrip.lodging === true ||
-                apiTrip.tripLodging === "true" ||
-                apiTrip.hasLodging === true,
-
-            roomTypes: apiTrip.roomTypes || apiTrip.rooms || [],
-
-            meals: apiTrip.meals || apiTrip.mealSettings || [],
-            staffSeatIds: Array.isArray(apiTrip.staffSeatIds) ? apiTrip.staffSeatIds.map(String) : []
-
-        };
-
-
-        registrationForm.style.display = "";
-
-        renderSelectedTrip();
+        // 若已有快取先顯示，收到最新資料後再靜默更新畫面。
+        showSelectedTrip(apiTrip);
         loadSeatStatus();
-
-
     } catch (error) {
-
         console.error("載入報名行程失敗：", error);
-
-        selectedTripContainer.innerHTML = `
-            <div class="empty-trip">
-                <h3>⚠️ 行程資料載入失敗</h3>
-                <p>請重新整理頁面，或稍後再試。</p>
-            </div>
-        `;
-
-        registrationForm.style.display = "none";
-
+        if (!renderedFromCache) {
+            selectedTripContainer.innerHTML = `
+                <div class="empty-trip">
+                    <h3>⚠️ 行程資料載入失敗</h3>
+                    <p>請確認網路連線後重新整理頁面。</p>
+                </div>`;
+            registrationForm.style.display = "none";
+        } else {
+            // 快取資料仍可供查看，提醒使用者資料可能不是最新版本。
+            const note = document.createElement("small");
+            note.textContent = "目前顯示上次載入的行程資料，最新資料暫時無法更新。";
+            note.style.color = "#9b456f";
+            selectedTripContainer.appendChild(note);
+        }
     }
-
 }
-
 
 /* =====================================================
    2. 顯示選擇的行程
