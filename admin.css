@@ -241,8 +241,11 @@
   box-shadow: none;
 }
 #adminLoginPassword:focus {
-  background: rgba(255,255,255,.76);
-  box-shadow: 0 0 0 3px rgba(224, 91, 143, .28);
+  /* 插畫本身已經有輸入框外框；焦點時只顯示游標，不再加第二圈邊框 */
+  background: transparent;
+  border: 0;
+  outline: 0;
+  box-shadow: none;
 }
 #adminLoginPassword::placeholder { color: transparent; }
 #adminLoginSubmit {
