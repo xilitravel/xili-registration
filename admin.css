@@ -1691,3 +1691,144 @@
   width: 31px !important;
   height: 31px !important;
 }
+
+
+/* ==========================================================
+   FIX v2｜強制修正 SVG 黑塊、尺寸與桌面首屏比例
+   此區放在檔案最末端，確保不被前面的舊版規則覆蓋。
+========================================================== */
+.admin-body svg.ui-icon {
+  display: inline-block !important;
+  width: 1em !important;
+  height: 1em !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 2.5 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  vertical-align: middle !important;
+  flex: 0 0 auto !important;
+}
+.admin-body svg.ui-icon path,
+.admin-body svg.ui-icon rect,
+.admin-body svg.ui-icon circle,
+.admin-body svg.ui-icon ellipse,
+.admin-body svg.ui-icon line,
+.admin-body svg.ui-icon polyline,
+.admin-body svg.ui-icon polygon {
+  fill: none !important;
+  stroke: currentColor !important;
+  vector-effect: non-scaling-stroke;
+}
+.admin-body svg.ui-icon [fill="#fffaf7"] { fill: #fffaf7 !important; }
+.admin-sidebar .admin-nav-btn > svg.ui-icon { width: 38px !important; height: 38px !important; }
+.dashboard-premium .dashboard-heading h2 > svg.ui-icon { width: 30px !important; height: 30px !important; }
+.dashboard-stats .stat-icon > svg.ui-icon { width: 42px !important; height: 42px !important; }
+.dashboard-panel-heading .panel-heading-icon svg.ui-icon,
+.dashboard-panel-heading h3 > svg.ui-icon { width: 25px !important; height: 25px !important; }
+.dashboard-quick-actions .quick-action > span > svg.ui-icon { width: 30px !important; height: 30px !important; }
+
+@media (min-width: 1251px) {
+  .admin-header { height: 116px !important; min-height: 116px !important; }
+  .admin-container {
+    width: calc(100% - 30px) !important;
+    max-width: none !important;
+    margin: 12px 15px 16px !important;
+    padding: 0 !important;
+    grid-template-columns: 245px minmax(0,1fr) !important;
+    gap: 14px !important;
+    align-items: start !important;
+  }
+  .admin-sidebar {
+    min-height: 0 !important;
+    height: 690px !important;
+    padding: 14px 12px 250px !important;
+  }
+  .admin-sidebar::before { height: 420px !important; }
+  .admin-sidebar-character {
+    top: 430px !important;
+    bottom: auto !important;
+    left: -2px !important;
+    width: 235px !important;
+    height: 250px !important;
+  }
+  .admin-nav-btn { min-height: 56px !important; height: 56px !important; padding: 9px 12px !important; font-size: 16px !important; }
+  .dashboard-premium .dashboard-heading {
+    min-height: 54px !important;
+    margin: 0 0 10px !important;
+    padding: 0 2px 6px !important;
+  }
+  .dashboard-premium .dashboard-heading h2 { font-size: 24px !important; }
+  .dashboard-premium .admin-description { margin: 4px 0 0 !important; font-size: 13px !important; }
+  .dashboard-stats {
+    grid-template-columns: repeat(4,minmax(0,1fr)) !important;
+    gap: 11px !important;
+    margin: 0 0 12px !important;
+  }
+  .dashboard-stats .admin-stat-card {
+    height: 108px !important;
+    min-height: 108px !important;
+    padding: 11px 13px !important;
+    gap: 11px !important;
+    border-radius: 18px !important;
+  }
+  .dashboard-stats .admin-stat-card::after { width: 70px !important; height: 70px !important; }
+  .dashboard-stats .stat-icon {
+    flex: 0 0 58px !important;
+    width: 58px !important;
+    height: 58px !important;
+    border-radius: 15px !important;
+  }
+  .dashboard-stats .admin-stat-title { font-size: 14px !important; margin: 0 0 4px !important; }
+  .dashboard-stats .admin-stat-number { font-size: 39px !important; line-height: 1 !important; }
+  .dashboard-panels {
+    grid-template-columns: minmax(0,.9fr) minmax(0,1.3fr) !important;
+    gap: 12px !important;
+    margin: 0 0 12px !important;
+  }
+  .dashboard-premium .dashboard-panel {
+    height: 250px !important;
+    min-height: 250px !important;
+    padding: 14px 16px !important;
+    border-radius: 20px !important;
+  }
+  .dashboard-panel-heading { min-height: 36px !important; padding-bottom: 8px !important; margin-bottom: 9px !important; }
+  .dashboard-panel-heading h3 { font-size: 18px !important; }
+  .registration-chart-layout { height: 185px !important; min-height: 185px !important; gap: 12px !important; }
+  .registration-donut { width: 166px !important; height: 166px !important; flex: 0 0 166px !important; }
+  .registration-donut::before { inset: 16px !important; }
+  .donut-center span { font-size: 14px !important; }
+  .donut-center strong { font-size: 36px !important; }
+  .registration-legend > div { padding: 10px 0 !important; font-size: 13px !important; gap: 6px !important; }
+  .registration-legend strong { font-size: 13px !important; }
+  .registration-legend small { font-size: 11px !important; }
+  .dashboard-table-wrap { height: 185px !important; overflow: hidden !important; }
+  .dashboard-recent-table { min-width: 0 !important; width: 100% !important; font-size: 12px !important; }
+  .dashboard-recent-table th { padding: 8px 6px !important; font-size: 12px !important; }
+  .dashboard-recent-table td { padding: 7px 6px !important; font-size: 12px !important; }
+  .payment-pill { padding: 3px 7px !important; font-size: 11px !important; }
+  .dashboard-quick-card {
+    height: 132px !important;
+    min-height: 132px !important;
+    margin: 0 !important;
+    padding: 12px 16px !important;
+    border-radius: 20px !important;
+  }
+  .dashboard-quick-card .dashboard-panel-heading { min-height: 32px !important; padding-bottom: 7px !important; margin-bottom: 8px !important; }
+  .dashboard-quick-actions { grid-template-columns: repeat(6,minmax(0,1fr)) !important; gap: 9px !important; }
+  .quick-action { height: 76px !important; min-height: 76px !important; padding: 6px 4px !important; gap: 4px !important; border-radius: 14px !important; }
+  .dashboard-quick-actions .quick-action > span { width: 40px !important; height: 40px !important; flex: 0 0 40px !important; border-radius: 12px !important; }
+  .dashboard-quick-actions .quick-action > span > svg.ui-icon { width: 25px !important; height: 25px !important; }
+  .quick-action strong { font-size: 13px !important; }
+  .dashboard-warning { display: none !important; }
+}
+
+@media (max-width: 1250px) and (min-width: 701px) {
+  .admin-body svg.ui-icon { max-width: 100% !important; }
+  .dashboard-premium .dashboard-panel { height: 250px !important; min-height: 250px !important; }
+  .registration-donut { width: 150px !important; height: 150px !important; flex-basis: 150px !important; }
+  .dashboard-quick-card { height: 130px !important; min-height: 130px !important; }
+}
