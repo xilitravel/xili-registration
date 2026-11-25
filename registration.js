@@ -12,8 +12,9 @@ const SEAT_IDS = [
 function renderSeatMap(occupied) {
   const root = document.getElementById("seatMap");
   if (!root) return;
-  const unavailable = new Set((occupied || []).map(x => x.seatId));
-  const staffSeats = new Set((selectedTrip?.staffSeatIds || []).map(String));
+  const unavailable = new Set((occupied || []).filter(x => x.status !== "staff" && !x.mine).map(x => x.seatId));
+  const apiStaffSeats = (occupied || []).filter(x => x.status === "staff").map(x => String(x.seatId));
+  const staffSeats = new Set([...(selectedTrip?.staffSeatIds || []).map(String), ...apiStaffSeats]);
   const cells = [];
   const add = (id, col, row) => {
     const staff = staffSeats.has(id);
@@ -43,12 +44,25 @@ function renderSeatMap(occupied) {
   add('12-5', 3, 14);
 
   root.innerHTML = html + cells.join('');
-  root.querySelectorAll('button[data-seat]').forEach(btn => btn.addEventListener('click', () => {
+  root.querySelectorAll('button[data-seat]').forEach(btn => btn.addEventListener('click', async () => {
     const id = btn.dataset.seat;
-    if (selectedSeatIds.includes(id)) selectedSeatIds = selectedSeatIds.filter(x => x !== id);
+    const wasSelected = selectedSeatIds.includes(id);
+    if (wasSelected) selectedSeatIds = selectedSeatIds.filter(x => x !== id);
     else if (selectedSeatIds.length < Number(peopleCountSelect.value || 1)) selectedSeatIds.push(id);
-    else alert('選擇座位數不可超過報名人數');
+    else { alert('選擇座位數不可超過報名人數'); return; }
     refreshSeatSelection();
+    saveRegistrationDraft();
+    try {
+      await postSeatAction(wasSelected ? "releaseSeatSelection" : "selectSeat", id);
+      if (wasSelected) seatHeldByThisTab.delete(id); else seatHeldByThisTab.add(id);
+      loadSeatStatus();
+    } catch (error) {
+      selectedSeatIds = wasSelected ? [...selectedSeatIds, id] : selectedSeatIds.filter(x => x !== id);
+      refreshSeatSelection();
+      saveRegistrationDraft();
+      alert(error.message || "座位同步失敗，請重新選擇");
+      loadSeatStatus();
+    }
   }));
   refreshSeatSelection();
 }
@@ -57,15 +71,31 @@ function refreshSeatSelection(){
   document.querySelectorAll('#seatMap button[data-seat]').forEach(b=>b.classList.toggle('selected',selectedSeatIds.includes(b.dataset.seat)));
   const el=document.getElementById('seatSelectionText');if(el)el.textContent=selectedSeatIds.length?`已選座位：${selectedSeatIds.join('、')}`:'尚未選擇座位';
 }
+
+async function postSeatAction(action, seatId) {
+    const response = await fetch(SUBMIT_API_URL, {
+        method: "POST",
+        headers: {"Content-Type":"text/plain;charset=utf-8"},
+        body: JSON.stringify({action, tripId:selectedTrip.id, seatId, sessionId:seatSessionId, orderId:currentOrderId || ""})
+    });
+    const result = await response.json();
+    if (!result || result.success !== true) throw new Error(result?.message || "座位同步失敗");
+    return result.data;
+}
+
 let seatStatusLoading = false;
 async function loadSeatStatus(){
   if(!selectedTrip?.id || seatStatusLoading)return;
   seatStatusLoading = true;
   try{
-    const url = `${SUBMIT_API_URL}?action=seatStatus&tripId=${encodeURIComponent(selectedTrip.id)}&_=${Date.now()}`;
+    const url = `${SUBMIT_API_URL}?action=seatStatus&tripId=${encodeURIComponent(selectedTrip.id)}&sessionId=${encodeURIComponent(seatSessionId)}&orderId=${encodeURIComponent(currentOrderId || "")}&_=${Date.now()}`;
     const r = await fetch(url, { cache: "no-store" });
     const j = await r.json();
-    if(j.success) renderSeatMap(j.data || []);
+    if(j.success) {
+      const status = j.data || [];
+      selectedTrip.staffSeatIds = status.filter(x => x.status === "staff").map(x => String(x.seatId));
+      renderSeatMap(status);
+    }
     else console.warn("座位狀態讀取失敗：", j.message || "API 回傳失敗");
   }catch(e){
     console.warn("座位狀態讀取失敗",e);
@@ -89,6 +119,75 @@ const peopleCountSelect = document.getElementById("peopleCount");
 const travelerContainer = document.getElementById("travelerContainer");
 const boardingContainer = document.getElementById("boardingContainer");
 const submitButton = document.getElementById("submitButton");
+
+const REG_DRAFT_KEY = "xili_registration_draft_v2";
+const SEAT_SESSION_KEY = "xili_seat_session_v1";
+let currentOrderId = "";
+let seatSessionId = sessionStorage.getItem(SEAT_SESSION_KEY);
+if (!seatSessionId) {
+    seatSessionId = (crypto.randomUUID ? crypto.randomUUID() : "s" + Date.now() + Math.random().toString(16).slice(2));
+    sessionStorage.setItem(SEAT_SESSION_KEY, seatSessionId);
+}
+let seatHeldByThisTab = new Set();
+let registrationDraft = null;
+let draftRestored = false;
+let boardingPointsReady = false;
+
+try { registrationDraft = JSON.parse(sessionStorage.getItem(REG_DRAFT_KEY) || "null"); } catch (_) { registrationDraft = null; }
+
+function saveRegistrationDraft() {
+    if (!selectedTrip) return;
+    const fields = {};
+    registrationForm.querySelectorAll("input[id],select[id],textarea[id]").forEach(el => {
+        if (el.type === "checkbox" || el.type === "radio") fields[el.id] = {checked:el.checked, value:el.value};
+        else fields[el.id] = {value:el.value};
+    });
+    const draft = {
+        tripId: selectedTrip.id,
+        fields,
+        selectedSeatIds: [...selectedSeatIds],
+        currentOrderId
+    };
+    try { sessionStorage.setItem(REG_DRAFT_KEY, JSON.stringify(draft)); } catch (e) { console.warn("報名草稿暫存失敗",e); }
+}
+
+function restoreRegistrationDraft() {
+    if (draftRestored || !registrationDraft || !selectedTrip || !boardingPointsReady) return;
+    if (String(registrationDraft.tripId) !== String(selectedTrip.id)) return;
+    const fields = registrationDraft.fields || {};
+    const count = fields.peopleCount?.value;
+    if (count) {
+        peopleCountSelect.value = count;
+        renderTravelers();
+    }
+    Object.entries(fields).forEach(([id, saved]) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (el.type === "checkbox" || el.type === "radio") el.checked = !!saved.checked;
+        else el.value = saved.value ?? "";
+    });
+    selectedSeatIds = Array.isArray(registrationDraft.selectedSeatIds) ? registrationDraft.selectedSeatIds.map(String) : [];
+    currentOrderId = registrationDraft.currentOrderId || "";
+    refreshSeatSelection();
+    draftRestored = true;
+    saveRegistrationDraft();
+    loadSeatStatus();
+    if (!currentOrderId && selectedSeatIds.length) {
+        selectedSeatIds.forEach(async seatId => {
+            try { await postSeatAction("selectSeat", seatId); seatHeldByThisTab.add(seatId); }
+            catch (error) {
+                selectedSeatIds = selectedSeatIds.filter(x => x !== seatId);
+                refreshSeatSelection();
+                saveRegistrationDraft();
+            }
+        });
+    }
+}
+
+registrationForm.addEventListener("input", saveRegistrationDraft);
+registrationForm.addEventListener("change", saveRegistrationDraft);
+window.addEventListener("pagehide", saveRegistrationDraft);
+
 
 /* =====================================================
    個資告知書視窗：明確綁定事件，避免按鈕點擊無反應
@@ -195,6 +294,9 @@ async function loadBoardingPointsInBackground() {
     } catch (error) {
         console.warn("載入上車地點失敗：", error);
         boardingPointsList = [];
+    } finally {
+        boardingPointsReady = true;
+        restoreRegistrationDraft();
     }
 }
 
@@ -253,6 +355,7 @@ async function loadSelectedTrip() {
 
         // 若已有快取先顯示，收到最新資料後再靜默更新畫面。
         showSelectedTrip(apiTrip);
+        restoreRegistrationDraft();
         loadSeatStatus();
     } catch (error) {
         console.error("載入報名行程失敗：", error);
@@ -1285,7 +1388,9 @@ registrationForm.addEventListener(
 
         // 將目前表單資料轉成 Code.gs submitRegistration 所需格式
         const payload = {
-            action: "submitRegistration",
+            action: currentOrderId ? "updateRegistration" : "submitRegistration",
+            orderId: currentOrderId || "",
+            seatSessionId: seatSessionId,
             tripId: selectedTrip.id,
             tripName: selectedTrip.sheetName || selectedTrip.title,
             seatIds: selectedSeatIds,
@@ -1332,6 +1437,10 @@ registrationForm.addEventListener(
             if (!result || result.success !== true) {
                 throw new Error(result && result.message ? result.message : "報名資料送出失敗");
             }
+
+            currentOrderId = (result.data && result.data.orderId) || currentOrderId;
+            seatHeldByThisTab.clear();
+            saveRegistrationDraft();
 
             const registrationData = {
                 trip: {
@@ -1658,7 +1767,7 @@ function showRegistrationConfirmation(data) {
 
         <button
             type="button"
-            onclick="location.reload()"
+            id="returnToEditRegistration"
         >
 
             ↩️ 返回修改資料
@@ -1683,6 +1792,14 @@ function showRegistrationConfirmation(data) {
     registrationForm.parentElement.appendChild(
         confirmation
     );
+
+    const returnButton = confirmation.querySelector("#returnToEditRegistration");
+    if (returnButton) returnButton.addEventListener("click", function() {
+        confirmation.remove();
+        registrationForm.style.display = "";
+        registrationForm.scrollIntoView({behavior:"smooth",block:"start"});
+        saveRegistrationDraft();
+    });
 
 
     /* =========================
