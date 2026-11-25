@@ -10,30 +10,49 @@ const SEAT_IDS = [
   "1-1","1-2","1-3","1-4","2-1","2-2","2-3","2-4","3-1","3-2","3-3","3-4","4-1","4-2","4-3","4-4","5-1","5-2","5-3","5-4","6-1","6-2","7-1","7-2","8-1","8-2","9-3","9-4","10-1","10-2","10-3","10-4","11-1","11-2","11-3","11-4","12-1","12-2","12-5","12-3","12-4"
 ];
 function renderSeatMap(occupied) {
-  const root=document.getElementById("seatMap"); if(!root)return;
-  const unavailable=new Set((occupied||[]).map(x=>x.seatId));
-  const cells=[];
-  const add=(id,grid)=>{const taken=unavailable.has(id);const chosen=selectedSeatIds.includes(id);cells.push(`<button type="button" data-seat="${id}" class="${taken?'taken ':''}${chosen?'selected':''}" ${taken?'disabled':''} style="${grid}">${id}</button>`)};
-  // rows 1-7: paired left and right; row 8 is safety door; rows 8-12 left and rows 9-12 right
-  root.innerHTML=`<div class="door front">前門</div><div class="door safety">安全門</div><div class="door middle">中門</div><div class="aisle">走道</div>`;
-  const positions={};
-  for(let r=1;r<=7;r++){positions[`${r}-1`]=`${r}`;positions[`${r}-2`]=`${r}`;positions[`${r}-3`]=`${r}`;positions[`${r}-4`]=`${r}`}
-  for(let r=8;r<=12;r++){positions[`${r}-1`]=`${r}`;positions[`${r}-2`]=`${r}`}
-  for(let r=9;r<=12;r++){positions[`${r}-3`]=`${r}`;positions[`${r}-4`]=`${r}`}
-  const seats=SEAT_IDS;
-  seats.forEach(id=>{const [row,col]=id.split('-').map(Number);let grid='';
-    if(row<=7 && col<=2) grid=`grid-column:${col};grid-row:${row}`;
-    else if(row<=5 && col>=3) grid=`grid-column:${col+1};grid-row:${row+1}`;
-    else if(row>=9 && col>=3) grid=`grid-column:${col+1};grid-row:${row-1}`;
-    else if(row>=8 && col<=2) grid=`grid-column:${col};grid-row:${row+1}`;
-    else if(id==='12-5') grid='grid-column:3;grid-row:14';
-    add(id,grid);
-  });
-  root.innerHTML += cells.join("");
-  // Put the three door labels in the intended map rows; the center aisle remains vertical.
-  root.querySelectorAll('button[data-seat]').forEach(btn=>btn.addEventListener('click',()=>{const id=btn.dataset.seat;if(selectedSeatIds.includes(id))selectedSeatIds=selectedSeatIds.filter(x=>x!==id);else if(selectedSeatIds.length<Number(peopleCountSelect.value||1))selectedSeatIds.push(id);else alert('選擇座位數不可超過報名人數');refreshSeatSelection();}));
+  const root = document.getElementById("seatMap");
+  if (!root) return;
+  const unavailable = new Set((occupied || []).map(x => x.seatId));
+  const cells = [];
+  const add = (id, col, row, span = 1) => {
+    const taken = unavailable.has(id);
+    const chosen = selectedSeatIds.includes(id);
+    cells.push(`<button type="button" data-seat="${id}" class="${taken ? 'taken ' : ''}${chosen ? 'selected' : ''}" ${taken ? 'disabled' : ''} style="grid-column:${col};grid-row:${row} / span ${span}">${id}</button>`);
+  };
+  const door = (label, cls, col, row, span = 1) =>
+    `<div class="door ${cls}" style="grid-column:${col};grid-row:${row} / span ${span}">${label}</div>`;
+
+  // 依照使用者提供的原始座位表定位：左側 1–12 排、中央走道、右側前門/中門，12-5 在最後一排走道底部。
+  let html = door('前門', 'front', '4 / span 2', 1, 2)
+    + door('安全門', 'safety', '1 / span 2', 8, 1)
+    + door('中門', 'middle', '4 / span 2', 8, 2)
+    + '<div class="aisle" style="grid-column:3;grid-row:1 / span 12">走道</div>';
+
+  for (let r = 1; r <= 7; r++) {
+    add(`${r}-1`, 1, r); add(`${r}-2`, 2, r);
+  }
+  for (let r = 8; r <= 12; r++) {
+    add(`${r}-1`, 1, r + 1); add(`${r}-2`, 2, r + 1);
+  }
+  for (let r = 1; r <= 5; r++) {
+    add(`${r}-3`, 4, r + 2); add(`${r}-4`, 5, r + 2);
+  }
+  for (let r = 9; r <= 12; r++) {
+    add(`${r}-3`, 4, r + 1); add(`${r}-4`, 5, r + 1);
+  }
+  add('12-5', 3, 13);
+
+  root.innerHTML = html + cells.join('');
+  root.querySelectorAll('button[data-seat]').forEach(btn => btn.addEventListener('click', () => {
+    const id = btn.dataset.seat;
+    if (selectedSeatIds.includes(id)) selectedSeatIds = selectedSeatIds.filter(x => x !== id);
+    else if (selectedSeatIds.length < Number(peopleCountSelect.value || 1)) selectedSeatIds.push(id);
+    else alert('選擇座位數不可超過報名人數');
+    refreshSeatSelection();
+  }));
   refreshSeatSelection();
 }
+
 function refreshSeatSelection(){
   document.querySelectorAll('#seatMap button[data-seat]').forEach(b=>b.classList.toggle('selected',selectedSeatIds.includes(b.dataset.seat)));
   const el=document.getElementById('seatSelectionText');if(el)el.textContent=selectedSeatIds.length?`已選座位：${selectedSeatIds.join('、')}`:'尚未選擇座位';
@@ -118,37 +137,25 @@ async function loadSelectedTrip() {
 
     try {
 
-        const response = await fetch(TRIPS_JSON_URL + "?t=" + Date.now(), { cache: "no-store" });
-        if (!response.ok) throw new Error("讀取行程資料失敗（HTTP " + response.status + "）");
-        const trips = await response.json();
-
-        /* 載入上車地點 */
-
-        try {
-
-            const boardingResponse = await fetch(BOARDING_API_URL);
-            const boardingResult = await boardingResponse.json();
-
-            if (boardingResult.success && Array.isArray(boardingResult.data)) {
-
-                boardingPointsList = boardingResult.data;
-
-            } else if (Array.isArray(boardingResult.boardingPoints)) {
-
-                boardingPointsList = boardingResult.boardingPoints;
-
-            } else {
-
-                boardingPointsList = [];
-
-            }
-
-        } catch (boardingError) {
-
-            console.error("載入上車地點失敗：", boardingError);
-
+        // 行程 JSON 與上車地點彼此獨立，平行讀取避免兩次網路等待相加。
+        // 不再每次加上時間戳強制繞過快取，減少 GitHub Pages 的重複下載。
+        const [tripResponse, boardingResult] = await Promise.all([
+            fetch(TRIPS_JSON_URL, { cache: "no-cache" }).then(response => {
+                if (!response.ok) throw new Error("讀取行程資料失敗（HTTP " + response.status + "）");
+                return response.json();
+            }),
+            fetch(BOARDING_API_URL).then(response => response.json()).catch(error => {
+                console.error("載入上車地點失敗：", error);
+                return null;
+            })
+        ]);
+        const trips = tripResponse;
+        if (boardingResult?.success && Array.isArray(boardingResult.data)) {
+            boardingPointsList = boardingResult.data;
+        } else if (Array.isArray(boardingResult?.boardingPoints)) {
+            boardingPointsList = boardingResult.boardingPoints;
+        } else {
             boardingPointsList = [];
-
         }
 
 
