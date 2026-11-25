@@ -57,9 +57,21 @@ function refreshSeatSelection(){
   document.querySelectorAll('#seatMap button[data-seat]').forEach(b=>b.classList.toggle('selected',selectedSeatIds.includes(b.dataset.seat)));
   const el=document.getElementById('seatSelectionText');if(el)el.textContent=selectedSeatIds.length?`已選座位：${selectedSeatIds.join('、')}`:'尚未選擇座位';
 }
+let seatStatusLoading = false;
 async function loadSeatStatus(){
-  if(!selectedTrip?.id)return;
-  try{const r=await fetch(`${SUBMIT_API_URL}?action=seatStatus&tripId=${encodeURIComponent(selectedTrip.id)}`);const j=await r.json();if(j.success)renderSeatMap(j.data||[]);else renderSeatMap([]);}catch(e){console.warn('座位狀態讀取失敗',e);renderSeatMap([]);}
+  if(!selectedTrip?.id || seatStatusLoading)return;
+  seatStatusLoading = true;
+  try{
+    const url = `${SUBMIT_API_URL}?action=seatStatus&tripId=${encodeURIComponent(selectedTrip.id)}&_=${Date.now()}`;
+    const r = await fetch(url, { cache: "no-store" });
+    const j = await r.json();
+    if(j.success) renderSeatMap(j.data || []);
+    else console.warn("座位狀態讀取失敗：", j.message || "API 回傳失敗");
+  }catch(e){
+    console.warn("座位狀態讀取失敗",e);
+  }finally{
+    seatStatusLoading = false;
+  }
 }
 
 
@@ -1708,5 +1720,15 @@ peopleCountSelect?.addEventListener("change", function(){
   if(selectedSeatIds.length>Number(this.value||1)){selectedSeatIds=selectedSeatIds.slice(0,Number(this.value||1));refreshSeatSelection();}
 });
 
-// 每 20 秒更新一次座位狀態，降低多人同時選位時看到舊狀態的機率。
-setInterval(loadSeatStatus, 20000);
+// 座位狀態近即時同步：頁面開啟時每 3 秒更新；切到背景分頁時降低頻率。
+let seatSyncTimer = null;
+function startSeatStatusSync(){
+  if(seatSyncTimer) clearInterval(seatSyncTimer);
+  seatSyncTimer = setInterval(() => {
+    if(document.visibilityState === "visible") loadSeatStatus();
+  }, 3000);
+}
+document.addEventListener("visibilitychange", () => {
+  if(document.visibilityState === "visible") loadSeatStatus();
+});
+startSeatStatusSync();
