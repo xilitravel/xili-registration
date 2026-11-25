@@ -6,6 +6,7 @@ const registrationParams = new URLSearchParams(window.location.search);
 const selectedTripId = registrationParams.get("trip");
 let selectedTrip = null;
 let selectedSeatIds = [];
+const seatActionsInFlight = new Set();
 const SEAT_IDS = [
   "1-1","1-2","1-3","1-4","2-1","2-2","2-3","2-4","3-1","3-2","3-3","3-4","4-1","4-2","4-3","4-4","5-1","5-2","5-3","5-4","6-1","6-2","7-1","7-2","8-1","8-2","9-1","9-2","9-3","9-4","10-1","10-2","10-3","10-4","11-1","11-2","11-3","11-4","12-1","12-2","12-3","12-4","12-5"
 ];
@@ -51,32 +52,45 @@ function renderSeatMap(occupied) {
 
   root.innerHTML = html + cells.join('');
   root.querySelectorAll('button[data-seat]').forEach(btn => btn.addEventListener('click', async () => {
-    if (btn.dataset.busy === "1") return;
     const id = btn.dataset.seat;
-    const wasSelected = selectedSeatIds.includes(id);
-    if (wasSelected) selectedSeatIds = selectedSeatIds.filter(x => x !== id);
-    else if (selectedSeatIds.length < Number(peopleCountSelect.value || 1)) selectedSeatIds.push(id);
-    else { alert('選擇座位數不可超過報名人數'); return; }
 
+    // 同一個座位的同步請求尚未完成時，避免重複送出；
+    // 不停用按鈕，讓取消／換位的畫面反應保持即時。
+    if (seatActionsInFlight.has(id)) return;
+
+    const wasSelected = selectedSeatIds.includes(id);
+    if (wasSelected) {
+      selectedSeatIds = selectedSeatIds.filter(x => x !== id);
+    } else if (selectedSeatIds.length < Number(peopleCountSelect.value || 1)) {
+      selectedSeatIds.push(id);
+    } else {
+      alert('選擇座位數不可超過報名人數');
+      return;
+    }
+
+    // 先更新畫面及草稿，不等待伺服器；本機選取一律先顯示橘色。
     refreshSeatSelection();
     saveRegistrationDraft();
-    btn.dataset.busy = "1";
-    btn.disabled = true;
+    seatActionsInFlight.add(id);
+
     try {
       const action = wasSelected ? "releaseSeatSelection" : "selectSeat";
       await postSeatAction(action, id);
       await loadSeatStatus();
     } catch (error) {
-      // 後端判定已被別人先選時，還原本頁暫選並立即同步最新狀態。
-      if (wasSelected) selectedSeatIds.push(id);
-      else selectedSeatIds = selectedSeatIds.filter(x => x !== id);
+      // 只回復這一個座位，避免覆蓋使用者在等待期間選取的其他座位。
+      if (wasSelected) {
+        if (!selectedSeatIds.includes(id)) selectedSeatIds.push(id);
+      } else {
+        selectedSeatIds = selectedSeatIds.filter(x => x !== id);
+      }
       refreshSeatSelection();
       saveRegistrationDraft();
       await loadSeatStatus();
       alert(error.message || "座位同步失敗，請重新選擇");
     } finally {
-      btn.dataset.busy = "0";
-      await loadSeatStatus();
+      seatActionsInFlight.delete(id);
+      refreshSeatSelection();
     }
   }));
   refreshSeatSelection();
