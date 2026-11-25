@@ -1312,81 +1312,65 @@ function unlockAdminPage() {
 function initializeAdminLock() {
   loginOverlay = document.createElement("div");
   loginOverlay.id = "adminLoginOverlay";
-
   loginOverlay.innerHTML = `
-    <div class="login-decoration login-star star-one">✦</div>
-    <div class="login-decoration login-star star-two">✧</div>
-    <div class="login-decoration login-heart heart-one">♡</div>
-    <div class="login-decoration login-flower flower-one">✿</div>
-    <div class="login-decoration login-heart heart-two">♡</div>
-
-    <div class="login-page-content">
-      <header class="login-brand">
-        <h1>囍莉旅遊</h1>
-        <p class="login-subtitle">旅遊報名系統</p>
-        <div class="login-slogan">
-          <span></span>
-          <em>Travel Happy Together</em>
-          <span>♡</span>
-          <span></span>
-        </div>
-      </header>
-
-      <section class="login-card">
-        <div class="login-lock-circle">🔐</div>
-        <h2>工作人員登入</h2>
-        <form id="adminLoginForm">
-          <label for="adminLoginPassword">工作人員 PIN</label>
-          <input
-            id="adminLoginPassword"
-            type="password"
-            autocomplete="current-password"
-            placeholder="輸 入  P I N"
-            required
-          />
-          <button type="submit" id="adminLoginSubmit">
-            🌸 進入後台
-          </button>
-          <div id="adminLoginError" role="alert"></div>
-        </form>
-      </section>
+    <div class="login-stage">
+      <img class="login-artwork" src="assets/login-cover.png" alt="囍莉旅遊旅遊報名系統工作人員登入" draggable="false">
+      <form id="adminLoginForm" class="login-hotspots" aria-label="工作人員登入">
+        <input id="adminLoginPassword" type="password" autocomplete="current-password"
+          placeholder="輸入工作人員 PIN" aria-label="工作人員 PIN" required>
+        <button type="submit" id="adminLoginSubmit" aria-label="進入後台" title="進入後台">進入後台</button>
+        <div id="adminLoginError" role="alert" aria-live="polite"></div>
+      </form>
     </div>
+    <form id="adminLoginFormMobile" class="login-mobile-form" aria-label="工作人員登入">
+      <h2>🔐 工作人員登入</h2>
+      <label for="adminLoginPasswordMobile">工作人員 PIN</label>
+      <input id="adminLoginPasswordMobile" type="password" autocomplete="current-password"
+        placeholder="輸入 PIN" required>
+      <button type="submit" id="adminLoginSubmitMobile">🌸 進入後台</button>
+      <div id="adminLoginErrorMobile" role="alert" aria-live="polite"></div>
+    </form>
   `;
 
   document.body.appendChild(loginOverlay);
-
   lockAdminPage();
 
-  document.getElementById("adminLoginForm").addEventListener("submit", async event => {
-    event.preventDefault();
+  const bindLoginForm = (formId, inputId, buttonId, errorId) => {
+    document.getElementById(formId).addEventListener("submit", async event => {
+      event.preventDefault();
+      const passwordInput = document.getElementById(inputId);
+      const submitButton = document.getElementById(buttonId);
+      const errorBox = document.getElementById(errorId);
+      const password = passwordInput.value;
 
-    const passwordInput = document.getElementById("adminLoginPassword");
-    const submitButton = document.getElementById("adminLoginSubmit");
-    const errorBox = document.getElementById("adminLoginError");
-    const password = passwordInput.value;
+      submitButton.disabled = true;
+      if (buttonId === "adminLoginSubmitMobile") submitButton.textContent = "驗證中...";
+      errorBox.textContent = "";
 
-    submitButton.disabled = true;
-    submitButton.textContent = "驗證中...";
-    errorBox.textContent = "";
-
-    try {
-      await adminLogin(password);
-      unlockAdminPage();
-      await loadAllData();
-    } catch (error) {
-      adminToken = "";
-      errorBox.textContent = "PIN 錯誤或登入失敗，請重新輸入。";
-      passwordInput.value = "";
-      passwordInput.focus();
-    } finally {
-      if (loginOverlay) {
-        submitButton.disabled = false;
-        submitButton.textContent = "🌸 進入後台";
+      try {
+        await adminLogin(password);
+        unlockAdminPage();
+        await loadAllData();
+      } catch (error) {
+        adminToken = "";
+        errorBox.textContent = "PIN 錯誤或登入失敗，請重新輸入。";
+        passwordInput.value = "";
+        passwordInput.focus();
+      } finally {
+        if (loginOverlay) {
+          submitButton.disabled = false;
+          if (buttonId === "adminLoginSubmitMobile") submitButton.textContent = "🌸 進入後台";
+        }
       }
-    }
-  });
+    });
+  };
 
-  document.getElementById("adminLoginPassword").focus();
+  bindLoginForm("adminLoginForm", "adminLoginPassword", "adminLoginSubmit", "adminLoginError");
+  bindLoginForm("adminLoginFormMobile", "adminLoginPasswordMobile", "adminLoginSubmitMobile", "adminLoginErrorMobile");
+
+  const desktopInput = document.getElementById("adminLoginPassword");
+  if (window.matchMedia("(min-width: 701px)").matches) desktopInput.focus();
+  else document.getElementById("adminLoginPasswordMobile").focus();
 }
 
 // =====================================================

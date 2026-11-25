@@ -183,122 +183,132 @@
 #tripStaffSeats .admin-seat-door.middle { grid-column: 4 / 6; grid-row: 8 / span 2; }
 
 /* ========================================
-   工作人員登入封面
+   囍莉旅遊｜正式櫻花插畫登入封面
+   使用核定設計稿作為完整背景，不再以 CSS 仿畫
 ======================================== */
 #adminLoginOverlay {
-  position: fixed; inset: 0; z-index: 999999;
-  display: flex; align-items: center; justify-content: center;
-  overflow: auto; padding: 24px 20px;
-  background:
-    radial-gradient(ellipse at 8% 10%, rgba(218,244,250,.95), transparent 32%),
-    radial-gradient(ellipse at 92% 8%, rgba(255,214,231,.85), transparent 32%),
-    radial-gradient(ellipse at 50% 100%, #f8c6db 0, transparent 35%),
-    linear-gradient(135deg,#fffafd 0%,#fff0f5 48%,#eaf7fb 100%);
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  padding: 0;
+  background: linear-gradient(135deg, #e8f6fa 0%, #fff1f6 52%, #fce3ed 100%);
   font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
 }
 #adminLoginOverlay * { box-sizing: border-box; }
-.login-page-content { width: min(100%, 760px); position: relative; z-index: 2; padding: 8px 0; }
-.login-brand { text-align: center; margin: 0 auto 22px; }
-.login-brand h1 {
-  display: inline-block; margin: 0; padding: 7px 28px 12px;
-  color: #fff; font-size: clamp(38px,6vw,66px); font-weight: 1000;
-  letter-spacing: .16em; line-height: 1.25;
-  background: linear-gradient(110deg,#ef8bb3,#e45b91,#f18db2);
-  border-radius: 18px 35px 20px 30px;
-  text-shadow: 3px 4px 0 #b94c78, 0 0 8px rgba(255,255,255,.8);
-  box-shadow: 7px 8px 0 rgba(190,72,119,.12);
-  transform: rotate(-1deg);
+.login-stage {
+  position: relative;
+  width: min(100vw, calc(100vh * 1.777896));
+  aspect-ratio: 1672 / 941;
+  max-height: 100vh;
+  flex: 0 0 auto;
+  overflow: hidden;
+  box-shadow: 0 12px 45px rgba(188, 91, 132, .10);
 }
-.login-subtitle {
-  margin: 18px 0 5px; color: #c64e83;
-  font-size: clamp(22px,3.5vw,36px); font-weight: 1000; letter-spacing: .12em;
-  text-shadow: 2px 3px 0 #fff, 0 5px 12px rgba(194,75,124,.12);
+.login-artwork {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
 }
-.login-slogan { display: flex; align-items: center; justify-content: center; gap: 12px; color: #bd7190; font-size: 18px; }
-.login-slogan em { font-family: "Brush Script MT","Segoe Script",cursive; font-weight: 700; }
-.login-slogan span:first-child, .login-slogan span:last-child { width: 34px; height: 2px; background: #eaa2bd; }
-.login-slogan span:nth-child(3) { font-size: 22px; color: #e879a5; }
-.login-card {
-  width: min(100%,560px); margin: 0 auto; padding: 24px 34px 28px;
-  border: 2px solid #f5c1d5; border-radius: 28px;
-  background: rgba(255,255,255,.88);
-  box-shadow: 0 14px 35px rgba(188,91,132,.14), inset 0 0 0 5px rgba(255,255,255,.65);
-  text-align: center; backdrop-filter: blur(8px);
+/* 實際輸入欄覆蓋設計稿中的 PIN 輸入框 */
+#adminLoginForm.login-hotspots {
+  position: absolute;
+  inset: 0;
+  margin: 0;
 }
-.login-lock-circle {
-  width: 66px; height: 66px; margin: 0 auto 10px;
-  display: flex; align-items: center; justify-content: center; border-radius: 50%;
-  background: linear-gradient(145deg,#ffdce9,#f5a9c6); box-shadow: 0 5px 15px rgba(191,94,132,.15); font-size: 32px;
-}
-.login-card h2 { color: #a94e74; font-size: 25px; letter-spacing: .12em; margin: 0 0 16px; font-weight: 900; }
-.login-card label { display: block; text-align: left; color: #8c5b6b; font-size: 15px; font-weight: 800; margin-bottom: 8px; }
 #adminLoginPassword {
-  display: block; width: 100%; height: 58px; border: 2px solid #f0cada; border-radius: 14px;
-  background: #fff; padding: 0 18px; text-align: center; font-size: 20px; font-weight: 700;
-  letter-spacing: .28em; color: #875064; outline: none; transition: .2s;
+  position: absolute;
+  left: 32.70%;
+  top: 71.65%;
+  width: 33.25%;
+  height: 7.55%;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 12px;
+  outline: 0;
+  background: rgba(255,255,255,.02);
+  color: #875064;
+  text-align: center;
+  font-size: clamp(14px, 1.3vw, 22px);
+  font-weight: 800;
+  letter-spacing: .22em;
+  box-shadow: none;
 }
-#adminLoginPassword:focus { border-color: #df6f9c; box-shadow: 0 0 0 4px rgba(215,111,152,.12); }
-#adminLoginPassword::placeholder { color: #aaa; letter-spacing: .18em; }
+#adminLoginPassword:focus {
+  background: rgba(255,255,255,.76);
+  box-shadow: 0 0 0 3px rgba(224, 91, 143, .28);
+}
+#adminLoginPassword::placeholder { color: transparent; }
 #adminLoginSubmit {
-  display: block; width: 100%; min-height: 60px; margin-top: 16px; border: 0; border-radius: 16px;
-  background: linear-gradient(110deg,#ef86ae,#df4d8b); color: #fff; font-size: 19px; font-weight: 900;
-  letter-spacing: .08em; cursor: pointer; box-shadow: 0 8px 18px rgba(197,83,126,.2); transition: .2s;
+  position: absolute;
+  left: 32.65%;
+  top: 82.10%;
+  width: 33.45%;
+  height: 7.65%;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 18px;
+  background: transparent;
+  color: transparent;
+  font-size: 0;
+  cursor: pointer;
+  box-shadow: none;
 }
-#adminLoginSubmit:hover { transform: translateY(-2px); box-shadow: 0 12px 22px rgba(197,83,126,.24); }
-#adminLoginSubmit:disabled { opacity: .65; cursor: wait; transform: none; }
-#adminLoginError { color: #c62828; margin-top: 10px; min-height: 20px; font-size: 14px; font-weight: 700; }
-.login-decoration { position: absolute; color: rgba(222,105,151,.23); pointer-events: none; user-select: none; z-index: 1; }
-.login-star { font-size: 44px; }
-.star-one { top: 9%; right: 8%; transform: rotate(15deg); }
-.star-two { left: 7%; top: 30%; font-size: 32px; }
-.heart-one { right: 3%; top: 18%; font-size: 64px; }
-.heart-two { left: 10%; bottom: 9%; font-size: 48px; }
-.flower-one { right: 7%; bottom: 13%; font-size: 72px; color: rgba(239,142,180,.35); }
+#adminLoginSubmit:hover { transform: none; box-shadow: 0 0 0 4px rgba(255,255,255,.28); }
+#adminLoginSubmit:disabled { opacity: .7; cursor: wait; }
+#adminLoginError {
+  position: absolute;
+  left: 31%;
+  top: 90.2%;
+  width: 38%;
+  min-height: 18px;
+  margin: 0;
+  color: #b52f5e;
+  text-align: center;
+  font-size: clamp(10px, .85vw, 14px);
+  font-weight: 800;
+  text-shadow: 0 1px 2px #fff;
+}
+.login-mobile-form { display: none; }
 
-@media (max-width: 900px) {
-  .admin-container { grid-template-columns: 1fr; }
-  .admin-sidebar { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 5px; }
-  .admin-stats { grid-template-columns: repeat(2,minmax(0,1fr)); }
-}
-@media (max-width: 600px) {
-  .admin-header { padding: 20px 16px; }
-  .admin-header-inner { flex-direction: column; align-items: flex-start; }
-  .admin-header h1 { font-size: 25px; }
-  .admin-header::after { font-size: 28px; right: 12px; }
-  .admin-header-actions { width: 100%; }
-  .admin-header-actions .admin-btn { flex: 1; text-align: center; }
-  .admin-container { padding: 0 12px; margin-top: 16px; }
-  .admin-sidebar { grid-template-columns: repeat(2,minmax(0,1fr)); padding: 10px; }
-  .admin-nav-btn { font-size: 14px; padding: 11px 8px; }
-  .admin-form-grid, .admin-filter { grid-template-columns: 1fr; }
-  .admin-stats { grid-template-columns: repeat(2,minmax(0,1fr)); }
-  .admin-section-header { flex-direction: column; align-items: flex-start; }
-  .admin-card, .admin-stat-card, .admin-filter { padding: 16px; border-radius: 14px; }
-  .admin-stat-number { font-size: 27px; }
-  #tripStaffSeats.admin-seat-map { grid-template-columns: repeat(5,68px); width: max-content; max-width: 100%; }
-  #adminLoginOverlay { padding: 18px 14px; align-items: center; }
-  .login-brand { margin-bottom: 16px; }
-  .login-brand h1 { font-size: clamp(34px,10vw,48px); padding: 6px 18px 9px; }
-  .login-subtitle { margin-top: 12px; font-size: 21px; }
-  .login-slogan { font-size: 15px; gap: 8px; }
-  .login-slogan span:first-child, .login-slogan span:last-child { width: 20px; }
-  .login-card { padding: 20px 18px 22px; border-radius: 22px; }
-  .login-lock-circle { width: 58px; height: 58px; font-size: 28px; }
-  .login-card h2 { font-size: 21px; margin-bottom: 13px; }
-  #adminLoginPassword { height: 54px; font-size: 18px; }
-  #adminLoginSubmit { min-height: 55px; font-size: 17px; }
-  .login-decoration { opacity: .55; }
-}
-
-@media (max-height: 720px) and (min-width: 601px) {
-  #adminLoginOverlay { align-items: flex-start; }
-  .login-page-content { padding: 0; }
-  .login-brand { margin-bottom: 12px; }
-  .login-brand h1 { font-size: 46px; }
-  .login-subtitle { margin: 8px 0 3px; font-size: 24px; }
-  .login-card { padding: 16px 28px 18px; }
-  .login-lock-circle { width: 52px; height: 52px; font-size: 26px; margin-bottom: 6px; }
-  .login-card h2 { font-size: 21px; margin-bottom: 10px; }
-  #adminLoginPassword { height: 50px; }
-  #adminLoginSubmit { min-height: 50px; margin-top: 12px; }
+@media (max-width: 700px) {
+  #adminLoginOverlay { align-items: flex-start; justify-content: center; overflow-y: auto; padding: 0 0 24px; }
+  .login-stage { width: 100vw; max-height: none; height: 48vw; aspect-ratio: auto; box-shadow: none; }
+  .login-artwork { object-fit: cover; object-position: top center; }
+  #adminLoginForm.login-hotspots { display: none; }
+  .login-mobile-form {
+    display: block;
+    width: calc(100% - 32px);
+    max-width: 440px;
+    margin: 12px auto 0;
+    padding: 22px 20px 20px;
+    border: 2px solid #f5c1d5;
+    border-radius: 22px;
+    background: rgba(255,255,255,.94);
+    box-shadow: 0 10px 28px rgba(188,91,132,.13);
+    text-align: center;
+  }
+  .login-mobile-form h2 { margin: 0 0 16px; color: #a94e74; font-size: 21px; font-weight: 900; }
+  .login-mobile-form label { display: block; margin: 0 0 7px; color: #8c5b6b; text-align: left; font-weight: 800; }
+  #adminLoginPasswordMobile {
+    display: block; width: 100%; height: 52px; padding: 0 14px;
+    border: 2px solid #f0cada; border-radius: 12px; background: #fff;
+    color: #875064; text-align: center; font-size: 18px; letter-spacing: .18em; outline: 0;
+  }
+  #adminLoginPasswordMobile:focus { border-color: #df6f9c; box-shadow: 0 0 0 3px rgba(215,111,152,.12); }
+  #adminLoginSubmitMobile {
+    width: 100%; min-height: 52px; margin-top: 14px; border: 0; border-radius: 14px;
+    background: linear-gradient(110deg,#ef86ae,#df4d8b); color: #fff;
+    font-size: 17px; font-weight: 900; letter-spacing: .08em; cursor: pointer;
+    box-shadow: 0 7px 16px rgba(197,83,126,.18);
+  }
+  #adminLoginErrorMobile { min-height: 18px; margin-top: 8px; color: #b52f5e; font-size: 13px; font-weight: 700; }
 }
