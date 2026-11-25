@@ -19,9 +19,12 @@ function renderSeatMap(occupied) {
     const staff = staffSeats.has(id);
     const taken = unavailable.has(id);
     const chosen = selectedSeatIds.includes(id);
-    const disabled = staff || taken;
-    const cls = [staff ? 'staff-only' : '', taken ? 'taken' : '', chosen ? 'selected' : ''].filter(Boolean).join(' ');
-    const title = staff ? '工作人員專用' : taken ? '已被選／保留' : id;
+    // 座位表先立即顯示；行程設定尚未載入前暫時不能點選，
+    // 避免 2-1／2-2 等工作人員座位在設定讀取前被誤選。
+    const tripReady = !!selectedTrip;
+    const disabled = !tripReady || staff || taken;
+    const cls = [staff ? 'staff-only' : '', taken ? 'taken' : '', chosen ? 'selected' : '', !tripReady ? 'seat-loading' : ''].filter(Boolean).join(' ');
+    const title = !tripReady ? '行程資料載入中' : staff ? '工作人員專用' : taken ? '已被選／保留' : id;
     cells.push(`<button type="button" data-seat="${id}" class="${cls}" ${disabled ? 'disabled' : ''} title="${title}" style="grid-column:${col};grid-row:${row}">${id}</button>`);
   };
   const door = (label, cls, col, row, rowSpan = 1) =>
@@ -1689,6 +1692,10 @@ function showRegistrationConfirmation(data) {
 /* =====================================================
    11. 初始化
 ===================================================== */
+
+// 不等待 trips.json 或 Apps Script：先把固定座位表畫面立即顯示。
+// 此時座位按鈕暫時 disabled；取得行程設定與座位狀態後再開放可選座位。
+renderSeatMap([]);
 
 loadSelectedTrip();
 
