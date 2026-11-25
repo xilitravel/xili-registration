@@ -305,16 +305,18 @@ function renderStaffSeatOptions(selected = []) {
     positions[`${row}-2`] = [2, row];
   }
   for (let row = 1; row <= 5; row++) {
-    positions[`${row}-3`] = [4, row + 1];
-    positions[`${row}-4`] = [5, row + 1];
+    // 前門佔兩列，因此右側前半段座位從第 3 列開始。
+    positions[`${row}-3`] = [4, row + 2];
+    positions[`${row}-4`] = [5, row + 2];
   }
   for (let row = 8; row <= 12; row++) {
     positions[`${row}-1`] = [1, row + 1];
     positions[`${row}-2`] = [2, row + 1];
   }
   for (let row = 9; row <= 11; row++) {
-    positions[`${row}-3`] = [4, row - 1];
-    positions[`${row}-4`] = [5, row - 1];
+    // 中門佔第 8、9 列，後半段座位從第 10 列開始。
+    positions[`${row}-3`] = [4, row + 1];
+    positions[`${row}-4`] = [5, row + 1];
   }
   // 最後一排右側 12-3、12-4 必須與左側 12-1、12-2 及中央 12-5 同列。
   positions["12-3"] = [4, 13];
