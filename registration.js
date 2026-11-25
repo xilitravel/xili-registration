@@ -7,6 +7,10 @@ const selectedTripId = registrationParams.get("trip");
 let selectedTrip = null;
 let selectedSeatIds = [];
 const seatActionsInFlight = new Set();
+// 同一座位的操作依點擊順序排隊送出，但不阻擋使用者連續點擊。
+const seatActionQueues = new Map();
+// 本機先行釋放：避免等 Apps Script 回應時，舊的 pending 樣式仍卡在畫面上。
+const locallyReleasedSeatIds = new Set();
 const SEAT_IDS = [
   "1-1","1-2","1-3","1-4","2-1","2-2","2-3","2-4","3-1","3-2","3-3","3-4","4-1","4-2","4-3","4-4","5-1","5-2","5-3","5-4","6-1","6-2","7-1","7-2","8-1","8-2","9-1","9-2","9-3","9-4","10-1","10-2","10-3","10-4","11-1","11-2","11-3","11-4","12-1","12-2","12-3","12-4","12-5"
 ];
@@ -15,7 +19,7 @@ function renderSeatMap(occupied) {
   if (!root) return;
   const isPendingStatus = x => x.status === "pending" || x.status === "held";
   const unavailable = new Set((occupied || []).filter(x => (isPendingStatus(x) || x.status === "confirmed") && !x.mine).map(x => String(x.seatId)));
-  const pendingSeats = new Set((occupied || []).filter(isPendingStatus).map(x => String(x.seatId)));
+  const pendingSeats = new Set((occupied || []).filter(x => isPendingStatus(x) && !locallyReleasedSeatIds.has(String(x.seatId))).map(x => String(x.seatId)));
   const confirmedSeats = new Set((occupied || []).filter(x => x.status === "confirmed").map(x => String(x.seatId)));
   const apiStaffSeats = (occupied || []).filter(x => x.status === "staff").map(x => String(x.seatId));
   const staffSeats = new Set([...(selectedTrip?.staffSeatIds || []).map(String), ...apiStaffSeats]);
@@ -56,14 +60,14 @@ function renderSeatMap(occupied) {
   root.querySelectorAll('button[data-seat]').forEach(btn => btn.addEventListener('click', async () => {
     const id = btn.dataset.seat;
 
-    // 同一個座位的同步請求尚未完成時，避免重複送出；
-    // 不停用按鈕，讓取消／換位的畫面反應保持即時。
-    if (seatActionsInFlight.has(id)) return;
-
+    // 即使同一座位的上一個請求尚未完成，也接受這次點擊；
+    // 伺服器操作會依點擊順序排隊，畫面則立即更新。
     const wasSelected = selectedSeatIds.includes(id);
     if (wasSelected) {
       selectedSeatIds = selectedSeatIds.filter(x => x !== id);
+      locallyReleasedSeatIds.add(id);
     } else if (selectedSeatIds.length < Number(peopleCountSelect.value || 1)) {
+      locallyReleasedSeatIds.delete(id);
       selectedSeatIds.push(id);
     } else {
       alert('選擇座位數不可超過報名人數');
@@ -73,34 +77,58 @@ function renderSeatMap(occupied) {
     // 先更新畫面及草稿，不等待伺服器；本機選取一律先顯示橘色。
     refreshSeatSelection();
     saveRegistrationDraft();
-    seatActionsInFlight.add(id);
 
-    try {
-      const action = wasSelected ? "releaseSeatSelection" : "selectSeat";
-      // 本機已先更新橘色／取消狀態；成功後不立刻再查整張座位表，
-      // 避免每次點選都連續佔用兩次 Apps Script 鎖。背景同步會補上其他人的變動。
-      await postSeatAction(action, id);
-    } catch (error) {
-      // 只回復這一個座位，避免覆蓋使用者在等待期間選取的其他座位。
-      if (wasSelected) {
-        if (!selectedSeatIds.includes(id)) selectedSeatIds.push(id);
-      } else {
-        selectedSeatIds = selectedSeatIds.filter(x => x !== id);
-      }
-      refreshSeatSelection();
-      saveRegistrationDraft();
-      alert(error.message || "座位同步失敗，請重新選擇");
-    } finally {
-      seatActionsInFlight.delete(id);
-      refreshSeatSelection();
-    }
+    const action = wasSelected ? "releaseSeatSelection" : "selectSeat";
+    enqueueSeatAction(action, id);
   }));
   refreshSeatSelection();
 }
 
 function refreshSeatSelection(){
-  document.querySelectorAll('#seatMap button[data-seat]').forEach(b=>b.classList.toggle('selected',selectedSeatIds.includes(b.dataset.seat)));
+  document.querySelectorAll('#seatMap button[data-seat]').forEach(b=>{
+    const id = b.dataset.seat;
+    const selected = selectedSeatIds.includes(id);
+    b.classList.toggle('selected', selected);
+    // 已在本機取消的座位，立即移除舊的藍色 pending 樣式並恢復可點選。
+    if (locallyReleasedSeatIds.has(id) && !selected) {
+      b.classList.remove('pending');
+      if (!b.classList.contains('taken') && !b.classList.contains('staff-only')) {
+        b.disabled = false;
+        b.title = id;
+      }
+    }
+  });
   const el=document.getElementById('seatSelectionText');if(el)el.textContent=selectedSeatIds.length?`已選座位：${selectedSeatIds.join('、')}`:'尚未選擇座位';
+}
+
+// 同一座位可連續操作：例如「選 A → 立刻取消 A」，
+// UI 立即反映最後一次點擊，API 則依序完成 select 再 release，避免請求順序顛倒。
+function enqueueSeatAction(action, seatId) {
+  const queue = seatActionQueues.get(seatId) || [];
+  queue.push(action);
+  seatActionQueues.set(seatId, queue);
+  if (seatActionsInFlight.has(seatId)) return;
+
+  seatActionsInFlight.add(seatId);
+  (async () => {
+    try {
+      while (queue.length) {
+        const nextAction = queue.shift();
+        try {
+          await postSeatAction(nextAction, seatId);
+        } catch (error) {
+          console.warn(`座位 ${seatId} 同步失敗（${nextAction}）：`, error);
+          alert(error.message || "座位同步失敗，請稍後確認座位狀態");
+        }
+      }
+    } finally {
+      seatActionQueues.delete(seatId);
+      seatActionsInFlight.delete(seatId);
+      refreshSeatSelection();
+      // 請求全部完成後再用伺服器狀態校正，避免舊狀態覆蓋尚未送出的操作。
+      loadSeatStatus();
+    }
+  })();
 }
 
 async function postSeatAction(action, seatId) {
@@ -135,6 +163,8 @@ async function loadSeatStatus(){
     const result = await response.json();
     if (!result || result.success !== true) throw new Error(result?.message || "座位狀態讀取失敗");
     const status = result.data || [];
+    // 狀態查詢已在操作完成後執行，交由伺服器最新結果接管畫面。
+    locallyReleasedSeatIds.clear();
     selectedTrip.staffSeatIds = status.filter(x => x.status === "staff").map(x => String(x.seatId));
     renderSeatMap(status);
   } catch (error) {
