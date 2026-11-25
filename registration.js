@@ -7,40 +7,37 @@ const selectedTripId = registrationParams.get("trip");
 let selectedTrip = null;
 let selectedSeatIds = [];
 const SEAT_IDS = [
-  "1-1","1-2","1-3","1-4","2-1","2-2","2-3","2-4","3-1","3-2","3-3","3-4","4-1","4-2","4-3","4-4","5-1","5-2","5-3","5-4","6-1","6-2","7-1","7-2","8-1","8-2","9-3","9-4","10-1","10-2","10-3","10-4","11-1","11-2","11-3","11-4","12-1","12-2","12-5","12-3","12-4"
+  "1-1","1-2","1-3","1-4","2-1","2-2","2-3","2-4","3-1","3-2","3-3","3-4","4-1","4-2","4-3","4-4","5-1","5-2","5-3","5-4","6-1","6-2","7-1","7-2","8-1","8-2","9-1","9-2","9-3","9-4","10-1","10-2","10-3","10-4","11-1","11-2","11-3","11-4","12-1","12-2","12-3","12-4","12-5"
 ];
 function renderSeatMap(occupied) {
   const root = document.getElementById("seatMap");
   if (!root) return;
   const unavailable = new Set((occupied || []).map(x => x.seatId));
+  const staffSeats = new Set((selectedTrip?.staffSeatIds || []).map(String));
   const cells = [];
-  const add = (id, col, row, span = 1) => {
+  const add = (id, col, row) => {
+    const staff = staffSeats.has(id);
     const taken = unavailable.has(id);
     const chosen = selectedSeatIds.includes(id);
-    cells.push(`<button type="button" data-seat="${id}" class="${taken ? 'taken ' : ''}${chosen ? 'selected' : ''}" ${taken ? 'disabled' : ''} style="grid-column:${col};grid-row:${row} / span ${span}">${id}</button>`);
+    const disabled = staff || taken;
+    const cls = [staff ? 'staff-only' : '', taken ? 'taken' : '', chosen ? 'selected' : ''].filter(Boolean).join(' ');
+    const title = staff ? '工作人員專用' : taken ? '已被選／保留' : id;
+    cells.push(`<button type="button" data-seat="${id}" class="${cls}" ${disabled ? 'disabled' : ''} title="${title}" style="grid-column:${col};grid-row:${row}">${id}</button>`);
   };
-  const door = (label, cls, col, row, span = 1) =>
-    `<div class="door ${cls}" style="grid-column:${col};grid-row:${row} / span ${span}">${label}</div>`;
+  const door = (label, cls, col, row, rowSpan = 1) =>
+    `<div class="door ${cls}" style="grid-column:${col};grid-row:${row} / span ${rowSpan}">${label}</div>`;
 
-  // 依照使用者提供的原始座位表定位：左側 1–12 排、中央走道、右側前門/中門，12-5 在最後一排走道底部。
+  // 依原始座位表：左側 1–7 排、雙格安全門、8–12 排；右側前門、1–5 排、雙格中門、9–12 排；走道底端為 12-5。
   let html = door('前門', 'front', '4 / span 2', 1, 2)
-    + door('安全門', 'safety', '1 / span 2', 8, 1)
-    + door('中門', 'middle', '4 / span 2', 8, 2)
-    + '<div class="aisle" style="grid-column:3;grid-row:1 / span 12">走道</div>';
+    + door('安全門', 'safety', '1 / span 2', 8, 2)
+    + door('中門', 'middle', '4 / span 2', 8, 3)
+    + '<div class="aisle" style="grid-column:3;grid-row:1 / span 14">走道</div>';
 
-  for (let r = 1; r <= 7; r++) {
-    add(`${r}-1`, 1, r); add(`${r}-2`, 2, r);
-  }
-  for (let r = 8; r <= 12; r++) {
-    add(`${r}-1`, 1, r + 1); add(`${r}-2`, 2, r + 1);
-  }
-  for (let r = 1; r <= 5; r++) {
-    add(`${r}-3`, 4, r + 2); add(`${r}-4`, 5, r + 2);
-  }
-  for (let r = 9; r <= 12; r++) {
-    add(`${r}-3`, 4, r + 1); add(`${r}-4`, 5, r + 1);
-  }
-  add('12-5', 3, 13);
+  for (let r = 1; r <= 7; r++) { add(`${r}-1`, 1, r); add(`${r}-2`, 2, r); }
+  for (let r = 8; r <= 12; r++) { add(`${r}-1`, 1, r + 2); add(`${r}-2`, 2, r + 2); }
+  for (let r = 1; r <= 5; r++) { add(`${r}-3`, 4, r + 2); add(`${r}-4`, 5, r + 2); }
+  for (let r = 9; r <= 12; r++) { add(`${r}-3`, 4, r + 2); add(`${r}-4`, 5, r + 2); }
+  add('12-5', 3, 15);
 
   root.innerHTML = html + cells.join('');
   root.querySelectorAll('button[data-seat]').forEach(btn => btn.addEventListener('click', () => {
@@ -234,7 +231,8 @@ async function loadSelectedTrip() {
 
             roomTypes: apiTrip.roomTypes || apiTrip.rooms || [],
 
-            meals: apiTrip.meals || apiTrip.mealSettings || []
+            meals: apiTrip.meals || apiTrip.mealSettings || [],
+            staffSeatIds: Array.isArray(apiTrip.staffSeatIds) ? apiTrip.staffSeatIds.map(String) : []
 
         };
 

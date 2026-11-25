@@ -288,6 +288,19 @@ document.getElementById("tripLodging")?.addEventListener("change", updateLodging
 renderTripMealsConfig(1);
 updateLodgingSettings();
 
+// 每團工作人員專用座位設定（不影響其他行程）
+const ADMIN_SEAT_IDS = ["1-1","1-2","1-3","1-4","2-1","2-2","2-3","2-4","3-1","3-2","3-3","3-4","4-1","4-2","4-3","4-4","5-1","5-2","5-3","5-4","6-1","6-2","7-1","7-2","8-1","8-2","9-1","9-2","9-3","9-4","10-1","10-2","10-3","10-4","11-1","11-2","11-3","11-4","12-1","12-2","12-3","12-4","12-5"];
+function renderStaffSeatOptions(selected = []) {
+  const root = document.getElementById("tripStaffSeats");
+  if (!root) return;
+  const chosen = new Set((selected || []).map(String));
+  root.innerHTML = ADMIN_SEAT_IDS.map(id => `<label><input type="checkbox" class="staff-seat-option" value="${id}" ${chosen.has(id) ? "checked" : ""}> ${id}</label>`).join("");
+}
+function getStaffSeatIds() {
+  return Array.from(document.querySelectorAll(".staff-seat-option:checked")).map(x => x.value);
+}
+renderStaffSeatOptions();
+
 // =====================================================
 // 新增行程
 // =====================================================
@@ -303,6 +316,7 @@ document.getElementById("addTripBtn")
   .addEventListener("click", () => {
 
     tripForm.reset();
+    renderStaffSeatOptions([]);
 
     document.getElementById("tripDays").value = 1;
     renderTripMealsConfig(1);
@@ -427,7 +441,9 @@ tripForm.addEventListener("submit", async event => {
         .value
         .split("\n")
         .map(item => item.trim())
-        .filter(Boolean)
+        .filter(Boolean),
+
+    staffSeatIds: getStaffSeatIds()
 
   };
 
@@ -680,6 +696,8 @@ function editTrip(id) {
     .value = (trip.notes || [])
       .join("\n");
 
+
+  renderStaffSeatOptions(trip.staffSeatIds || []);
 
   document.getElementById("tripFormTitle")
     .textContent = "修改行程";
