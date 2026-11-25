@@ -12,8 +12,9 @@ const SEAT_IDS = [
 function renderSeatMap(occupied) {
   const root = document.getElementById("seatMap");
   if (!root) return;
-  const unavailable = new Set((occupied || []).filter(x => (x.status === "pending" || x.status === "confirmed") && !x.mine).map(x => String(x.seatId)));
-  const pendingSeats = new Set((occupied || []).filter(x => x.status === "pending" && !x.mine).map(x => String(x.seatId)));
+  const isPendingStatus = x => x.status === "pending" || x.status === "held";
+  const unavailable = new Set((occupied || []).filter(x => (isPendingStatus(x) || x.status === "confirmed") && !x.mine).map(x => String(x.seatId)));
+  const pendingSeats = new Set((occupied || []).filter(isPendingStatus).map(x => String(x.seatId)));
   const confirmedSeats = new Set((occupied || []).filter(x => x.status === "confirmed").map(x => String(x.seatId)));
   const apiStaffSeats = (occupied || []).filter(x => x.status === "staff").map(x => String(x.seatId));
   const staffSeats = new Set([...(selectedTrip?.staffSeatIds || []).map(String), ...apiStaffSeats]);
@@ -27,8 +28,9 @@ function renderSeatMap(occupied) {
     // 座位表先立即顯示；行程設定尚未載入前暫時不能點選，
     // 避免 2-1／2-2 等工作人員座位在設定讀取前被誤選。
     const tripReady = !!selectedTrip;
-    const disabled = !tripReady || staff || taken;
-    const cls = [staff ? 'staff-only' : '', confirmed ? 'taken' : '', pending ? 'pending' : '', chosen ? 'selected' : '', !tripReady ? 'seat-loading' : ''].filter(Boolean).join(' ');
+    const ownPending = pending && (occupied || []).some(x => String(x.seatId) === id && x.mine);
+    const disabled = !tripReady || staff || (taken && !ownPending);
+    const cls = [staff ? 'staff-only' : '', confirmed ? 'taken' : '', pending && !chosen ? 'pending' : '', chosen ? 'selected' : '', !tripReady ? 'seat-loading' : ''].filter(Boolean).join(' ');
     const title = !tripReady ? '行程資料載入中' : staff ? '工作人員專用' : confirmed ? '已結清' : pending ? '已送出報名／待付款' : id;
     cells.push(`<button type="button" data-seat="${id}" class="${cls}" ${disabled ? 'disabled' : ''} title="${title}" style="grid-column:${col};grid-row:${row}">${id}</button>`);
   };
@@ -1452,6 +1454,7 @@ registrationForm.addEventListener(
                 mainRegistrant: travelers[0] || {},
                 peopleCount: peopleCount,
                 travelers: travelers,
+                seatIds: [...selectedSeatIds],
                 privacyConsent: privacyConsent,
                 photoConsent: photoConsent,
                 proxyConsent: proxyConsent,
@@ -1668,6 +1671,20 @@ function showRegistrationConfirmation(data) {
 
             ${travelerHTML}
 
+
+        </div>
+
+
+        <div class="confirmation-section">
+
+            <h3>
+                🚌 遊覽車座位
+            </h3>
+
+            <p>
+                <strong>已選座位：</strong>
+                ${(Array.isArray(data.seatIds) && data.seatIds.length) ? data.seatIds.join("、") : "未選擇座位"}
+            </p>
 
         </div>
 
