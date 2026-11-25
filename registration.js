@@ -119,6 +119,8 @@ const submitButton = document.getElementById("submitButton");
 const REG_DRAFT_KEY = "xili_registration_draft_v2";
 const SEAT_SESSION_KEY = "xili_seat_session_v1";
 let currentOrderId = "";
+let hasSubmittedOrder = false;
+let registrationFinalized = false;
 let seatSessionId = sessionStorage.getItem(SEAT_SESSION_KEY);
 if (!seatSessionId) {
     seatSessionId = (crypto.randomUUID ? crypto.randomUUID() : "s" + Date.now() + Math.random().toString(16).slice(2));
@@ -132,6 +134,10 @@ let boardingPointsReady = false;
 try { registrationDraft = JSON.parse(sessionStorage.getItem(REG_DRAFT_KEY) || "null"); } catch (_) { registrationDraft = null; }
 
 function saveRegistrationDraft() {
+    if (registrationFinalized) {
+        sessionStorage.removeItem(REG_DRAFT_KEY);
+        return;
+    }
     if (!selectedTrip) return;
     const fields = {};
     registrationForm.querySelectorAll("input[id],select[id],textarea[id]").forEach(el => {
@@ -142,7 +148,8 @@ function saveRegistrationDraft() {
         tripId: selectedTrip.id,
         fields,
         selectedSeatIds: [...selectedSeatIds],
-        currentOrderId
+        currentOrderId: hasSubmittedOrder ? currentOrderId : "",
+        orderSubmitted: hasSubmittedOrder
     };
     try { sessionStorage.setItem(REG_DRAFT_KEY, JSON.stringify(draft)); } catch (e) { console.warn("報名草稿暫存失敗",e); }
 }
@@ -163,7 +170,10 @@ function restoreRegistrationDraft() {
         else el.value = saved.value ?? "";
     });
     selectedSeatIds = Array.isArray(registrationDraft.selectedSeatIds) ? registrationDraft.selectedSeatIds.map(String) : [];
-    currentOrderId = registrationDraft.currentOrderId || "";
+    // 只有曾經成功建立報名單的草稿才可進入「修改報名」流程。
+    // 舊版草稿可能殘留未成功送出的 orderId，不能拿它當作正式報名單。
+    hasSubmittedOrder = registrationDraft.orderSubmitted === true && !!registrationDraft.currentOrderId;
+    currentOrderId = hasSubmittedOrder ? String(registrationDraft.currentOrderId) : "";
     refreshSeatSelection();
     draftRestored = true;
     saveRegistrationDraft();
@@ -1375,8 +1385,8 @@ registrationForm.addEventListener(
 
         // 將目前表單資料轉成 Code.gs submitRegistration 所需格式
         const payload = {
-            action: currentOrderId ? "updateRegistration" : "submitRegistration",
-            orderId: currentOrderId || "",
+            action: hasSubmittedOrder && currentOrderId ? "updateRegistration" : "submitRegistration",
+            orderId: hasSubmittedOrder ? currentOrderId : "",
             seatSessionId: seatSessionId,
             tripId: selectedTrip.id,
             tripName: selectedTrip.sheetName || selectedTrip.title,
@@ -1426,6 +1436,7 @@ registrationForm.addEventListener(
             }
 
             currentOrderId = (result.data && result.data.orderId) || currentOrderId;
+            hasSubmittedOrder = !!currentOrderId;
             seatHeldByThisTab.clear();
             saveRegistrationDraft();
             // 報名成功後，座位狀態由後端訂單保留紀錄決定；此時已不是橘色暫選。
@@ -1763,6 +1774,16 @@ function showRegistrationConfirmation(data) {
 
         </button>
 
+        <button
+            type="button"
+            id="finalConfirmRegistration"
+            class="primary-button"
+        >
+
+            ✓ 確認無誤，完成報名
+
+        </button>
+
 
     `;
 
@@ -1788,6 +1809,25 @@ function showRegistrationConfirmation(data) {
         registrationForm.style.display = "";
         registrationForm.scrollIntoView({behavior:"smooth",block:"start"});
         saveRegistrationDraft();
+    });
+
+    // 最終確認：保留後端已建立的正式報名單與座位，不再把它當成可編輯草稿。
+    // 清除本瀏覽器的訂單關聯，下一次重新整理／重新填寫會建立全新報名單。
+    const finalConfirmButton = confirmation.querySelector("#finalConfirmRegistration");
+    if (finalConfirmButton) finalConfirmButton.addEventListener("click", function() {
+        if (!window.confirm("確認資料無誤並完成本次報名嗎？完成後若要更改，請聯絡阿冷。")) return;
+        registrationFinalized = true;
+        sessionStorage.removeItem(REG_DRAFT_KEY);
+        currentOrderId = "";
+        hasSubmittedOrder = false;
+        selectedSeatIds = [];
+        seatHeldByThisTab.clear();
+        confirmation.innerHTML = `
+            <h2>🎉 本次報名已完成最終確認</h2>
+            <p>報名資料已保留，座位仍依付款狀態顯示。若需要修改，請聯絡阿冷。</p>
+            <p>下一次重新整理此頁或重新開啟報名頁，將會開始一筆全新的報名。</p>
+        `;
+        confirmation.scrollIntoView({behavior:"smooth",block:"start"});
     });
 
 
