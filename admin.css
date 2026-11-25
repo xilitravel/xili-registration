@@ -1571,63 +1571,76 @@
   .dashboard-premium .dashboard-heading { height:auto !important; }
 }
 
+/* =====================================================
+   按鍵圖示底色｜玫瑰奶油金統一樣式
+   僅為圖示增加柔和底色，不改變按鍵原有尺寸與功能
+===================================================== */
+.admin-nav-btn > .ui-icon {
+  flex: 0 0 38px;
+  width: 38px !important;
+  height: 38px !important;
+  padding: 7px;
+  margin-right: 11px;
+  box-sizing: border-box;
+  border-radius: 12px;
+  background: #fff0f2;
+  color: #b6536b;
+  stroke: currentColor;
+  fill: none;
+  filter: drop-shadow(0 1px 0 rgba(255,255,255,.8));
+}
+.admin-nav-btn:nth-of-type(2) > .ui-icon { background:#fff2e2; color:#bd8841; }
+.admin-nav-btn:nth-of-type(3) > .ui-icon { background:#edf6e9; color:#67934e; }
+.admin-nav-btn:nth-of-type(4) > .ui-icon { background:#fff1df; color:#c58a35; }
+.admin-nav-btn:nth-of-type(5) > .ui-icon { background:#fcecf0; color:#bd5c75; }
+.admin-nav-btn:nth-of-type(6) > .ui-icon { background:#f1edf8; color:#8771a8; }
+.admin-nav-btn.active > .ui-icon {
+  background: rgba(255,255,255,.22) !important;
+  color: #fff !important;
+  box-shadow: inset 0 1px 2px rgba(255,255,255,.2);
+}
+.admin-nav-btn { gap: 0; }
 
-/* ==========================================================
-   FINAL REFERENCE MATCH — exact dashboard icon treatment
-   Desktop layout follows the approved 1645 × 900 reference.
-========================================================== */
-.admin-body { overflow-x:hidden; }
-.admin-header { height:116px !important; min-height:116px !important; background-size:cover !important; background-position:center center !important; }
-.admin-container { width:calc(100% - 30px) !important; max-width:none !important; margin:16px 15px 24px !important; grid-template-columns:258px minmax(0,1fr) !important; gap:16px !important; }
-.admin-sidebar { min-height:calc(100vh - 140px) !important; padding:16px 12px 20px !important; }
-.admin-sidebar::before { height:440px !important; border-radius:24px !important; }
-.admin-nav-btn { display:flex !important; align-items:center !important; gap:13px !important; min-height:62px !important; height:62px !important; padding:10px 16px !important; font-size:18px !important; font-weight:700 !important; }
-.admin-nav-btn:first-of-type { margin-top:0 !important; }
-.admin-nav-btn span { display:inline-block; }
-.admin-nav-btn .ui-icon { width:32px; height:32px; flex:0 0 32px; stroke-width:2.7; }
-.admin-nav-btn[data-section="dashboard"] .ui-icon { color:#b84e68; }
-.admin-nav-btn[data-section="trips"] .ui-icon { color:#c45b73; }
-.admin-nav-btn[data-section="registrations"] .ui-icon { color:#23933f; }
-.admin-nav-btn[data-section="payments"] .ui-icon { color:#d59a2d; }
-.admin-nav-btn[data-section="boarding"] .ui-icon { color:#b64e68; }
-.admin-nav-btn[data-section="settings"] .ui-icon { color:#a94e68; }
-.admin-nav-btn.active .ui-icon { color:#fff !important; }
-.admin-sidebar-character { top:430px !important; bottom:auto !important; left:-2px !important; width:250px !important; height:280px !important; object-fit:contain !important; object-position:center top !important; }
-.dashboard-premium .dashboard-heading h2 { display:flex !important; align-items:center !important; gap:12px !important; }
-.dashboard-premium .dashboard-heading h2::before { content:none !important; }
-.dashboard-premium .dashboard-heading h2 .ui-icon { width:44px; height:44px; color:#a34358; stroke-width:2.7; }
-.dashboard-premium .dashboard-heading h2 span { display:inline-block; }
-.dashboard-updated .calendar-small { display:inline-flex; width:28px; height:28px; vertical-align:middle; margin-right:6px; }
-.dashboard-updated .calendar-small .ui-icon { width:28px; height:28px; stroke:#8f4c4c; stroke-width:2.7; }
-.dashboard-refresh-btn span { font-size:30px !important; }
-.dashboard-stats .stat-icon { background:rgba(255,255,255,.78) !important; }
-.dashboard-stats .stat-icon .ui-icon { width:58px; height:58px; stroke:currentColor; stroke-width:2.35; fill:none; stroke-linecap:round; stroke-linejoin:round; filter:drop-shadow(0 1px 1px rgba(80,40,40,.12)); }
-.dashboard-stats .stat-rose .stat-icon .ui-icon { color:#c65376; }
-.dashboard-stats .stat-gold .stat-icon .ui-icon { color:#bd8b48; }
-.dashboard-stats .stat-blue .stat-icon .ui-icon { color:#5c9cab; }
-.dashboard-stats .stat-green .stat-icon .ui-icon { color:#4e8c3d; }
-.panel-heading-icon { display:inline-flex !important; vertical-align:middle; width:31px; height:31px; margin-right:8px !important; }
-.panel-heading-icon .ui-icon { width:31px; height:31px; stroke:currentColor; stroke-width:2.6; fill:none; stroke-linecap:round; stroke-linejoin:round; }
-.dashboard-quick-card .panel-heading-icon { width:34px; height:34px; color:#b27a3d; }
-.dashboard-quick-actions { grid-template-columns:repeat(6,minmax(0,1fr)) !important; }
-.quick-action { display:flex !important; flex-direction:column !important; align-items:center !important; justify-content:center !important; }
-.quick-action span { display:flex !important; align-items:center !important; justify-content:center !important; width:50px !important; height:50px !important; color:#b84f69 !important; }
-.quick-action span .ui-icon { width:48px; height:48px; stroke:currentColor; stroke-width:2.35; fill:none; stroke-linecap:round; stroke-linejoin:round; }
-.quick-action:nth-child(4) span { color:#bd8b48 !important; }
-.quick-action strong { font-size:18px !important; line-height:1.2 !important; }
-.dashboard-premium .dashboard-panel, .dashboard-quick-card { border-color:#dfc5b5 !important; }
-@media (min-width:1251px) and (max-width:1750px) {
-  .dashboard-panels { grid-template-columns:minmax(0,.70fr) minmax(0,1fr) !important; }
-  .registration-donut { width:190px !important; height:190px !important; flex-basis:190px !important; }
-  .registration-chart-layout { gap:10px !important; }
+/* 總覽快速功能：每個圖示都有獨立柔色底 */
+.dashboard-quick-actions .quick-action > span {
+  display: grid !important;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  flex: 0 0 54px;
+  border-radius: 17px;
+  background: #fff0f2 !important;
+  color: #b6536b !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 0 2px 5px rgba(133,77,83,.07);
 }
-@media (max-width:1250px) and (min-width:701px) {
-  .admin-nav-btn { font-size:16px !important; gap:8px !important; }
-  .admin-nav-btn .ui-icon { width:25px; height:25px; flex-basis:25px; }
-  .dashboard-premium .dashboard-heading h2 .ui-icon { width:32px; height:32px; }
+.dashboard-quick-actions .quick-action:nth-child(2) > span { background:#fff2e2 !important; color:#bd8841 !important; }
+.dashboard-quick-actions .quick-action:nth-child(3) > span { background:#fcecf0 !important; color:#bd5c75 !important; }
+.dashboard-quick-actions .quick-action:nth-child(4) > span { background:#fff1df !important; color:#c58a35 !important; }
+.dashboard-quick-actions .quick-action:nth-child(5) > span { background:#fcecf0 !important; color:#bd5c75 !important; }
+.dashboard-quick-actions .quick-action:nth-child(6) > span { background:#f1edf8 !important; color:#8771a8 !important; }
+.dashboard-quick-actions .quick-action > span > svg {
+  display: block;
+  width: 31px !important;
+  height: 31px !important;
+  stroke: currentColor;
+  fill: none;
 }
-@media (max-width:700px) {
-  .admin-nav-btn { display:inline-flex !important; width:auto !important; height:auto !important; min-height:42px !important; }
-  .admin-nav-btn .ui-icon { width:22px; height:22px; flex-basis:22px; }
-  .admin-sidebar-character { display:none !important; }
+.dashboard-quick-actions .quick-action:hover > span {
+  transform: translateY(-1px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.98), 0 4px 9px rgba(133,77,83,.12);
+}
+
+/* 可點擊的小型功能按鈕圖示底色 */
+.dashboard-refresh-btn > span,
+.dashboard-more-btn::first-letter {
+  color: #a94d65;
+}
+.dashboard-refresh-btn > span {
+  display: inline-grid;
+  place-items: center;
+  width: 25px;
+  height: 25px;
+  margin-right: 5px;
+  border-radius: 8px;
+  background: #fbe8ed;
 }
