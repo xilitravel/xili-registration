@@ -218,28 +218,75 @@ async function loadTrips() {
 
 
 function updateDashboard() {
+  const total = registrationData.length;
+  const pending = registrationData.filter(item => String(item.status || "").includes("待確認")).length;
+  const cancelled = registrationData.filter(item => String(item.status || "").includes("取消")).length;
+  const confirmed = Math.max(0, total - pending - cancelled);
+  const pendingPayment = paymentData
+    .filter(item => !["已結清", "已取消"].includes(String(item.paymentStatus || item.status || "")))
+    .reduce((sum, item) => sum + (Number(item.travelerCount) || 1), 0);
 
-  document.getElementById("totalTrips")
-    .textContent = tripsData.length;
+  const setText = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
+  setText("totalTrips", tripsData.length);
+  setText("totalRegistrations", total);
+  setText("pendingRegistrations", pending);
+  setText("pendingPayments", pendingPayment);
+  setText("donutTotal", total);
+  setText("chartPending", `${pending} 人`);
+  setText("chartConfirmed", `${confirmed} 人`);
+  setText("chartCancelled", `${cancelled} 人`);
+  const pct = value => total ? `${Math.round(value / total * 100)}%` : "0%";
+  setText("chartPendingPct", pct(pending));
+  setText("chartConfirmedPct", pct(confirmed));
+  setText("chartCancelledPct", pct(cancelled));
 
-  document.getElementById("totalRegistrations")
-    .textContent = registrationData.length;
+  const donut = document.getElementById("registrationDonut");
+  if (donut) {
+    const p1 = total ? pending / total * 100 : 0;
+    const p2 = total ? (pending + confirmed) / total * 100 : 0;
+    donut.style.background = total
+      ? `conic-gradient(#e8a1b8 0% ${p1}%, #c6537b ${p1}% ${p2}%, #d7d6d5 ${p2}% 100%)`
+      : "conic-gradient(#eee7e9 0% 100%)";
+  }
 
-  document.getElementById("pendingRegistrations")
-    .textContent = registrationData.filter(item => {
-
-      return item.status === "待確認";
-
-    }).length;
-
-  document.getElementById("pendingPayments")
-    .textContent = paymentData.filter(item => {
-
-      return item.status === "未繳費";
-
-    }).length;
-
+  renderDashboardRecentTrips();
 }
+
+function renderDashboardRecentTrips() {
+  const tbody = document.getElementById("dashboardRecentTrips");
+  if (!tbody) return;
+  const sorted = [...tripsData].sort((a, b) => String(a.date || "9999-99-99").localeCompare(String(b.date || "9999-99-99"))).slice(0, 5);
+  if (!sorted.length) {
+    tbody.innerHTML = `<tr><td colspan="4" class="empty-data">目前尚無行程資料</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = sorted.map(trip => {
+    const tripId = String(trip.tripId || trip.id || "");
+    const tripName = trip.name || trip.title || "未命名行程";
+    const orders = paymentData.filter(x => String(x.tripId || "") === tripId || x.tripName === tripName);
+    const registered = orders.reduce((sum, x) => sum + (Number(x.travelerCount) || 0), 0);
+    const unpaid = orders.filter(x => !["已結清", "已取消"].includes(String(x.paymentStatus || x.status || "")))
+      .reduce((sum, x) => sum + (Number(x.travelerCount) || 1), 0);
+    const quota = Number(trip.maxPeople) || 0;
+    return `<tr>
+      <td>${escapeHTML(trip.date || "—")}</td>
+      <td class="recent-trip-name">${escapeHTML(tripName)}</td>
+      <td>${registered} / ${quota || "—"}</td>
+      <td><span class="payment-pill ${unpaid ? "has-unpaid" : "all-paid"}">${unpaid} 人未繳</span></td>
+    </tr>`;
+  }).join("");
+}
+
+// 快速功能與「查看全部」共用左側原有導覽切換，避免重複建立另一套頁面狀態。
+document.addEventListener("click", event => {
+  const jump = event.target.closest("[data-jump-section]");
+  if (!jump) return;
+  const target = document.querySelector(`.admin-nav-btn[data-section="${jump.dataset.jumpSection}"]`);
+  if (target) target.click();
+  if (jump.dataset.quickAction === "add-trip") {
+    document.getElementById("addTripBtn")?.click();
+  }
+});
 
 
 // =====================================================

@@ -7,7 +7,7 @@
   <title>管理後台｜囍莉旅遊</title>
 
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="admin.css?v=20261125-premium-rose-1">
+  <link rel="stylesheet" href="admin.css?v=20261125-dashboard-premium-2">
 
   <style id="admin-seat-map-styles">
     #tripStaffSeats.admin-seat-map {
@@ -157,62 +157,82 @@
     <div class="admin-main">
 
 
-      <!-- 總覽 -->
-      <section class="admin-section active" id="dashboard">
+      <!-- 總覽：成熟精緻版 -->
+      <section class="admin-section active dashboard-premium" id="dashboard">
 
-        <h2>🏠 管理總覽</h2>
-
-        <p class="admin-description">
-          查看目前行程、報名及繳費狀況。
-        </p>
-
-
-        <div class="admin-stats">
-
-          <div class="admin-stat-card">
-            <div class="admin-stat-title">目前行程數</div>
-            <div class="admin-stat-number" id="totalTrips">0</div>
+        <div class="dashboard-heading">
+          <div>
+            <h2>管理總覽</h2>
+            <p class="admin-description">歡迎使用囍莉旅遊管理後台，以下為最新的行程與報名統計。</p>
           </div>
-
-          <div class="admin-stat-card">
-            <div class="admin-stat-title">報名總人數</div>
-            <div class="admin-stat-number" id="totalRegistrations">0</div>
-          </div>
-
-          <div class="admin-stat-card">
-            <div class="admin-stat-title">待確認報名</div>
-            <div class="admin-stat-number" id="pendingRegistrations">0</div>
-          </div>
-
-          <div class="admin-stat-card">
-            <div class="admin-stat-title">待繳費人數</div>
-            <div class="admin-stat-number" id="pendingPayments">0</div>
-          </div>
-
+          <div class="dashboard-updated"><span aria-hidden="true">▦</span> 資料即時統計</div>
         </div>
 
-
-        <div class="admin-card">
-
-          <h3>📌 系統功能</h3>
-
-          <ul>
-            <li>新增、修改及刪除旅遊行程</li>
-            <li>查看旅客報名資料</li>
-            <li>管理報名及繳費狀態</li>
-            <li>管理上車地點</li>
-            <li>匯出報名資料</li>
-            <li>設定網站及系統資料</li>
-          </ul>
-
+        <div class="admin-stats dashboard-stats">
+          <div class="admin-stat-card stat-rose">
+            <div class="stat-icon" aria-hidden="true">▣</div>
+            <div><div class="admin-stat-title">目前行程數</div><div class="admin-stat-number" id="totalTrips">0</div></div>
+          </div>
+          <div class="admin-stat-card stat-gold">
+            <div class="stat-icon" aria-hidden="true">♟</div>
+            <div><div class="admin-stat-title">報名總人數</div><div class="admin-stat-number" id="totalRegistrations">0</div></div>
+          </div>
+          <div class="admin-stat-card stat-blue">
+            <div class="stat-icon" aria-hidden="true">☑</div>
+            <div><div class="admin-stat-title">待確認報名</div><div class="admin-stat-number" id="pendingRegistrations">0</div></div>
+          </div>
+          <div class="admin-stat-card stat-green">
+            <div class="stat-icon" aria-hidden="true">▤</div>
+            <div><div class="admin-stat-title">待繳費人數</div><div class="admin-stat-number" id="pendingPayments">0</div></div>
+          </div>
         </div>
 
+        <div class="dashboard-panels">
+          <section class="admin-card dashboard-panel registration-overview-card">
+            <div class="dashboard-panel-heading">
+              <h3><span class="panel-heading-icon">▥</span> 報名狀態統計</h3>
+              <span class="panel-accent" aria-hidden="true"></span>
+            </div>
+            <div class="registration-chart-layout">
+              <div class="registration-donut" id="registrationDonut" role="img" aria-label="報名狀態統計圖">
+                <div class="donut-center"><span>報名總人數</span><strong id="donutTotal">0</strong></div>
+              </div>
+              <div class="registration-legend">
+                <div><i class="legend-dot pending"></i><span>待確認</span><strong id="chartPending">0 人</strong><small id="chartPendingPct">0%</small></div>
+                <div><i class="legend-dot confirmed"></i><span>已確認</span><strong id="chartConfirmed">0 人</strong><small id="chartConfirmedPct">0%</small></div>
+                <div><i class="legend-dot cancelled"></i><span>已取消</span><strong id="chartCancelled">0 人</strong><small id="chartCancelledPct">0%</small></div>
+              </div>
+            </div>
+          </section>
 
-        <div class="admin-warning">
+          <section class="admin-card dashboard-panel recent-trips-card">
+            <div class="dashboard-panel-heading recent-heading">
+              <h3><span class="panel-heading-icon">▦</span> 近期出團行程 <small>（最近 5 筆）</small></h3>
+              <button type="button" class="dashboard-more-btn" data-jump-section="trips">查看全部 ›</button>
+            </div>
+            <div class="dashboard-table-wrap">
+              <table class="dashboard-recent-table">
+                <thead><tr><th>出團日期</th><th>行程名稱</th><th>報名 / 名額</th><th>繳費狀態</th></tr></thead>
+                <tbody id="dashboardRecentTrips"><tr><td colspan="4" class="empty-data">資料載入中…</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
 
-          ⚠️ 目前後台尚未連接 Google Sheets。
-          此頁面為功能介面，尚未儲存實際資料。
+        <section class="admin-card dashboard-quick-card">
+          <div class="dashboard-panel-heading"><h3><span class="panel-heading-icon">✦</span> 快速功能</h3></div>
+          <div class="dashboard-quick-actions">
+            <button type="button" class="quick-action" data-jump-section="trips" data-quick-action="add-trip"><span>▦</span><strong>新增行程</strong></button>
+            <button type="button" class="quick-action" data-jump-section="trips"><span>✎</span><strong>修改行程</strong></button>
+            <button type="button" class="quick-action" data-jump-section="registrations"><span>♟</span><strong>查看報名</strong></button>
+            <button type="button" class="quick-action" data-jump-section="payments"><span>▤</span><strong>繳費管理</strong></button>
+            <button type="button" class="quick-action" data-jump-section="boarding"><span>⌖</span><strong>上車地點</strong></button>
+            <button type="button" class="quick-action" data-jump-section="settings"><span>⚙</span><strong>系統設定</strong></button>
+          </div>
+        </section>
 
+        <div class="admin-warning dashboard-warning">
+          ⚠️ 行程資料由網站行程 JSON 載入；報名與繳費統計依目前後台 API 回傳資料計算。
         </div>
 
       </section>
@@ -755,7 +775,7 @@
   </main>
 
 
-  <script src="admin.js?v=20261125-premium-rose-1"></script>
+  <script src="admin.js?v=20261125-dashboard-premium-2"></script>
 
 </body>
 </html>
