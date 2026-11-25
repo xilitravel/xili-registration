@@ -231,8 +231,10 @@
   top: 71.65%;
   width: 33.25%;
   height: 7.55%;
-  padding: 0 16px;
+  /* 將密碼點點與游標往下微調，對齊背景輸入框的垂直中心 */
+  padding: 12px 16px 0;
   margin: 0;
+  line-height: normal;
   border: 0 !important;
   border-radius: 0 !important;
   outline: 0 !important;
@@ -272,7 +274,15 @@
   cursor: pointer;
   box-shadow: none;
 }
-#adminLoginSubmit:hover { transform: none; box-shadow: 0 0 0 4px rgba(255,255,255,.28); }
+/* 按鈕本身已印在背景圖上；透明點擊區不可再畫出額外外框 */
+#adminLoginSubmit:hover,
+#adminLoginSubmit:focus,
+#adminLoginSubmit:focus-visible,
+#adminLoginSubmit:active {
+  transform: none;
+  outline: none;
+  box-shadow: none;
+}
 #adminLoginSubmit:disabled { opacity: .7; cursor: wait; }
 #adminLoginError {
   position: absolute;
