@@ -756,3 +756,254 @@
   .registration-chart-layout { flex-direction:column; }
   .dashboard-quick-actions { grid-template-columns:repeat(2,minmax(0,1fr)); }
 }
+
+
+
+/* ==========================================================
+   囍莉旅遊｜總覽比例校正版 v4
+   依照使用者提供的參考圖：縮小統計圖、降低卡片高度、
+   放寬主內容，讓快速功能能在一般桌面畫面中完整呈現。
+========================================================== */
+.admin-container {
+  width: calc(100% - 30px);
+  max-width: none;
+  margin: 16px 15px 24px;
+  padding: 0;
+  grid-template-columns: 258px minmax(0, 1fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+.admin-sidebar {
+  min-height: calc(100vh - 140px);
+  padding: 16px 12px 20px;
+}
+.admin-sidebar::before {
+  height: 420px;
+  border-radius: 22px;
+}
+.admin-sidebar-character {
+  top: 430px;
+  bottom: auto;
+  left: -2px;
+  width: 250px;
+  height: 280px;
+  object-fit: contain;
+  object-position: center top;
+}
+
+.dashboard-premium .dashboard-heading {
+  min-height: 48px;
+  margin: 0 0 13px;
+  padding: 0 2px 7px;
+}
+.dashboard-premium .dashboard-heading h2 {
+  font-size: 25px;
+}
+.dashboard-premium .admin-description {
+  margin: 5px 0 0;
+  font-size: 14px;
+}
+
+.dashboard-stats {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0 0 16px;
+}
+.dashboard-stats .admin-stat-card {
+  min-width: 0;
+  min-height: 120px;
+  padding: 14px 15px;
+  gap: 12px;
+  border-radius: 20px;
+}
+.dashboard-stats .admin-stat-card::after {
+  width: 76px;
+  height: 76px;
+  right: 7px;
+}
+.dashboard-stats .stat-icon {
+  flex: 0 0 64px;
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  font-size: 33px;
+}
+.dashboard-stats .admin-stat-title {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+.dashboard-stats .admin-stat-number {
+  font-size: 40px;
+}
+
+.dashboard-panels {
+  grid-template-columns: minmax(0, .9fr) minmax(0, 1.3fr);
+  gap: 14px;
+  margin: 0 0 14px;
+  align-items: stretch;
+}
+.dashboard-premium .dashboard-panel {
+  min-width: 0;
+  min-height: 286px;
+  padding: 17px 18px;
+  margin: 0;
+  border-radius: 21px;
+}
+.dashboard-panel-heading {
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+.dashboard-panel-heading h3 {
+  font-size: 19px;
+}
+.panel-heading-icon {
+  font-size: 22px;
+}
+.registration-chart-layout {
+  min-height: 205px;
+  gap: 14px;
+}
+.registration-donut {
+  width: 184px;
+  height: 184px;
+  flex: 0 0 184px;
+}
+.registration-donut::before {
+  inset: 17px;
+}
+.donut-center span {
+  font-size: 14px;
+}
+.donut-center strong {
+  font-size: 36px;
+}
+.registration-legend {
+  min-width: 115px;
+}
+.registration-legend > div {
+  grid-template-columns: 12px minmax(0,1fr) auto auto;
+  gap: 6px;
+  padding: 11px 0;
+  font-size: 13px;
+}
+.registration-legend strong {
+  font-size: 13px;
+}
+.registration-legend small {
+  font-size: 12px;
+}
+
+.dashboard-recent-table {
+  min-width: 0;
+  font-size: 12px;
+}
+.dashboard-recent-table th {
+  padding: 9px 7px;
+  font-size: 12px;
+}
+.dashboard-recent-table td {
+  padding: 9px 7px;
+  font-size: 12px;
+}
+.dashboard-more-btn {
+  padding: 7px 13px;
+  font-size: 12px;
+}
+
+.dashboard-quick-card {
+  margin: 0;
+  padding: 15px 18px 17px;
+  border-radius: 21px;
+}
+.dashboard-quick-card .dashboard-panel-heading {
+  margin-bottom: 10px;
+  padding-bottom: 9px;
+}
+.dashboard-quick-actions {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+}
+.quick-action {
+  min-width: 0;
+  min-height: 88px;
+  padding: 9px 5px;
+  gap: 6px;
+  border-radius: 15px;
+}
+.quick-action span {
+  font-size: 29px;
+}
+.quick-action strong {
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+/* 參考圖未顯示資料提示框，避免它把快速功能推到首屏以下 */
+.dashboard-warning {
+  display: none;
+}
+
+@media (max-width: 1250px) and (min-width: 701px) {
+  .admin-container {
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 13px;
+  }
+  .admin-sidebar-character {
+    width: 215px;
+    height: 255px;
+  }
+  .dashboard-stats .admin-stat-card {
+    padding: 12px 10px;
+    gap: 8px;
+  }
+  .dashboard-stats .stat-icon {
+    flex-basis: 48px;
+    width: 48px;
+    height: 48px;
+    font-size: 27px;
+  }
+  .dashboard-stats .admin-stat-title {
+    font-size: 12px;
+  }
+  .dashboard-stats .admin-stat-number {
+    font-size: 34px;
+  }
+  .dashboard-panels {
+    grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr);
+  }
+  .registration-donut {
+    width: 158px;
+    height: 158px;
+    flex-basis: 158px;
+  }
+  .registration-chart-layout {
+    gap: 9px;
+  }
+}
+
+@media (max-width: 700px) {
+  .admin-container {
+    width: calc(100% - 20px);
+    margin: 10px auto 24px;
+    grid-template-columns: 1fr;
+  }
+  .admin-sidebar-character {
+    display: none;
+  }
+  .dashboard-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .dashboard-panels {
+    grid-template-columns: 1fr;
+  }
+  .dashboard-premium .dashboard-panel {
+    min-height: 0;
+  }
+  .registration-chart-layout {
+    min-height: 0;
+  }
+  .dashboard-quick-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
