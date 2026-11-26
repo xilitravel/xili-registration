@@ -6341,41 +6341,190 @@ body.admin-body .admin-table {
   .dashboard-trip-item { min-height: 62px !important; }
 }
 
-/* v74｜管理總覽右側改為選取行程的五項統計 */
-.dashboard-selected-detail-card { display:flex !important; flex-direction:column !important; min-height:0 !important; }
-.dashboard-selected-detail-card .dashboard-panel-heading { flex:0 0 auto !important; }
-.dashboard-selected-detail-card .dashboard-detail-grid {
-  display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)) !important;
-  grid-template-rows:minmax(92px,1fr) minmax(92px,1fr) auto !important;
-  gap:10px !important; min-height:0 !important; flex:1 1 auto !important;
-  overflow-y:auto !important; overflow-x:hidden !important; padding:1px 5px 3px 1px !important;
-  scrollbar-width:thin !important; scrollbar-color:#d9a5b5 #fbf1f4 !important;
+/* v75｜行程清單：改為參考圖的單列緊湊高度；金枝縮短避開右側按鈕 */
+.dashboard-trip-list-card > .dashboard-panel-heading {
+  position: relative !important;
+  padding-bottom: 19px !important;
+  margin-bottom: 8px !important;
+  overflow: visible !important;
 }
-.dashboard-selected-detail-card .dashboard-detail-grid::-webkit-scrollbar { width:6px; }
-.dashboard-selected-detail-card .dashboard-detail-grid::-webkit-scrollbar-thumb { background:#d9a5b5; border-radius:8px; }
-.dashboard-detail-card {
-  min-width:0 !important; min-height:0 !important; padding:11px 13px !important;
-  border:1px solid rgba(224,169,169,.62) !important; border-radius:15px !important;
-  background:linear-gradient(145deg,rgba(255,255,255,.94),rgba(255,247,247,.88)) !important;
-  box-shadow:0 3px 9px rgba(137,82,82,.055) !important;
+.dashboard-trip-list-card > .dashboard-panel-heading::after {
+  left: 13% !important;
+  right: 25% !important;
+  bottom: -2px !important;
+  height: 19px !important;
+  background-size: 100% 100% !important;
+  opacity: .9 !important;
+  pointer-events: none !important;
 }
-.dashboard-detail-card h4 { margin:0 0 8px !important; padding:0 0 7px !important; color:#a94762 !important; font-size:16px !important; font-weight:900 !important; border-bottom:1px solid rgba(222,174,174,.38) !important; }
-.dashboard-detail-content { min-width:0 !important; color:#59464a !important; font-size:13px !important; }
-.dashboard-detail-empty { color:#a28a8d !important; text-align:center !important; padding:12px 4px !important; }
-.dashboard-detail-list { display:grid !important; gap:6px !important; }
-.dashboard-detail-row { display:grid !important; grid-template-columns:minmax(58px,.8fr) minmax(35px,1fr) auto !important; align-items:center !important; gap:7px !important; font-size:12px !important; }
-.dashboard-detail-label { overflow:hidden !important; text-overflow:ellipsis !important; white-space:nowrap !important; }
-.dashboard-detail-bar { display:block !important; height:7px !important; border-radius:10px !important; background:#f8e8ec !important; overflow:hidden !important; }
-.dashboard-detail-bar i { display:block !important; height:100% !important; border-radius:10px !important; background:linear-gradient(90deg,#e9a1b5,#d65d83) !important; }
-.dashboard-detail-row strong { white-space:nowrap !important; color:#8f4359 !important; font-size:12px !important; }
-.dashboard-meal-summary { display:flex !important; flex-wrap:wrap !important; gap:8px 18px !important; align-items:center !important; padding:7px 2px !important; }
-.dashboard-meal-summary span { white-space:nowrap !important; }
-.dashboard-meal-summary strong { color:#b64d70 !important; font-size:20px !important; margin:0 3px !important; }
-.dashboard-meal-summary small { color:#9b8589 !important; }
-.dashboard-detail-reminders { grid-column:1 / -1 !important; }
-.dashboard-reminder-list { margin:0 !important; padding:0 0 0 19px !important; display:grid !important; gap:5px !important; line-height:1.5 !important; }
-.dashboard-reminder-list li { overflow-wrap:anywhere !important; }
-@media (max-width:700px) {
-  .dashboard-selected-detail-card .dashboard-detail-grid { grid-template-columns:1fr !important; grid-template-rows:none !important; }
-  .dashboard-detail-reminders { grid-column:auto !important; }
+.dashboard-trip-list-wrap {
+  padding: 2px 5px 2px 0 !important;
+}
+.dashboard-trip-list {
+  display: grid !important;
+  gap: 6px !important;
+  padding: 0 8px !important;
+}
+.dashboard-trip-item {
+  display: grid !important;
+  grid-template-columns: max-content minmax(0, 1fr) max-content 12px !important;
+  grid-template-rows: 1fr !important;
+  align-items: center !important;
+  column-gap: 9px !important;
+  row-gap: 0 !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-height: 43px !important;
+  height: 43px !important;
+  margin: 0 !important;
+  padding: 7px 10px !important;
+  border-radius: 11px !important;
+}
+.dashboard-trip-item-date {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  font-size: 11px !important;
+  line-height: 1.2 !important;
+}
+.dashboard-trip-item-name {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  font-size: 13px !important;
+  line-height: 1.25 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+.dashboard-trip-item-count {
+  grid-column: 3 !important;
+  grid-row: 1 !important;
+  align-self: center !important;
+  font-size: 12px !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+}
+.dashboard-trip-item-arrow {
+  grid-column: 4 !important;
+  grid-row: 1 !important;
+  justify-self: end !important;
+  align-self: center !important;
+  margin: 0 !important;
+}
+.dashboard-trip-item-metrics { display: none !important; }
+@media (max-width: 900px) {
+  .dashboard-trip-item { column-gap: 6px !important; padding-inline: 8px !important; }
+  .dashboard-trip-item-date { font-size: 10px !important; }
+  .dashboard-trip-item-name { font-size: 12px !important; }
+  .dashboard-trip-item-count { font-size: 11px !important; }
+  .dashboard-trip-list-card > .dashboard-panel-heading::after { right: 27% !important; }
+}
+@media (max-width: 560px) {
+  .dashboard-trip-item { grid-template-columns: max-content minmax(0,1fr) max-content 9px !important; }
+  .dashboard-trip-item-date { font-size: 9px !important; }
+  .dashboard-trip-item-count { font-size: 10px !important; }
+  .dashboard-trip-list-card > .dashboard-panel-heading::after { left: 12% !important; right: 30% !important; height: 16px !important; }
+}
+
+
+/* v76-final｜左側行程清單真正縮小、金枝縮短避開按鈕 */
+.dashboard-trip-list-card > .dashboard-panel-heading {
+  position: relative !important;
+  padding-bottom: 13px !important;
+  margin-bottom: 6px !important;
+  overflow: visible !important;
+}
+.dashboard-trip-list-card > .dashboard-panel-heading::after {
+  content: "" !important;
+  position: absolute !important;
+  left: 43% !important;
+  right: auto !important;
+  bottom: -1px !important;
+  width: 145px !important;
+  max-width: 26% !important;
+  height: 13px !important;
+  background-image: url("registration-title-gold-branch-v49.png?v=20261126-v76") !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  opacity: .72 !important;
+  pointer-events: none !important;
+}
+.dashboard-trip-list-wrap {
+  padding: 1px 5px 1px 0 !important;
+}
+.dashboard-trip-list {
+  display: grid !important;
+  grid-auto-rows: 34px !important;
+  gap: 4px !important;
+  padding: 0 8px !important;
+}
+.dashboard-trip-list .dashboard-trip-item {
+  display: grid !important;
+  grid-template-columns: max-content minmax(0,1fr) max-content 8px !important;
+  grid-template-rows: 1fr !important;
+  align-items: center !important;
+  column-gap: 8px !important;
+  row-gap: 0 !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 34px !important;
+  height: 34px !important;
+  max-height: 34px !important;
+  margin: 0 !important;
+  padding: 3px 9px !important;
+  border-radius: 9px !important;
+  line-height: 1.1 !important;
+}
+.dashboard-trip-list .dashboard-trip-item-date,
+.dashboard-trip-list .dashboard-trip-item-name,
+.dashboard-trip-list .dashboard-trip-item-count,
+.dashboard-trip-list .dashboard-trip-item-arrow {
+  grid-row: 1 !important;
+  align-self: center !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1.15 !important;
+}
+.dashboard-trip-list .dashboard-trip-item-date {
+  grid-column: 1 !important;
+  white-space: nowrap !important;
+  font-size: 11px !important;
+}
+.dashboard-trip-list .dashboard-trip-item-name {
+  grid-column: 2 !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  font-size: 12px !important;
+}
+.dashboard-trip-list .dashboard-trip-item-count {
+  grid-column: 3 !important;
+  white-space: nowrap !important;
+  font-size: 11px !important;
+}
+.dashboard-trip-list .dashboard-trip-item-arrow {
+  grid-column: 4 !important;
+  justify-self: end !important;
+  font-size: 13px !important;
+}
+.dashboard-trip-list .dashboard-trip-item-metrics { display: none !important; }
+
+@media (max-width: 900px) {
+  .dashboard-trip-list .dashboard-trip-item {
+    column-gap: 5px !important;
+    padding-inline: 6px !important;
+  }
+  .dashboard-trip-list .dashboard-trip-item-date { font-size: 10px !important; }
+  .dashboard-trip-list .dashboard-trip-item-name { font-size: 11px !important; }
+  .dashboard-trip-list .dashboard-trip-item-count { font-size: 10px !important; }
+  .dashboard-trip-list-card > .dashboard-panel-heading::after {
+    left: 42% !important;
+    width: 115px !important;
+    max-width: 22% !important;
+    height: 11px !important;
+  }
 }
