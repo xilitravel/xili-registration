@@ -160,6 +160,58 @@
     "staffSeatIds": []
   },
   {
+    "tripId": "fbeece73-6191-4e28-9720-7dfed5c98fc4",
+    "id": "fbeece73-6191-4e28-9720-7dfed5c98fc4",
+    "name": "1234567",
+    "title": "1234567",
+    "date": "2026-12-19",
+    "dateText": "2026-12-19",
+    "type": "多日遊",
+    "price": 2000,
+    "priceText": "$2,000",
+    "deadline": "2026-11-30",
+    "maxPeople": 20,
+    "status": "報名中",
+    "sheetName": "1234567",
+    "departure": "台南",
+    "description": "",
+    "highlights": [],
+    "boardingPoints": [],
+    "notes": [],
+    "image": "",
+    "days": 2,
+    "lodging": true,
+    "roomTypes": [],
+    "meals": [
+      {
+        "key": "day1_早餐",
+        "provided": false
+      },
+      {
+        "key": "day1_午餐",
+        "provided": false
+      },
+      {
+        "key": "day1_晚餐",
+        "provided": false
+      },
+      {
+        "key": "day2_早餐",
+        "provided": false
+      },
+      {
+        "key": "day2_午餐",
+        "provided": false
+      },
+      {
+        "key": "day2_晚餐",
+        "provided": false
+      }
+    ],
+    "registeredPeople": 0,
+    "staffSeatIds": []
+  },
+  {
     "tripId": "da34626c-6136-475a-9ee7-5f3bb6006cb1",
     "id": "da34626c-6136-475a-9ee7-5f3bb6006cb1",
     "name": "111",
