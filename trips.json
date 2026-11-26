@@ -1,1 +1,42 @@
-[]
+[
+  {
+    "tripId": "4db645c5-dddc-46ac-b084-6547a48718d1",
+    "id": "4db645c5-dddc-46ac-b084-6547a48718d1",
+    "name": "測試行程",
+    "title": "測試行程",
+    "date": "2026-12-01",
+    "dateText": "2026-12-01",
+    "type": "一日遊",
+    "price": 1000,
+    "priceText": "$1,000",
+    "deadline": "2026-11-26",
+    "maxPeople": 40,
+    "status": "報名中",
+    "sheetName": "測試行程",
+    "departure": "台南",
+    "description": "",
+    "highlights": [],
+    "boardingPoints": [],
+    "notes": [],
+    "image": "",
+    "days": 1,
+    "lodging": false,
+    "roomTypes": [],
+    "meals": [
+      {
+        "key": "day1_早餐",
+        "provided": false
+      },
+      {
+        "key": "day1_午餐",
+        "provided": false
+      },
+      {
+        "key": "day1_晚餐",
+        "provided": false
+      }
+    ],
+    "registeredPeople": 0,
+    "staffSeatIds": []
+  }
+]
