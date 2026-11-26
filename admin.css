@@ -4778,3 +4778,33 @@ body.admin-body .admin-table {
     opacity:.94 !important;
   }
 }
+
+
+/* v36：移除四張統計卡片圖示後方的白色圓角底板，保留 PNG 原始透明背景 */
+.dashboard-stats .stat-icon {
+  background:transparent !important;
+  background-color:transparent !important;
+  border:0 !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  filter:none !important;
+  overflow:visible !important;
+}
+.dashboard-stats .stat-icon img {
+  width:100% !important;
+  height:100% !important;
+  object-fit:contain !important;
+  background:transparent !important;
+  mix-blend-mode:normal !important;
+}
+@media (max-width:760px) {
+  .dashboard-stats .stat-icon {
+    background:transparent !important;
+    border:0 !important;
+    box-shadow:none !important;
+  }
+  .dashboard-stats .stat-icon img {
+    width:100% !important;
+    height:100% !important;
+  }
+}
