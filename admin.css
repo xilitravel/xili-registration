@@ -5511,3 +5511,35 @@ body.admin-body .admin-table {
   .trip-count-legend strong { width:100%; }
   .trip-list-heading { align-items:flex-start; flex-direction:column; }
 }
+
+/* v55｜行程管理頁面修正：避免裝飾性偽元素覆蓋行程內容 */
+#trips {
+  position: relative;
+  isolation: isolate;
+}
+#trips::before,
+#trips::after,
+#trips .admin-section-header::before,
+#trips .admin-section-header::after,
+#trips .admin-section-header > div::before,
+#trips .admin-section-header > div::after,
+#trips .trip-page-title::before,
+#trips .trip-page-title::after,
+#trips .trip-list-heading::before,
+#trips .trip-list-heading::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+}
+#trips .admin-section-header,
+#trips .trip-page-title,
+#trips .trip-list-heading {
+  background: transparent !important;
+  background-image: none !important;
+}
+#trips .trip-calendar-icon {
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  fill: none !important;
+}
