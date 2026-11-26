@@ -795,7 +795,7 @@ function renderTrips() {
   if (countLabel) countLabel.textContent = `（共 ${filtered.length} 筆）`;
 
   if (!filtered.length) {
-    tbody.innerHTML = `<tr><td colspan="7" class="empty-data">${sourceTrips.length ? "找不到符合條件的行程" : "目前尚無行程資料"}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8" class="empty-data">${sourceTrips.length ? "找不到符合條件的行程" : "目前尚無行程資料"}</td></tr>`;
     return;
   }
 
@@ -815,7 +815,7 @@ function renderTrips() {
       (!tripId && String(item.tripName || "").trim() === name.trim())
     );
     const people = tripRegistrations.length;
-    const countClass = people >= 40 ? "count-purple" : people >= 30 ? "count-green" : people >= 20 ? "count-blue" : "count-red";
+    const countClass = people >= 40 ? "count-purple" : people >= 30 ? "count-blue" : people >= 20 ? "count-green" : "count-red";
     const countText = capacity > 0 ? `${people} / ${capacity} 人` : `${people} 人`;
     const dateParts = date.match(/^(\d{4})-(\d{2})-(\d{2})$/);
     const dateDisplay = dateParts ? `${dateParts[2]}/${dateParts[3]}` : date;
@@ -823,6 +823,7 @@ function renderTrips() {
     return `
       <tr class="trip-list-row">
         <td><span class="trip-date-chip"><small>${dateParts ? `${dateParts[1]} 年` : "出發日期"}</small><strong>${escapeHTML(dateDisplay)}</strong></span></td>
+        <td><span class="trip-deadline-text">${escapeHTML(trip.deadline || "未設定")}</span></td>
         <td><strong class="trip-name-text">${escapeHTML(name)}</strong></td>
         <td><span class="trip-type-chip">${escapeHTML(type || "未設定")}</span></td>
         <td><span class="trip-departure-text">⌖ ${escapeHTML(departure)}</span></td>

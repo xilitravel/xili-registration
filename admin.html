@@ -10,7 +10,7 @@
 
   <title>管理後台｜囍莉旅遊</title>
   
-<link rel="stylesheet" href="admin.css?v=20261126-trip-management-refresh-scroll-v58">
+<link rel="stylesheet" href="admin.css?v=20261126-trip-deadline-colors-monthfix-v59">
 </head>
 
 <body class="admin-body">
@@ -343,7 +343,7 @@
             <select id="tripStatusFilter"><option value="">全部狀態</option><option>報名中</option><option>即將成團</option><option>已成團</option><option>已額滿</option><option>已截止</option><option>已取消</option><option>籌備中</option></select>
           </label>
           <label class="trip-filter-control">出發月份
-            <select id="tripMonthFilter"><option value="">全部月份</option>{''.join(f'<option value="{i:02d}">{i} 月</option>' for i in range(1,13))}</select>
+            <select id="tripMonthFilter"><option value="">全部月份</option><option value="01">1 月</option><option value="02">2 月</option><option value="03">3 月</option><option value="04">4 月</option><option value="05">5 月</option><option value="06">6 月</option><option value="07">7 月</option><option value="08">8 月</option><option value="09">9 月</option><option value="10">10 月</option><option value="11">11 月</option><option value="12">12 月</option></select>
           </label>
           <label class="trip-filter-control trip-sort-control">排序
             <select id="tripSort"><option value="asc">出發日期（近 → 遠）</option><option value="desc">出發日期（遠 → 近）</option><option value="name">行程名稱</option></select>
@@ -353,8 +353,8 @@
         <div class="trip-count-legend" aria-label="報名人數顏色說明">
           <strong>報名人數顏色說明：</strong>
           <span class="trip-count-key count-red">0～19 人</span>
-          <span class="trip-count-key count-blue">20～29 人</span>
-          <span class="trip-count-key count-green">30～39 人</span>
+          <span class="trip-count-key count-green">20～29 人</span>
+          <span class="trip-count-key count-blue">30～39 人</span>
           <span class="trip-count-key count-purple">40 人</span>
         </div>
 
@@ -366,9 +366,9 @@
         <div class="admin-card trip-list-card">
           <div class="admin-table-wrapper trip-table-wrapper">
             <table class="admin-table trip-admin-table">
-              <thead><tr><th>出發日期</th><th>行程名稱</th><th>類型</th><th>出發地</th><th>報名人數</th><th>狀態</th><th>操作</th></tr></thead>
+              <thead><tr><th>出發日期</th><th>報名截止日</th><th>行程名稱</th><th>類型</th><th>出發地</th><th>報名人數</th><th>狀態</th><th>操作</th></tr></thead>
               <tbody id="tripsTableBody">
-                <tr><td colspan="7" class="empty-data">目前尚無行程資料</td></tr>
+                <tr><td colspan="8" class="empty-data">目前尚無行程資料</td></tr>
               </tbody>
             </table>
           </div>
@@ -703,7 +703,7 @@
   </main>
 
 
-  <script src="admin.js?v=20261126-trip-management-refresh-scroll-v58"></script>
+  <script src="admin.js?v=20261126-trip-deadline-colors-monthfix-v59"></script>
 
 </body>
 </html>

@@ -5740,3 +5740,35 @@ body.admin-body .admin-table {
     max-height:280px !important;
   }
 }
+
+
+/* v59｜報名截止日欄位與表格欄寬 */
+#trips .trip-admin-table {
+  min-width: 1120px;
+}
+#trips .trip-admin-table th,
+#trips .trip-admin-table td {
+  white-space: nowrap;
+}
+#trips .trip-deadline-text {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:88px;
+  padding:7px 10px;
+  border:1px solid rgba(220,164,174,.38);
+  border-radius:12px;
+  background:#fff8fa;
+  color:#89566a;
+  font-size:13px;
+  font-weight:700;
+  font-variant-numeric:tabular-nums;
+}
+#trips .trip-count-key.count-green {
+  color:#287a3d !important;
+  background:#e0f3df !important;
+}
+#trips .trip-count-key.count-blue {
+  color:#1266b1 !important;
+  background:#dcefff !important;
+}
