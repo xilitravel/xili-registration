@@ -504,6 +504,75 @@ function getDashboardTripStats(trip) {
   };
 }
 
+function dashboardRenderCountList(counts, emptyText) {
+  const entries = Object.entries(counts || {}).filter(([, count]) => Number(count) > 0)
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "zh-Hant"));
+  if (!entries.length) return `<div class="dashboard-detail-empty">${escapeHTML(emptyText || "目前沒有資料")}</div>`;
+  const max = Math.max(...entries.map(([, count]) => count), 1);
+  return `<div class="dashboard-detail-list">${entries.map(([name, count]) => `
+    <div class="dashboard-detail-row"><span class="dashboard-detail-label">${escapeHTML(name)}</span>
+      <span class="dashboard-detail-bar"><i style="width:${Math.max(5, count / max * 100)}%"></i></span>
+      <strong>${Number(count)} 人</strong></div>`).join("")}</div>`;
+}
+
+function dashboardGetMealValue(item) {
+  return item.meals ?? item.meal ?? item.mealPreference ?? item.mealNeeds ?? item.foodPreference ?? item.dietary ?? item["餐食需求"] ?? item["餐食"] ?? "";
+}
+
+function renderSelectedDashboardTripDetails(trip, tripRegistrations, tripOrders) {
+  const root = document.getElementById("dashboardSelectedTripDetails");
+  const nameEl = document.getElementById("dashboardSelectedTripName");
+  if (!root) return;
+  if (!trip) {
+    if (nameEl) nameEl.textContent = "請選擇左側行程";
+    root.innerHTML = ["上車地點人數", "房型", "餐食", "付款方式", "重點提醒"].map(title => `<div class="dashboard-detail-card"><h4>${title}</h4><div class="dashboard-detail-content dashboard-detail-empty">請選擇左側行程</div></div>`).join("");
+    return;
+  }
+  const tripName = trip.name || trip.title || trip.tripName || "未命名行程";
+  if (nameEl) nameEl.textContent = tripName;
+
+  const boardingCounts = {};
+  const roomCounts = {};
+  const mealCounts = { "葷食": 0, "素食": 0, "未註明": 0 };
+  (tripRegistrations || []).forEach(item => {
+    [item.boarding1, item.boarding2, item.boardingPoint, item.boarding].forEach(value => {
+      const label = String(value || "").trim();
+      if (label && !["不需要", "無", "未選擇", "未選"].includes(label)) boardingCounts[label] = (boardingCounts[label] || 0) + 1;
+    });
+    const room = String(item.room || item.roomType || item["房型"] || "").trim();
+    if (room && !["無", "不需要", "未選"].includes(room)) roomCounts[room] = (roomCounts[room] || 0) + 1;
+    const meal = dashboardGetMealValue(item);
+    const mealText = typeof meal === "string" ? meal : JSON.stringify(meal || "");
+    if (/素食|vegetarian/i.test(mealText)) mealCounts["素食"]++;
+    else if (/葷食|葷|一般餐|普通餐|葷餐|non.?vegetarian/i.test(mealText)) mealCounts["葷食"]++;
+    else if (mealText && mealText !== "{}" && mealText !== "[]") mealCounts["未註明"]++;
+    else mealCounts["未註明"]++;
+  });
+
+  const paymentCounts = {};
+  (tripOrders || []).filter(order => String(order.paymentStatus || order.status || "").trim() !== "已取消").forEach(order => {
+    const method = String(order.paymentMethod || order.method || "未設定").trim() || "未設定";
+    const people = Math.max(1, Number(order.travelerCount || order.peopleCount || 1));
+    paymentCounts[method] = (paymentCounts[method] || 0) + people;
+  });
+
+  const rawNotes = trip.notes ?? trip.reminders ?? trip.importantNotes ?? [];
+  const notes = Array.isArray(rawNotes) ? rawNotes : String(rawNotes || "").split(/\r?\n/);
+  const noteItems = notes.map(value => String(value || "").trim()).filter(Boolean);
+  const noteHTML = noteItems.length
+    ? `<ul class="dashboard-reminder-list">${noteItems.map(note => `<li>${escapeHTML(note)}</li>`).join("")}</ul>`
+    : `<div class="dashboard-detail-empty">此行程尚未設定重點提醒</div>`;
+
+  const cards = [
+    ["上車地點人數", dashboardRenderCountList(boardingCounts, "目前沒有上車地點資料")],
+    ["房型", dashboardRenderCountList(roomCounts, trip.lodging ? "尚無房型選擇資料" : "此行程不提供住宿")],
+    ["餐食", `<div class="dashboard-meal-summary"><span>葷食 <strong>${mealCounts["葷食"]}</strong> 人</span><span>素食 <strong>${mealCounts["素食"]}</strong> 人</span>${mealCounts["未註明"] ? `<small>未註明 ${mealCounts["未註明"]} 人</small>` : ""}</div>`],
+    ["付款方式", dashboardRenderCountList(paymentCounts, "目前沒有付款方式資料")],
+    ["重點提醒", noteHTML, "dashboard-detail-reminders"]
+  ];
+  root.innerHTML = cards.map(([title, content, extra]) => `<div class="dashboard-detail-card ${extra || ""}"><h4>${title}</h4><div class="dashboard-detail-content">${content}</div></div>`).join("");
+}
+
 function renderSelectedDashboardTripStats(tripId) {
   const trip = (Array.isArray(tripsData) ? tripsData : []).find(item =>
     String(item.tripId || item.id || "") === String(tripId)
@@ -516,10 +585,16 @@ function renderSelectedDashboardTripStats(tripId) {
     if (registrationsEl) registrationsEl.textContent = "0";
     if (pendingEl) pendingEl.textContent = "0";
     if (deadlineEl) deadlineEl.textContent = "—";
+    renderSelectedDashboardTripDetails(null, [], []);
     return;
   }
 
   const stats = getDashboardTripStats(trip);
+  const selectedTripId = String(trip.tripId || trip.id || "");
+  const selectedTripName = trip.name || trip.title || trip.tripName || "未命名行程";
+  const selectedRegistrations = (Array.isArray(registrationData) ? registrationData : []).filter(item => getDashboardTripMatch(item, selectedTripId, selectedTripName));
+  const selectedOrders = (Array.isArray(paymentData) ? paymentData : []).filter(item => getDashboardTripMatch(item, selectedTripId, selectedTripName));
+  renderSelectedDashboardTripDetails(trip, selectedRegistrations, selectedOrders);
   if (registrationsEl) registrationsEl.textContent = String(stats.registeredCount);
   if (pendingEl) pendingEl.textContent = String(stats.pendingCount);
   if (deadlineEl) deadlineEl.textContent = stats.deadlineText;
