@@ -3918,7 +3918,7 @@ body.admin-body {
 .dashboard-stats .admin-stat-card::before {
   content:"" !important; display:block !important; position:absolute !important; z-index:1 !important;
   right:-5% !important; bottom:-18% !important; width:78% !important; height:122% !important;
-  background-image:url("flower.png?v=20261126-v24-asset") !important;
+  background-image:url("flower.png?v=20261126-user-exact-flower") !important;
   background-repeat:no-repeat !important; background-position:right bottom !important;
   background-size:contain !important; opacity:.94 !important; pointer-events:none !important;
 }
@@ -3932,6 +3932,19 @@ body.admin-body {
 @media (max-width:760px) {
   .dashboard-stats .admin-stat-card::before { width:74% !important; height:112% !important; right:-7% !important; bottom:-16% !important; opacity:.68 !important; }
 }
+</style>
+
+
+<style id="xili-v25-approved-assets">
+/* v25：四個統計圖示使用無櫻花獨立 PNG；報名狀態花枝獨立素材 */
+.dashboard-stats .stat-icon img { width:100% !important; height:100% !important; object-fit:contain !important; display:block !important; }
+.registration-overview-card .panel-accent {
+  right:0 !important; bottom:-13px !important; width:74% !important; height:54px !important;
+  background-image:url("registration-floral-divider.png?v=20261126-v26-clean-assets") !important;
+  background-repeat:no-repeat !important; background-position:right center !important; background-size:100% 100% !important;
+  opacity:1 !important;
+}
+@media (min-width:761px) { .admin-sidebar { transform:translateY(18px) !important; } }
 </style>
 
 </head>
@@ -4020,19 +4033,19 @@ body.admin-body {
 
         <div class="admin-stats dashboard-stats">
           <div class="admin-stat-card stat-rose">
-            <div class="stat-icon" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><rect x="7" y="14" width="34" height="29" rx="5"/><path d="M17 14V9a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v5M17 14v29m14-29v29"/></svg></div>
+            <div class="stat-icon" aria-hidden="true"><img src="icon-suitcase.svg?v=20261126-v27-soft-icons" alt="粉金立體行李箱" loading="eager" draggable="false"></div>
             <div><div class="admin-stat-title">目前行程數</div><div class="admin-stat-number" id="totalTrips">0</div></div>
           </div>
           <div class="admin-stat-card stat-gold">
-            <div class="stat-icon" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><circle cx="24" cy="14" r="7"/><circle cx="10" cy="19" r="5"/><circle cx="38" cy="19" r="5"/><path d="M9 41v-4a15 15 0 0 1 30 0v4M2 40v-3a9 9 0 0 1 8-9m36 12v-3a9 9 0 0 0-8-9"/></svg></div>
+            <div class="stat-icon" aria-hidden="true"><img src="icon-people.svg?v=20261126-v27-soft-icons" alt="金粉立體人物" loading="eager" draggable="false"></div>
             <div><div class="admin-stat-title">報名總人數</div><div class="admin-stat-number" id="totalRegistrations">0</div></div>
           </div>
           <div class="admin-stat-card stat-blue">
-            <div class="stat-icon" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><rect x="10" y="8" width="28" height="35" rx="4"/><path d="M18 8V5h12v3M17 25l5 5 10-12"/></svg></div>
+            <div class="stat-icon" aria-hidden="true"><img src="icon-clipboard.svg?v=20261126-v27-soft-icons" alt="粉金立體核取板" loading="eager" draggable="false"></div>
             <div><div class="admin-stat-title">待確認報名</div><div class="admin-stat-number" id="pendingRegistrations">0</div></div>
           </div>
           <div class="admin-stat-card stat-green">
-            <div class="stat-icon" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><rect x="5" y="10" width="38" height="28" rx="4"/><path d="M5 19h38M12 29h10m-10 4h6"/></svg></div>
+            <div class="stat-icon" aria-hidden="true"><img src="icon-payment-card.svg?v=20261126-v27-soft-icons" alt="綠金立體信用卡" loading="eager" draggable="false"></div>
             <div><div class="admin-stat-title">待繳費人數</div><div class="admin-stat-number" id="pendingPayments">0</div></div>
           </div>
         </div>
@@ -4613,7 +4626,7 @@ body.admin-body {
   </main>
 
 
-  <script src="admin.js?v=20261126-v24-flower-cards"></script>
+  <script src="admin.js?v=20261126-v27-soft-icons-login"></script>
 
 </body>
 </html>
@@ -4635,4 +4648,29 @@ body.admin-body {
   box-shadow:none !important;
 }
 .admin-header { border:0 !important; }
+</style>
+
+<style id="xili-v27-soft-icons-login-art">
+/* v27：統計圖示改為柔和粉金/藍/綠線稿素材，PIN 登入封面使用最新指定圖片 */
+.dashboard-stats .stat-icon {
+  background: rgba(255,255,255,.78) !important;
+  border-radius: 17px !important;
+}
+.dashboard-stats .stat-icon img {
+  width: 88% !important;
+  height: 88% !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+.registration-overview-card .panel-accent {
+  right: 0 !important;
+  bottom: -13px !important;
+  width: 74% !important;
+  height: 54px !important;
+  background-image: url("registration-floral-divider.png?v=20261126-v27-divider") !important;
+  background-repeat: no-repeat !important;
+  background-position: right center !important;
+  background-size: 100% 100% !important;
+  opacity: 1 !important;
+}
 </style>
