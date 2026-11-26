@@ -171,34 +171,83 @@ navButtons.forEach(button => {
 // 載入全部資料
 // =====================================================
 
+let dashboardLoadInProgress = false;
+
 async function loadAllData() {
+  if (dashboardLoadInProgress) return;
+  dashboardLoadInProgress = true;
 
-  try {
+  const updatedEl = document.getElementById("dashboardLastUpdated");
+  const refreshBtn = document.getElementById("dashboardRefreshBtn");
+  const originalButtonText = refreshBtn ? refreshBtn.innerHTML : "";
 
-    await loadTrips();
-
-    await loadBoardingLocations();
-
-    await loadRegistrations();
-
-    await loadPayments();
-
-    updateDashboard();
-
-    populateTripFilters();
-
-  } catch (error) {
-
-    console.error(error);
-
-    alert(
-      "資料載入失敗：\n\n" +
-      error.message
-    );
-
+  if (updatedEl) {
+    updatedEl.textContent = "更新中…";
+    updatedEl.classList.remove("is-error");
+    updatedEl.removeAttribute("title");
+  }
+  if (refreshBtn) {
+    refreshBtn.disabled = true;
+    refreshBtn.classList.add("is-loading");
   }
 
+  let timeoutId;
+  try {
+    const loadingTask = (async () => {
+      await loadTrips();
+      await loadBoardingLocations();
+      await loadRegistrations();
+      await loadPayments();
+      updateDashboard();
+      populateTripFilters();
+    })();
+
+    // 避免 API 或網路沒有回應時，畫面永遠停留在載入中。
+    await Promise.race([
+      loadingTask,
+      new Promise((_, reject) => {
+        timeoutId = setTimeout(
+          () => reject(new Error("資料載入逾時，請確認網路或 Google Apps Script 部署狀態後再重新整理。")),
+          25000
+        );
+      })
+    ]);
+
+    if (updatedEl) {
+      updatedEl.textContent = "更新於 " + new Date().toLocaleString("zh-TW", {
+        timeZone: "Asia/Taipei",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+      });
+      updatedEl.classList.remove("is-error");
+      updatedEl.title = "資料已成功載入";
+    }
+  } catch (error) {
+    console.error("管理總覽資料載入失敗：", error);
+    if (updatedEl) {
+      updatedEl.textContent = "更新失敗，請重新整理";
+      updatedEl.classList.add("is-error");
+      updatedEl.title = error && error.message ? error.message : "未知錯誤";
+    }
+  } finally {
+    if (timeoutId) clearTimeout(timeoutId);
+    dashboardLoadInProgress = false;
+    if (refreshBtn) {
+      refreshBtn.disabled = false;
+      refreshBtn.classList.remove("is-loading");
+      if (originalButtonText) refreshBtn.innerHTML = originalButtonText;
+    }
+  }
 }
+
+// 管理總覽的重新整理按鈕：重新讀取行程、上車地點、報名及繳費資料。
+document.getElementById("dashboardRefreshBtn")?.addEventListener("click", () => {
+  loadAllData();
+});
 
 
 // =====================================================

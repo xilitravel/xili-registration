@@ -4015,3 +4015,31 @@ body.admin-body {
 .admin-sidebar .admin-sidebar-character {
   top: 400px !important;
 }
+
+
+/* v29：報名狀態區改用低調細枝櫻花；修正資料更新狀態與重新整理互動 */
+.registration-overview-card .dashboard-panel-heading { overflow: visible !important; }
+.registration-overview-card .panel-accent {
+  right: 10px !important;
+  bottom: -8px !important;
+  width: 62% !important;
+  height: 38px !important;
+  background-image: url("registration-accent-subtle.svg?v=20261126-v29") !important;
+  background-repeat: no-repeat !important;
+  background-position: right center !important;
+  background-size: contain !important;
+  opacity: .78 !important;
+}
+#dashboardLastUpdated {
+  display: inline-block !important;
+  min-width: 112px;
+  color: #76545a;
+  font-variant-numeric: tabular-nums;
+}
+#dashboardLastUpdated.is-error { color: #b34c62 !important; font-weight: 700 !important; }
+.dashboard-refresh-btn:disabled { opacity: .72 !important; cursor: wait !important; }
+.dashboard-refresh-btn.is-loading > span { display: inline-block; animation: dashboardRefreshSpin .9s linear infinite; }
+@keyframes dashboardRefreshSpin { to { transform: rotate(360deg); } }
+@media (max-width:760px) {
+  .registration-overview-card .panel-accent { width: 54% !important; height: 30px !important; opacity: .68 !important; }
+}
