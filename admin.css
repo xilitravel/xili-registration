@@ -5390,3 +5390,63 @@ body.admin-body .admin-table {
     overflow: visible !important;
   }
 }
+
+/* v54：近期出團卡片與報名統計等高；全部上架行程在卡片內獨立滾動 */
+@media (min-width: 1101px) {
+  .dashboard-premium .dashboard-panels {
+    align-items: stretch !important;
+  }
+  .dashboard-premium .dashboard-panels > .dashboard-panel {
+    height: 378px !important;
+    min-height: 378px !important;
+    max-height: 378px !important;
+    box-sizing: border-box !important;
+  }
+  .dashboard-premium .registration-overview-card {
+    height: 378px !important;
+    min-height: 378px !important;
+    max-height: 378px !important;
+  }
+  .dashboard-premium .recent-trips-card {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+  .dashboard-premium .recent-trips-card .dashboard-panel-heading {
+    flex: 0 0 auto !important;
+  }
+  .dashboard-premium .recent-trips-card .dashboard-table-wrap {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow-x: auto !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(190,128,145,.55) transparent;
+  }
+  .dashboard-premium .recent-trips-card .dashboard-recent-table {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+  }
+  .dashboard-premium .recent-trips-card .dashboard-recent-table thead {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 3 !important;
+  }
+}
+@media (max-width: 1100px) {
+  .dashboard-premium .dashboard-panels > .dashboard-panel {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+  }
+  .dashboard-premium .recent-trips-card .dashboard-table-wrap {
+    max-height: 360px !important;
+    overflow-x: auto !important;
+    overflow-y: auto !important;
+  }
+}

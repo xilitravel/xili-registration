@@ -402,7 +402,8 @@ async function loadSelectedTrip() {
     loadBoardingPointsInBackground();
 
     try {
-        const response = await fetch(TRIPS_JSON_URL, { cache: "default" });
+        // 每次開啟報名頁都向 GitHub Pages 取得最新行程，避免瀏覽器/CDN 快取舊清單。
+        const response = await fetch(TRIPS_JSON_URL + "?t=" + Date.now(), { cache: "no-store" });
         if (!response.ok) throw new Error("讀取行程資料失敗（HTTP " + response.status + "）");
         const trips = await response.json();
         if (!Array.isArray(trips)) throw new Error("trips.json 格式錯誤");
@@ -1515,11 +1516,7 @@ registrationForm.addEventListener(
             hasSubmittedOrder = !!currentOrderId;
             seatHeldByThisTab.clear();
             saveRegistrationDraft();
-            // 報名成功後，座位狀態由後端訂單保留紀錄決定；此時已不是橘色暫選。
-            await loadSeatStatus();
-            await new Promise(resolve => setTimeout(resolve, 350));
-            await loadSeatStatus();
-
+            // 不等待額外的座位狀態 API；報名已由伺服器成功寫入，先立即顯示確認畫面。
             const registrationData = {
                 trip: {
                     id: selectedTrip.id,
@@ -1544,6 +1541,8 @@ registrationForm.addEventListener(
             };
 
             showRegistrationConfirmation(registrationData);
+            // 座位狀態改為背景同步，不再讓客人等兩次 API 才看到成功畫面。
+            loadSeatStatus().catch(error => console.warn("報名後座位狀態背景同步失敗：", error));
 
         } catch (error) {
             console.error("報名送出錯誤：", error);

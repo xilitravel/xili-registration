@@ -216,11 +216,14 @@ async function loadAllData() {
 
   let timeoutId;
   try {
+    // 四組資料彼此獨立，平行讀取，避免一個 API 等待完才開始下一個。
     const loadingTask = (async () => {
-      await loadTrips();
-      await loadBoardingLocations();
-      await loadRegistrations();
-      await loadPayments();
+      await Promise.all([
+        loadTrips(),
+        loadBoardingLocations(),
+        loadRegistrations(),
+        loadPayments()
+      ]);
       updateDashboard();
       populateTripFilters();
     })();
@@ -278,8 +281,7 @@ document.getElementById("dashboardRefreshBtn")?.addEventListener("click", () => 
 // =====================================================
 
 async function loadTrips() {
-  // 登入後先執行一次舊行程遷移；之後只會讀取 GitHub 靜態 JSON。
-  await apiPost({ action: "migrateTrips", token: adminToken });
+  // 行程已由新增／編輯行程流程直接發布到 GitHub；讀取時不再重跑遷移 API。
   const response = await fetch(TRIPS_JSON_URL + "?t=" + Date.now(), { cache: "no-store" });
   if (!response.ok) throw new Error("讀取 trips.json 失敗（HTTP " + response.status + "）");
   const data = await response.json();
@@ -328,9 +330,6 @@ function renderDashboardRecentTrips() {
   const getTripName = trip => trip.name || trip.title || trip.tripName || "未命名行程";
   const getTripId = trip => String(trip.tripId || trip.id || "");
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
   const sortedTrips = tripsData
     .filter(trip => !["已取消", "已下架", "取消"].includes(String(trip.status || "").trim()))
     .map((trip, index) => {
@@ -345,8 +344,7 @@ function renderDashboardRecentTrips() {
       // 有日期的行程依日期排序；日期相同或未設定時保留原始順序。
       if (a.timestamp !== b.timestamp) return a.timestamp - b.timestamp;
       return a.index - b.index;
-    })
-    .slice(0, 5);
+    });
 
   if (!sortedTrips.length) {
     tbody.innerHTML = `<tr><td colspan="4" class="empty-data">目前沒有可顯示的出團行程</td></tr>`;
