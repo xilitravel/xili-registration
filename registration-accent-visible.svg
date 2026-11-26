@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="120" viewBox="0 0 760 120">
+<g fill="none" stroke="#c9a06d" stroke-linecap="round" stroke-linejoin="round">
+ <path d="M10 96 C130 35 240 32 344 63 S545 95 642 42" stroke-width="3" opacity=".9"/>
+ <path d="M120 62 Q158 22 198 37 M260 52 Q296 20 334 36 M412 73 Q452 36 493 49 M545 61 Q581 25 615 31" stroke-width="1.8" opacity=".75"/>
+ <path d="M190 38 Q171 8 147 17 Q160 47 190 38Z M328 37 Q344 7 370 16 Q358 47 328 37Z M478 51 Q493 21 519 30 Q505 61 478 51Z M606 33 Q626 8 648 18 Q638 45 606 33Z" fill="#ead4b5" stroke-width="1.2" opacity=".78"/>
+</g>
+<!-- Main five-petal cherry blossom -->
+<g transform="translate(665 42)">
+ <g fill="#f5d5dc" stroke="#d99aa7" stroke-width="1.5">
+  <ellipse cy="-19" rx="12" ry="21"/>
+  <ellipse cx="19" cy="-6" rx="12" ry="21" transform="rotate(72 19 -6)"/>
+  <ellipse cx="12" cy="16" rx="12" ry="21" transform="rotate(144 12 16)"/>
+  <ellipse cx="-12" cy="16" rx="12" ry="21" transform="rotate(216 -12 16)"/>
+  <ellipse cx="-19" cy="-6" rx="12" ry="21" transform="rotate(288 -19 -6)"/>
+ </g>
+ <circle r="5" fill="#d6ad68"/>
+ <g fill="#fff6e9" opacity=".9">
+  <circle cx="-2" cy="-2" r="1.7"/><circle cx="3" cy="-3" r="1.7"/><circle cx="4" cy="2" r="1.7"/><circle cx="-3" cy="3" r="1.7"/>
+ </g>
+</g>
+<!-- Two small companion blossoms -->
+<g transform="translate(716 19) scale(.53)">
+ <g fill="#f4d1d9" stroke="#d99aa7" stroke-width="1.8">
+  <ellipse cy="-15" rx="9" ry="16"/><ellipse cx="14" cy="-5" rx="9" ry="16" transform="rotate(72 14 -5)"/>
+  <ellipse cx="9" cy="12" rx="9" ry="16" transform="rotate(144 9 12)"/><ellipse cx="-9" cy="12" rx="9" ry="16" transform="rotate(216 -9 12)"/>
+  <ellipse cx="-14" cy="-5" rx="9" ry="16" transform="rotate(288 -14 -5)"/>
+ </g><circle r="3.5" fill="#d6ad68"/>
+</g>
+<g fill="#d6ad68" opacity=".9"><circle cx="735" cy="72" r="2.2"/><circle cx="694" cy="91" r="1.7"/><circle cx="628" cy="85" r="1.8"/></g>
+</svg>

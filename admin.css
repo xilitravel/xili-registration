@@ -4126,3 +4126,201 @@ body.admin-body {
 .legend-dot.cancelled { background: #c8c8c8 !important; }
 .registration-legend > div:nth-child(1) .legend-dot { box-shadow: 0 0 0 3px rgba(216,166,75,.13); }
 .registration-legend > div:nth-child(2) .legend-dot { box-shadow: 0 0 0 3px rgba(103,155,114,.13); }
+
+
+/* v31：恢復清楚可見的淡粉櫻花枝裝飾，置於統計標題右側 */
+.registration-overview-card .dashboard-panel-heading {
+  position: relative !important;
+  overflow: visible !important;
+  min-height: 62px !important;
+  isolation: isolate;
+}
+.registration-overview-card .dashboard-panel-heading h3 {
+  position: relative !important;
+  z-index: 2 !important;
+}
+.registration-overview-card .panel-accent {
+  display: block !important;
+  position: absolute !important;
+  z-index: 1 !important;
+  top: 1px !important;
+  right: 12px !important;
+  bottom: auto !important;
+  width: 47% !important;
+  height: 58px !important;
+  background-image: url("registration-accent-visible.svg?v=20261126-v31") !important;
+  background-repeat: no-repeat !important;
+  background-position: right center !important;
+  background-size: contain !important;
+  opacity: .92 !important;
+  pointer-events: none !important;
+}
+@media (max-width:760px) {
+  .registration-overview-card .dashboard-panel-heading { min-height: 56px !important; }
+  .registration-overview-card .panel-accent {
+    top: 3px !important;
+    right: 4px !important;
+    width: 42% !important;
+    height: 44px !important;
+    opacity: .82 !important;
+  }
+}
+
+
+/* v32：A 優雅圓潤風——全管理後台統一字體，保留清晰辨識度 */
+:root {
+  --admin-font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  --admin-number-font: "Nunito", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+}
+html,
+body.admin-body,
+body.admin-body *,
+body.admin-body button,
+body.admin-body input,
+body.admin-body select,
+body.admin-body textarea {
+  font-family: var(--admin-font-family) !important;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+body.admin-body {
+  font-weight: 500;
+  letter-spacing: .015em;
+}
+body.admin-body h1,
+body.admin-body h2,
+body.admin-body h3,
+body.admin-body h4,
+body.admin-body .admin-nav-btn,
+body.admin-body .admin-btn,
+body.admin-body button {
+  font-weight: 700;
+  letter-spacing: .025em;
+}
+body.admin-body .admin-header h1,
+body.admin-body .admin-brand-title,
+body.admin-body .dashboard-stat-number,
+body.admin-body .stat-number,
+body.admin-body .count-number {
+  font-family: var(--admin-number-font) !important;
+}
+body.admin-body input,
+body.admin-body select,
+body.admin-body textarea,
+body.admin-body table,
+body.admin-body .admin-table {
+  font-weight: 500;
+  letter-spacing: .01em;
+}
+
+
+/* v33：側欄圖示加大並精緻化；選單內容下移，選取框與外框保留安全距離 */
+.admin-sidebar {
+  padding-top: 16px !important;
+}
+.admin-sidebar .admin-nav-btn {
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  min-height: 68px !important;
+  height: 68px !important;
+  margin: 0 0 4px !important;
+  padding: 8px 14px !important;
+  gap: 12px !important;
+  line-height: 1.2 !important;
+  border-radius: 17px !important;
+}
+.admin-sidebar .admin-nav-btn > .ui-icon {
+  display: block !important;
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px !important;
+  flex: 0 0 48px !important;
+  box-sizing: border-box !important;
+  padding: 8px !important;
+  margin: 0 2px 0 0 !important;
+  border-radius: 15px !important;
+  stroke: currentColor !important;
+  stroke-width: 3.2 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  filter: drop-shadow(0 1px 1px rgba(75,48,55,.10));
+  background: linear-gradient(145deg, rgba(255,255,255,.96), rgba(255,255,255,.60)) !important;
+  box-shadow: inset 0 1px 2px rgba(255,255,255,.95), 0 2px 5px rgba(95,65,68,.08) !important;
+}
+.admin-sidebar .admin-nav-btn:nth-of-type(1) > .ui-icon {
+  color: #bd5b79 !important;
+  background: linear-gradient(145deg,#fff0f4,#f8dce5) !important;
+}
+.admin-sidebar .admin-nav-btn:nth-of-type(2) > .ui-icon {
+  color: #b98439 !important;
+  background: linear-gradient(145deg,#fff7e9,#f8e8ce) !important;
+}
+.admin-sidebar .admin-nav-btn:nth-of-type(3) > .ui-icon {
+  color: #648d50 !important;
+  background: linear-gradient(145deg,#f2f8ec,#e2efd9) !important;
+}
+.admin-sidebar .admin-nav-btn:nth-of-type(4) > .ui-icon {
+  color: #5f91b2 !important;
+  background: linear-gradient(145deg,#eff8fc,#dcecf4) !important;
+}
+.admin-sidebar .admin-nav-btn:nth-of-type(5) > .ui-icon {
+  color: #bd5c75 !important;
+  background: linear-gradient(145deg,#fff0f4,#f7dfe7) !important;
+}
+.admin-sidebar .admin-nav-btn:nth-of-type(6) > .ui-icon {
+  color: #8872a8 !important;
+  background: linear-gradient(145deg,#f5f0fb,#e9e1f5) !important;
+}
+.admin-sidebar .admin-nav-btn.active {
+  margin-top: 2px !important;
+  margin-bottom: 6px !important;
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+  border-radius: 19px !important;
+  transform: none !important;
+  box-shadow: 0 6px 14px rgba(155,64,84,.20), inset 0 1px 0 rgba(255,255,255,.40) !important;
+}
+.admin-sidebar .admin-nav-btn.active > .ui-icon {
+  color: #fff !important;
+  background: linear-gradient(145deg,rgba(255,255,255,.34),rgba(255,255,255,.17)) !important;
+  box-shadow: inset 0 1px 2px rgba(255,255,255,.28), 0 2px 5px rgba(103,48,65,.12) !important;
+}
+.admin-sidebar .admin-nav-btn > span {
+  position: relative !important;
+  top: 2px !important;
+  line-height: 1.3 !important;
+  letter-spacing: .035em !important;
+}
+
+/* 手機版仍維持垂直排列與大圖示，不套用舊版縮小圖示設定 */
+@media (max-width:760px) {
+  .admin-sidebar {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    padding: 14px 10px 10px !important;
+    gap: 3px !important;
+  }
+  .admin-sidebar .admin-nav-btn {
+    display: flex !important;
+    width: 100% !important;
+    min-height: 66px !important;
+    height: 66px !important;
+    margin: 0 0 3px !important;
+    padding: 7px 12px !important;
+    font-size: 18px !important;
+  }
+  .admin-sidebar .admin-nav-btn > .ui-icon {
+    width: 46px !important;
+    height: 46px !important;
+    min-width: 46px !important;
+    flex-basis: 46px !important;
+    padding: 7px !important;
+    margin-right: 0 !important;
+  }
+  .admin-sidebar .admin-nav-btn.active {
+    margin-top: 2px !important;
+    margin-bottom: 5px !important;
+  }
+}
