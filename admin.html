@@ -3909,6 +3909,31 @@ body.admin-body {
 @media (max-width:760px) { .admin-sidebar { height:auto !important; min-height:0 !important; } .admin-sidebar::before { height:100% !important; } .admin-sidebar-character { display:none !important; } .donut-center span { font-size:17px !important; } .donut-center strong { font-size:46px !important; } .dashboard-stats .admin-stat-card::before { width:72% !important; height:82% !important; opacity:.65 !important; } }
 </style>
 
+
+<style id="xili-v24-real-flower-image-cards">
+/* v24：四張統計卡改用使用者提供的透明櫻花金葉 PNG 素材，不再使用 CSS/SVG 仿畫 */
+.dashboard-stats .admin-stat-card {
+  position:relative !important; isolation:isolate !important; overflow:hidden !important;
+}
+.dashboard-stats .admin-stat-card::before {
+  content:"" !important; display:block !important; position:absolute !important; z-index:1 !important;
+  right:-5% !important; bottom:-18% !important; width:78% !important; height:122% !important;
+  background-image:url("flower.png?v=20261126-v24-asset") !important;
+  background-repeat:no-repeat !important; background-position:right bottom !important;
+  background-size:contain !important; opacity:.94 !important; pointer-events:none !important;
+}
+.dashboard-stats .admin-stat-card::after { content:none !important; display:none !important; }
+.dashboard-stats .admin-stat-card > * { position:relative !important; z-index:2 !important; }
+/* 保留四張卡片各自的粉、金、藍、綠底色；花藝使用同一張原始素材 */
+.dashboard-stats .stat-rose::before { opacity:.92 !important; }
+.dashboard-stats .stat-gold::before { opacity:.98 !important; }
+.dashboard-stats .stat-blue::before { opacity:.76 !important; }
+.dashboard-stats .stat-green::before { opacity:.78 !important; }
+@media (max-width:760px) {
+  .dashboard-stats .admin-stat-card::before { width:74% !important; height:112% !important; right:-7% !important; bottom:-16% !important; opacity:.68 !important; }
+}
+</style>
+
 </head>
 
 <body class="admin-body">
@@ -4588,7 +4613,7 @@ body.admin-body {
   </main>
 
 
-  <script src="admin.js?v=20261126-root-login-fix"></script>
+  <script src="admin.js?v=20261126-v24-flower-cards"></script>
 
 </body>
 </html>
