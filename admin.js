@@ -166,6 +166,29 @@ navButtons.forEach(button => {
 
 });
 
+// 管理總覽「查看全部」：切換至既有的行程管理頁面
+function openAdminSection(sectionId) {
+  const targetButton = document.querySelector(
+    `.admin-nav-btn[data-section="${sectionId}"]`
+  );
+  if (targetButton) {
+    targetButton.click();
+  } else {
+    document.querySelectorAll(".admin-nav-btn").forEach(btn => btn.classList.remove("active"));
+    document.querySelectorAll(".admin-section").forEach(section => section.classList.remove("active"));
+    document.getElementById(sectionId)?.classList.add("active");
+  }
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+document.querySelectorAll("[data-jump-section]").forEach(button => {
+  button.addEventListener("click", () => {
+    const sectionId = button.dataset.jumpSection;
+    if (sectionId) openAdminSection(sectionId);
+  });
+});
+
 
 // =====================================================
 // 載入全部資料

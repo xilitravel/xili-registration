@@ -5330,3 +5330,63 @@ body.admin-body .admin-table {
     inset 0 1.5px 0 rgba(255,255,255,.98),
     inset 0 -1px 0 rgba(255,255,255,.42) !important;
 }
+
+
+/* v53：近期出團行程完整顯示，修正第四筆起被容器裁切 */
+.dashboard-premium .dashboard-panel:has(.dashboard-table-wrap) {
+  height: auto !important;
+  min-height: 303px !important;
+  overflow: visible !important;
+}
+.dashboard-table-wrap {
+  height: auto !important;
+  max-height: 290px !important;
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(190,128,145,.42) transparent;
+}
+.dashboard-recent-table {
+  height: auto !important;
+}
+.dashboard-recent-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+.dashboard-recent-table tbody tr {
+  height: 40px;
+}
+.dashboard-recent-table td {
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}
+.dashboard-more-btn {
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  position: relative !important;
+  z-index: 5 !important;
+}
+
+/* 較窄螢幕：行程面板隨內容延伸，不把表格鎖在固定高度 */
+@media (max-width: 1100px) {
+  .dashboard-premium .dashboard-panel:has(.dashboard-table-wrap) {
+    height: auto !important;
+    min-height: 0 !important;
+  }
+  .dashboard-table-wrap {
+    max-height: 360px !important;
+    overflow-y: auto !important;
+    overflow-x: auto !important;
+  }
+}
+@media (max-width: 700px) {
+  .dashboard-premium .dashboard-panel:has(.dashboard-table-wrap) {
+    height: auto !important;
+    min-height: 0 !important;
+  }
+  .dashboard-table-wrap {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+}
