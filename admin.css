@@ -5937,3 +5937,119 @@ body.admin-body .admin-table {
     font-size:13px !important;
   }
 }
+
+
+/* v61｜強制行程管理標題列與管理總覽使用同一組字體規格 */
+#trips .trip-management-header .trip-heading-copy h2.trip-page-title,
+#trips .trip-management-header .trip-heading-copy h2.trip-page-title > span {
+  font-family:inherit !important;
+  font-size:37px !important;
+  font-weight:900 !important;
+  line-height:1.15 !important;
+  letter-spacing:.035em !important;
+  color:#963f55 !important;
+  -webkit-text-fill-color:#963f55 !important;
+}
+#trips .trip-management-header .trip-heading-copy h2.trip-page-title {
+  display:flex !important;
+  align-items:center !important;
+  margin:0 !important;
+  white-space:nowrap !important;
+}
+#trips .trip-management-header .trip-heading-copy h2.trip-page-title .trip-calendar-icon {
+  width:40px !important;
+  height:40px !important;
+  min-width:40px !important;
+  max-width:40px !important;
+  flex:0 0 40px !important;
+  margin:0 12px 0 0 !important;
+  color:#a64a60 !important;
+  stroke:#a64a60 !important;
+  stroke-width:3 !important;
+}
+#trips .trip-management-header .trip-heading-copy p.admin-description {
+  font-family:inherit !important;
+  font-size:17px !important;
+  font-weight:400 !important;
+  line-height:1.5 !important;
+  letter-spacing:0 !important;
+  color:#382d2e !important;
+  -webkit-text-fill-color:#382d2e !important;
+  margin:0 !important;
+  padding:0 0 0 16px !important;
+  border-left:2px solid #bd5268 !important;
+  white-space:nowrap !important;
+}
+#trips .trip-management-header .trip-heading-actions .dashboard-updated,
+#trips .trip-management-header .trip-heading-actions .dashboard-updated-text,
+#trips .trip-management-header .trip-heading-actions .dashboard-updated-text time {
+  font-family:inherit !important;
+  font-size:16px !important;
+  font-weight:400 !important;
+  line-height:1.4 !important;
+  letter-spacing:0 !important;
+  color:#453638 !important;
+  -webkit-text-fill-color:#453638 !important;
+}
+#trips .trip-management-header .trip-heading-actions .calendar-small .ui-icon {
+  width:30px !important;
+  height:30px !important;
+  color:#73585a !important;
+  stroke:#73585a !important;
+}
+#trips .trip-management-header .trip-heading-actions .dashboard-refresh-btn {
+  font-family:inherit !important;
+  font-size:15px !important;
+  font-weight:800 !important;
+  line-height:1 !important;
+  color:#934858 !important;
+  -webkit-text-fill-color:#934858 !important;
+}
+@media (max-width:760px) {
+  #trips .trip-management-header .trip-heading-copy h2.trip-page-title,
+  #trips .trip-management-header .trip-heading-copy h2.trip-page-title > span {
+    font-size:29px !important;
+  }
+  #trips .trip-management-header .trip-heading-copy p.admin-description {
+    font-size:13px !important;
+    white-space:normal !important;
+  }
+  #trips .trip-management-header .trip-heading-actions .dashboard-updated,
+  #trips .trip-management-header .trip-heading-actions .dashboard-updated-text,
+  #trips .trip-management-header .trip-heading-actions .dashboard-updated-text time {
+    font-size:13px !important;
+  }
+}
+
+
+/* v62｜行程管理標題分隔線比照管理總覽，新增行程改用低飽和香檳金 */
+#trips .trip-management-header .trip-heading-copy h2.trip-page-title {
+  flex:0 0 auto !important;
+  margin:0 !important;
+  padding-right:17px !important;
+  border-right:2px solid #b85b68 !important;
+  color:#963f55 !important;
+}
+#trips .trip-management-header .trip-heading-copy p.admin-description {
+  margin:0 !important;
+  padding-left:0 !important;
+  border-left:0 !important;
+}
+
+/* 新增行程：與重新整理按鈕區分，採用低飽和香檳金色 */
+#trips #addTripBtn.admin-btn-primary {
+  background:linear-gradient(135deg,#c7a16f 0%,#a97c50 100%) !important;
+  border:1px solid #a97c50 !important;
+  color:#fff !important;
+  box-shadow:0 3px 9px rgba(145,103,59,.20) !important;
+}
+#trips #addTripBtn.admin-btn-primary:hover {
+  background:linear-gradient(135deg,#b9915f 0%,#956b43 100%) !important;
+  border-color:#956b43 !important;
+  box-shadow:0 4px 11px rgba(145,103,59,.25) !important;
+  transform:translateY(-1px);
+}
+#trips #addTripBtn.admin-btn-primary:focus-visible {
+  outline:3px solid rgba(199,161,111,.35) !important;
+  outline-offset:2px;
+}
