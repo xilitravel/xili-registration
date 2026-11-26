@@ -6053,3 +6053,32 @@ body.admin-body .admin-table {
   outline:3px solid rgba(199,161,111,.35) !important;
   outline-offset:2px;
 }
+
+
+/* v63｜強制顯示行程管理標題分隔線，並調整新增行程按鈕顏色 */
+#trips .admin-section-header.trip-management-header .trip-heading-copy > h2.trip-page-title {
+  display:flex !important;
+  align-items:center !important;
+  flex:0 0 auto !important;
+  padding-right:17px !important;
+  margin:0 !important;
+  border-right:2px solid #b85b68 !important;
+  box-sizing:content-box !important;
+}
+#trips .admin-section-header.trip-management-header .trip-heading-copy > p.admin-description {
+  display:inline-block !important;
+  padding-left:0 !important;
+  margin:0 !important;
+  border-left:0 !important;
+}
+#trips .admin-section-header.trip-management-header #addTripBtn {
+  background:linear-gradient(135deg,#c7a16f 0%,#a97c50 100%) !important;
+  background-color:#a97c50 !important;
+  border:1px solid #a97c50 !important;
+  color:#ffffff !important;
+  box-shadow:0 3px 9px rgba(145,103,59,.20) !important;
+}
+#trips .admin-section-header.trip-management-header #addTripBtn:hover {
+  background:linear-gradient(135deg,#b9915f 0%,#956b43 100%) !important;
+  border-color:#956b43 !important;
+}
