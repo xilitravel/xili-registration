@@ -78,5 +78,57 @@
     ],
     "registeredPeople": 0,
     "staffSeatIds": []
+  },
+  {
+    "tripId": "da34626c-6136-475a-9ee7-5f3bb6006cb1",
+    "id": "da34626c-6136-475a-9ee7-5f3bb6006cb1",
+    "name": "111",
+    "title": "111",
+    "date": "2026-12-23",
+    "dateText": "2026-12-23",
+    "type": "一日遊",
+    "price": 1000,
+    "priceText": "$1,000",
+    "deadline": "2026-11-30",
+    "maxPeople": 40,
+    "status": "報名中",
+    "sheetName": "111",
+    "departure": "台南",
+    "description": "旅遊報名暨個人資料蒐集、處理及利用告知與影像使用同意書\n囍莉旅遊重視每位旅客的個人資料安全與隱私權益。",
+    "highlights": [
+      "本報名平台以「囍莉旅遊」品牌提供旅遊行程推廣及報名服務，相關旅遊業務由「悅揚旅行社」正式承辦。",
+      "為辦理本次旅遊報名及提供相關旅遊服務，囍莉旅遊將依《個人資料保護法》及相關法令規定，蒐集、處理及利用旅客所提供之個人資料。"
+    ],
+    "boardingPoints": [
+      "虎尾寮",
+      "永康",
+      "新營",
+      "歸仁",
+      "關廟",
+      "佳里",
+      "學甲",
+      "西港"
+    ],
+    "notes": [],
+    "image": "",
+    "days": 1,
+    "lodging": false,
+    "roomTypes": [],
+    "meals": [
+      {
+        "key": "day1_早餐",
+        "provided": false
+      },
+      {
+        "key": "day1_午餐",
+        "provided": false
+      },
+      {
+        "key": "day1_晚餐",
+        "provided": false
+      }
+    ],
+    "registeredPeople": 0,
+    "staffSeatIds": []
   }
 ]
