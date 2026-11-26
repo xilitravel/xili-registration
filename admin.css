@@ -4859,18 +4859,8 @@ body.admin-body .admin-table {
 }
 
 /* 側欄插畫 SVG 原本被全域 fill:none 覆蓋，恢復每個圖形自己的漸層與描邊 */
-.admin-sidebar .admin-nav-btn > .ui-icon {
-  fill:revert !important;
-  stroke:revert !important;
-  overflow:visible !important;
-}
-.admin-sidebar .admin-nav-btn > .ui-icon path,
-.admin-sidebar .admin-nav-btn > .ui-icon rect,
-.admin-sidebar .admin-nav-btn > .ui-icon circle,
-.admin-sidebar .admin-nav-btn > .ui-icon ellipse {
-  fill:revert !important;
-  stroke:revert !important;
-}
+
+
 
 /* 報名狀態標題裝飾：改成細緻香檳金枝葉與小櫻花，不用大團花或粗麥穗 */
 .registration-overview-card .dashboard-panel-heading {
@@ -4912,8 +4902,8 @@ body.admin-body .admin-table {
 /* v40：正式套用獨立製作的香檳金多葉枝條 PNG，依參考圖呈現 */
 .registration-overview-card .dashboard-panel-heading {
   position:relative !important;
-  min-height:58px !important;
-  padding-right:265px !important;
+  min-height:66px !important;
+  padding-right:380px !important;
   overflow:hidden !important;
 }
 .registration-overview-card .dashboard-panel-heading h3 {
@@ -4928,24 +4918,77 @@ body.admin-body .admin-table {
   right:5px !important;
   bottom:auto !important;
   transform:translateY(-50%) !important;
-  width:270px !important;
-  height:48px !important;
-  background-image:url("registration-title-gold-leaves.png?v=20261126-v40") !important;
+  width:380px !important;
+  height:66px !important;
+  background-image:url("registration-title-gold-leaves.png?v=20261126-v42") !important;
   background-repeat:no-repeat !important;
   background-position:center right !important;
   background-size:100% 100% !important;
-  opacity:1 !important;
+  opacity:.62 !important;
   z-index:1 !important;
   pointer-events:none !important;
 }
 @media (max-width:760px) {
   .registration-overview-card .dashboard-panel-heading {
     min-height:48px !important;
-    padding-right:158px !important;
+    padding-right:205px !important;
   }
   .registration-overview-card .panel-accent {
-    width:158px !important;
-    height:27px !important;
+    width:205px !important;
+    height:36px !important;
     right:2px !important;
   }
+}
+
+
+/* v41：側欄改用六張獨立製作的透明 3D PNG 插畫，避免 SVG 被全域樣式染黑 */
+.admin-sidebar .admin-nav-btn {
+  display:flex !important;
+  flex-direction:row !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  gap:12px !important;
+}
+.admin-sidebar .admin-nav-btn > .sidebar-icon-img {
+  display:block !important;
+  width:56px !important;
+  height:56px !important;
+  min-width:56px !important;
+  flex:0 0 56px !important;
+  object-fit:contain !important;
+  object-position:center !important;
+  padding:0 !important;
+  margin:0 !important;
+  border:0 !important;
+  border-radius:13px !important;
+  background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(255,255,255,.68)) !important;
+  box-shadow:inset 0 1px 2px rgba(255,255,255,.95),0 2px 6px rgba(95,65,68,.09) !important;
+  filter:drop-shadow(0 1px 1px rgba(75,48,55,.10)) !important;
+}
+.admin-sidebar .admin-nav-btn:nth-of-type(1) > .sidebar-icon-img { background:linear-gradient(145deg,#fff7f8,#f3dce4) !important; }
+.admin-sidebar .admin-nav-btn:nth-of-type(2) > .sidebar-icon-img { background:linear-gradient(145deg,#fffaf0,#f4e4c9) !important; }
+.admin-sidebar .admin-nav-btn:nth-of-type(3) > .sidebar-icon-img { background:linear-gradient(145deg,#f8fcf4,#e3efd9) !important; }
+.admin-sidebar .admin-nav-btn:nth-of-type(4) > .sidebar-icon-img { background:linear-gradient(145deg,#f7fcfe,#deedf4) !important; }
+.admin-sidebar .admin-nav-btn:nth-of-type(5) > .sidebar-icon-img { background:linear-gradient(145deg,#fff7f9,#f4dfe7) !important; }
+.admin-sidebar .admin-nav-btn:nth-of-type(6) > .sidebar-icon-img { background:linear-gradient(145deg,#f7f3fc,#e9e0f3) !important; }
+.admin-sidebar .admin-nav-btn.active > .sidebar-icon-img {
+  background:linear-gradient(145deg,rgba(255,255,255,.48),rgba(255,255,255,.18)) !important;
+  box-shadow:inset 0 1px 2px rgba(255,255,255,.9),0 2px 5px rgba(120,55,78,.10) !important;
+}
+.admin-sidebar .admin-nav-btn > span {
+  display:flex !important;
+  align-items:center !important;
+  min-height:56px !important;
+  line-height:1.25 !important;
+  padding-top:2px !important;
+  margin:0 !important;
+  position:static !important;
+  transform:none !important;
+}
+@media (max-width:760px) {
+  .admin-sidebar .admin-nav-btn { align-items:center !important; gap:12px !important; }
+  .admin-sidebar .admin-nav-btn > .sidebar-icon-img {
+    width:56px !important;height:56px !important;min-width:56px !important;flex-basis:56px !important;
+  }
+  .admin-sidebar .admin-nav-btn > span { min-height:56px !important; padding-top:2px !important; }
 }
