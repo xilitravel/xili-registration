@@ -471,9 +471,14 @@ function getDaysUntilNearestDeadline() {
 }
 
 function getDashboardTripMatch(item, tripId, tripName) {
-  return (tripId && String(item.tripId || "") === String(tripId)) ||
-    (tripId && !item.tripId && String(item.tripName || "").trim() === String(tripName).trim()) ||
-    (!tripId && String(item.tripName || "").trim() === String(tripName).trim());
+  const ids = [item.tripId, item.trip_id, item.id, item.tripID, item.tripKey]
+    .filter(value => value !== undefined && value !== null && String(value).trim() !== "")
+    .map(String);
+  const names = [item.tripName, item.tripTitle, item.sheetName, item.trip, item["行程名稱"], item.name]
+    .filter(value => value !== undefined && value !== null && String(value).trim() !== "")
+    .map(value => String(value).trim());
+  return (tripId && ids.includes(String(tripId))) ||
+    (tripName && names.includes(String(tripName).trim()));
 }
 
 function getDashboardTripStats(trip) {
@@ -528,24 +533,27 @@ function renderDashboardDetailStats(trip) {
   const tripName = trip.name || trip.title || trip.tripName || "未命名行程";
   if (title) title.textContent = tripName;
 
-  const matches = item => getDashboardTripMatch(item, tripId, tripName);
-  const allOrders = (Array.isArray(paymentData) ? paymentData : []).filter(matches);
+  const matches = item => getDashboardTripMatch(item, tripId, tripName) ||
+    (item && String(item.tripId || item.trip_id || "") === tripId);
+  const rawOrders = Array.isArray(paymentData) ? paymentData : (paymentData?.orders || paymentData?.data || []);
+  const rawRegistrations = Array.isArray(registrationData) ? registrationData : (registrationData?.registrations || registrationData?.data || []);
+  const allOrders = rawOrders.filter(matches);
   const cancelledIds = new Set(allOrders.filter(o => ["已取消","取消"].includes(String(o.paymentStatus || o.status || "").trim())).map(o => String(o.orderId || "")));
   const orders = allOrders.filter(o => !["已取消","取消"].includes(String(o.paymentStatus || o.status || "").trim()));
-  const registrations = (Array.isArray(registrationData) ? registrationData : []).filter(item =>
+  const registrations = rawRegistrations.filter(item =>
     matches(item) && (!item.orderId || !cancelledIds.has(String(item.orderId)))
   );
 
   const boardingRows = [];
   registrations.forEach(r => {
-    [r.boarding1, r.boarding2, r.boardingPoint, r.boarding].forEach(v => {
+    [r.boarding1, r.boarding2, r.boardingPoint, r.boarding, r["上車點1"], r["上車點2"], r["上車地點"], r["上車地點1"], r["上車地點2"]].forEach(v => {
       if (v && !["不需要","無","未選擇"].includes(String(v).trim())) boardingRows.push({v:String(v).trim()});
     });
   });
   const boarding = dashboardCountBy(boardingRows, x => x.v);
   const boardingTotal = boarding.reduce((n,x)=>n+x[1],0);
 
-  const rooms = dashboardCountBy(registrations, r => r.room || r.roomType || r.roomName);
+  const rooms = dashboardCountBy(registrations, r => r.room || r.roomType || r.roomName || r["房型"] || r["住宿房型"]);
   const roomTotalPeople = rooms.reduce((n,x)=>n+x[1],0);
   const roomCount = ([...rooms].reduce((n,[type,people]) => {
     const match=type.match(/(\d+)\s*人/);
@@ -555,12 +563,12 @@ function renderDashboardDetailStats(trip) {
 
   let meat=0, vegetarian=0, mealOther=0;
   registrations.forEach(r => {
-    const raw=String(r.meals || r.meal || r.food || r.diet || "").trim();
+    const raw=String(r.meals || r.meal || r.food || r.diet || r["餐食需求"] || r["餐食"] || "").trim();
     if (!raw) { mealOther++; return; }
     const veg=(raw.match(/素食/g)||[]).length;
     const meatHits=(raw.match(/葷食|葷|一般餐/g)||[]).length;
-    if (veg>meatHits) vegetarian++;
-    else if (meatHits>0 || /葷/.test(raw)) meat++;
+    if (veg>0 && meatHits===0) vegetarian++;
+    else if (meatHits>0) meat++;
     else mealOther++;
   });
 
@@ -684,8 +692,8 @@ function renderDashboardTripList() {
 }
 
 // 點選左側行程後，上方卡片同步切換成該行程的報名、待付款及截止日資料。
-document.getElementById("dashboardTripList")?.addEventListener("click", event => {
-  const item = event.target.closest(".dashboard-trip-item");
+document.addEventListener("click", event => {
+  const item = event.target.closest("#dashboardTripList .dashboard-trip-item");
   if (!item) return;
   document.querySelectorAll("#dashboardTripList .dashboard-trip-item").forEach(card => {
     const active = card === item;

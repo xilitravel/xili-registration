@@ -6556,3 +6556,29 @@ body.admin-body .admin-table {
 .dashboard-reminder-card h4 { color:#a87536; border-color:#f2e1c8; }
 .dashboard-reminder-card ul { margin:0; padding-left:20px; color:#6c5960; font-size:13px; line-height:1.65; }
 @media(max-width:1050px){ .dashboard-panels{grid-template-columns:minmax(220px,.7fr) minmax(0,1.3fr)!important;} .dashboard-detail-grid{grid-template-columns:1fr;} }
+
+
+/* v78｜行程清單高度與標題花枝底線修正 */
+.dashboard-panels { align-items:stretch; }
+.dashboard-trip-list-card,
+.dashboard-trip-stats-card { min-height:430px !important; height:430px !important; }
+.dashboard-trip-list-wrap { height:calc(100% - 68px) !important; max-height:none !important; overflow-y:auto !important; }
+.dashboard-trip-list { max-height:none !important; overflow:visible !important; padding:2px 8px 6px 2px; }
+.dashboard-trip-item { min-height:39px !important; height:39px !important; margin:0 0 5px !important; padding:5px 10px !important; display:grid !important; grid-template-columns:auto minmax(50px,1fr) auto 12px !important; align-items:center !important; gap:7px !important; }
+.dashboard-trip-item-date,.dashboard-trip-item-name,.dashboard-trip-item-count,.dashboard-trip-item-arrow { white-space:nowrap !important; line-height:1.15 !important; }
+.dashboard-trip-list-card .dashboard-panel-heading { position:relative !important; overflow:visible !important; }
+.dashboard-trip-list-card .dashboard-panel-heading::after {
+  content:""; position:absolute; left:3px; right:112px; bottom:-3px; height:24px;
+  background-image:url("registration-title-gold-branch-v49.png");
+  background-repeat:no-repeat; background-position:left center; background-size:100% 100%;
+  pointer-events:none; opacity:.95;
+}
+.dashboard-trip-list-card .dashboard-panel-heading h3,
+.dashboard-trip-list-card .dashboard-panel-heading .dashboard-more-btn { position:relative; z-index:1; }
+.dashboard-trip-list-card .dashboard-panel-heading h3 { background:rgba(255,255,255,.72); padding-right:8px; }
+.dashboard-trip-stats-content { max-height:calc(100% - 65px); overflow-y:auto; }
+@media(max-width:900px){
+ .dashboard-trip-list-card,.dashboard-trip-stats-card{height:auto!important;min-height:360px!important;}
+ .dashboard-trip-list-wrap{max-height:360px!important;}
+ .dashboard-trip-list-card .dashboard-panel-heading::after{right:100px;}
+}
