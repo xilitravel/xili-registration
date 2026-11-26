@@ -4808,3 +4808,102 @@ body.admin-body .admin-table {
     height:100% !important;
   }
 }
+
+
+/* v37：修正更新列字體過大、恢復側欄 SVG 立體填色、金枝花飾與圓環位置 */
+
+/* 更新資訊固定小字級，避免被全站標題/按鈕字體規則放大 */
+.dashboard-toolbar,
+.dashboard-toolbar .dashboard-updated,
+.dashboard-toolbar .dashboard-updated-text,
+.dashboard-toolbar .dashboard-updated time,
+.dashboard-toolbar .dashboard-refresh-btn {
+  font-size:15px !important;
+}
+.dashboard-toolbar .dashboard-updated {
+  flex:0 1 auto !important;
+  min-width:0 !important;
+  max-width:calc(100% - 150px) !important;
+  gap:9px !important;
+  align-items:center !important;
+  white-space:nowrap !important;
+  line-height:1.25 !important;
+}
+.dashboard-toolbar .dashboard-updated-text {
+  display:inline-block !important;
+  position:static !important;
+  top:auto !important;
+  font-size:15px !important;
+  line-height:1.25 !important;
+  white-space:nowrap !important;
+  font-weight:500 !important;
+}
+.dashboard-toolbar .dashboard-updated time {
+  font-size:15px !important;
+  font-weight:500 !important;
+  line-height:1.25 !important;
+}
+.dashboard-toolbar .calendar-small .ui-icon {
+  width:27px !important;
+  height:27px !important;
+}
+@media (max-width:760px) {
+  .dashboard-toolbar { gap:8px !important; }
+  .dashboard-toolbar .dashboard-updated,
+  .dashboard-toolbar .dashboard-updated-text,
+  .dashboard-toolbar .dashboard-updated time {
+    font-size:13px !important;
+  }
+  .dashboard-toolbar .dashboard-updated { max-width:calc(100% - 105px) !important; }
+  .dashboard-toolbar .dashboard-refresh-btn { font-size:13px !important; padding:0 10px !important; }
+}
+
+/* 側欄插畫 SVG 原本被全域 fill:none 覆蓋，恢復每個圖形自己的漸層與描邊 */
+.admin-sidebar .admin-nav-btn > .ui-icon {
+  fill:revert !important;
+  stroke:revert !important;
+  overflow:visible !important;
+}
+.admin-sidebar .admin-nav-btn > .ui-icon path,
+.admin-sidebar .admin-nav-btn > .ui-icon rect,
+.admin-sidebar .admin-nav-btn > .ui-icon circle,
+.admin-sidebar .admin-nav-btn > .ui-icon ellipse {
+  fill:revert !important;
+  stroke:revert !important;
+}
+
+/* 報名狀態標題裝飾：改成細緻香檳金枝葉與小櫻花，不用大團花或粗麥穗 */
+.registration-overview-card .dashboard-panel-heading {
+  padding-right:205px !important;
+}
+.registration-overview-card .panel-accent {
+  width:230px !important;
+  height:74px !important;
+  top:-2px !important;
+  right:7px !important;
+  bottom:auto !important;
+  background-image:url("registration-golden-wheat-accent.svg?v=20261126-v37") !important;
+  background-repeat:no-repeat !important;
+  background-position:right center !important;
+  background-size:contain !important;
+  opacity:.96 !important;
+}
+@media (max-width:760px) {
+  .registration-overview-card .dashboard-panel-heading { padding-right:145px !important; }
+  .registration-overview-card .panel-accent {
+    width:150px !important;
+    height:58px !important;
+    top:0 !important;
+    right:3px !important;
+  }
+}
+
+/* 圓環整體上移，仍維持在統計卡片內，不改變資料或圖表比例 */
+.registration-overview-card .registration-donut {
+  transform:translateY(-13px) !important;
+}
+@media (max-width:760px) {
+  .registration-overview-card .registration-donut {
+    transform:translateY(-9px) !important;
+  }
+}
