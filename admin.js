@@ -280,6 +280,17 @@ document.getElementById("dashboardRefreshBtn")?.addEventListener("click", () => 
 // 行程管理
 // =====================================================
 
+function updateTripLastUpdated() {
+  const el = document.getElementById("tripLastUpdated");
+  if (!el) return;
+  const stamp = new Date().toLocaleString("zh-TW", {
+    timeZone: "Asia/Taipei",
+    year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit", hour12: false
+  });
+  el.textContent = "資料更新：" + stamp;
+}
+
 async function loadTrips() {
   // 行程已由新增／編輯行程流程直接發布到 GitHub；讀取時不再重跑遷移 API。
   const response = await fetch(TRIPS_JSON_URL + "?t=" + Date.now(), { cache: "no-store" });
@@ -289,7 +300,32 @@ async function loadTrips() {
   tripsData = data;
   renderTrips();
   renderDashboardRecentTrips();
+  updateTripLastUpdated();
 }
+
+// 行程管理頁專用重新整理：不必切回管理總覽。
+// 同步更新報名人數與繳費資料，避免只更新行程名稱、日期卻留下舊人數。
+document.getElementById("tripsRefreshBtn")?.addEventListener("click", async () => {
+  const button = document.getElementById("tripsRefreshBtn");
+  if (!button || button.disabled) return;
+  const originalHTML = button.innerHTML;
+  button.disabled = true;
+  button.classList.add("is-loading");
+  button.innerHTML = '<span aria-hidden="true">↻</span> 更新中…';
+  try {
+    await Promise.all([loadTrips(), loadRegistrations(), loadPayments()]);
+    renderTrips();
+    updateDashboard();
+    updateTripLastUpdated();
+  } catch (error) {
+    console.error("行程管理重新整理失敗：", error);
+    alert("重新整理失敗，請稍後再試。\n\n" + (error?.message || "未知錯誤"));
+  } finally {
+    button.disabled = false;
+    button.classList.remove("is-loading");
+    button.innerHTML = originalHTML;
+  }
+});
 
 
 

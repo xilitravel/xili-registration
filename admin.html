@@ -10,7 +10,7 @@
 
   <title>管理後台｜囍莉旅遊</title>
   
-<link rel="stylesheet" href="admin.css?v=20261126-v55-trips-clean">
+<link rel="stylesheet" href="admin.css?v=20261126-trip-management-refresh-scroll-v57">
 </head>
 
 <body class="admin-body">
@@ -156,16 +156,20 @@
       <!-- 行程管理 -->
       <section class="admin-section" id="trips">
 
-        <div class="admin-section-header">
+        <div class="admin-section-header trip-management-header">
 
-          <div>
-            <h2 class="trip-page-title"><svg class="trip-calendar-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg> 行程管理</h2>
+          <div class="trip-heading-copy">
+            <h2 class="trip-page-title"><svg class="trip-calendar-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg><span>行程管理</span></h2>
             <p>新增、修改及管理旅遊行程。</p>
           </div>
 
-          <button class="admin-btn admin-btn-primary" id="addTripBtn">
-            ＋ 新增行程
-          </button>
+          <div class="trip-heading-actions">
+            <span id="tripLastUpdated" class="trip-last-updated" aria-live="polite">資料更新：尚未更新</span>
+            <button type="button" class="dashboard-refresh-btn trips-refresh-btn" id="tripsRefreshBtn"><span aria-hidden="true">↻</span> 重新整理</button>
+            <button type="button" class="admin-btn admin-btn-primary" id="addTripBtn">
+              ＋ 新增行程
+            </button>
+          </div>
 
         </div>
 
@@ -698,7 +702,7 @@
   </main>
 
 
-  <script src="admin.js?v=20261126-v55-trips-clean"></script>
+  <script src="admin.js?v=20261126-trip-management-refresh-scroll-v57"></script>
 
 </body>
 </html>
