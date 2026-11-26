@@ -259,6 +259,10 @@ async function loadAllData() {
       updatedEl.classList.add("is-error");
       updatedEl.title = error && error.message ? error.message : "未知錯誤";
     }
+    const tripList = document.getElementById("dashboardTripList");
+    if (tripList && (!Array.isArray(tripsData) || !tripsData.length)) {
+      tripList.innerHTML = '<div class="dashboard-trip-empty">行程資料載入失敗，請按右上角「重新整理」再試一次</div>';
+    }
   } finally {
     if (timeoutId) clearTimeout(timeoutId);
     dashboardLoadInProgress = false;
@@ -299,6 +303,8 @@ async function loadTrips() {
   if (!Array.isArray(data)) throw new Error("trips.json 格式錯誤");
   tripsData = data;
   renderTrips();
+  // 行程資料先到就先顯示左側清單，不必等報名／繳費 API 全部完成。
+  renderDashboardTripList();
   renderDashboardRecentTrips();
   updateTripLastUpdated();
 }
@@ -473,6 +479,13 @@ function renderDashboardTripList() {
   }
   const getDate = trip => String(trip.date || trip.departureDate || trip.tripDate || "").trim();
   const getName = trip => trip.name || trip.title || trip.tripName || "未命名行程";
+  const matchesTrip = (item, tripId, tripName) =>
+    (tripId && String(item.tripId || "") === tripId) ||
+    (tripId && !item.tripId && String(item.tripName || "").trim() === String(tripName).trim()) ||
+    (!tripId && String(item.tripName || "").trim() === String(tripName).trim());
+  const todayText = getTaipeiTodayDateString();
+  const [yy, mm, dd] = todayText.split("-").map(Number);
+  const todayUTC = Date.UTC(yy, mm - 1, dd);
   const activeTrips = tripsData
     .filter(trip => !["已取消", "已下架", "取消"].includes(String(trip.status || "").trim()))
     .map((trip, index) => {
@@ -487,23 +500,51 @@ function renderDashboardTripList() {
     return;
   }
   const registrations = Array.isArray(registrationData) ? registrationData : [];
+  const orders = Array.isArray(paymentData) ? paymentData : [];
+  const currentSelected = root.querySelector('.dashboard-trip-item.is-selected')?.dataset.tripId || "";
   root.innerHTML = activeTrips.map(({ trip, rawDate }) => {
     const tripId = String(trip.tripId || trip.id || "");
     const tripName = getName(trip);
-    const count = registrations.filter(item =>
-      (tripId && String(item.tripId || "") === tripId) ||
-      (tripId && !item.tripId && String(item.tripName || "").trim() === String(tripName).trim()) ||
-      (!tripId && String(item.tripName || "").trim() === String(tripName).trim())
-    ).length;
+    const tripRegistrations = registrations.filter(item => matchesTrip(item, tripId, tripName));
+    const tripOrders = orders.filter(item => matchesTrip(item, tripId, tripName));
+    const registeredCount = tripRegistrations.length;
     const capacity = Number(trip.maxPeople || trip.capacity || 0);
-    const countText = capacity > 0 ? `${count} / ${capacity} 人` : `${count} 人`;
-    return `<button type="button" class="dashboard-trip-item" data-jump-section="trips" title="前往行程管理：${escapeHTML(tripName)}">
+    const countText = capacity > 0 ? `${registeredCount} / ${capacity} 人` : `${registeredCount} 人`;
+    const pendingCount = tripOrders.filter(item => {
+      const status = String(item.paymentStatus || item.status || "").trim();
+      return status && !["已結清", "已付款", "已繳費", "已取消"].includes(status);
+    }).length;
+    const deadline = String(trip.deadline || trip.registrationDeadline || "").trim().slice(0, 10);
+    let deadlineText = "未設定";
+    if (/^\d{4}-\d{2}-\d{2}$/.test(deadline)) {
+      const [dy, dm, dd2] = deadline.split("-").map(Number);
+      const days = Math.round((Date.UTC(dy, dm - 1, dd2) - todayUTC) / 86400000);
+      deadlineText = days < 0 ? "已截止" : days === 0 ? "今天截止" : `剩 ${days} 天`;
+    }
+    const selected = currentSelected && currentSelected === tripId ? " is-selected" : "";
+    return `<button type="button" class="dashboard-trip-item${selected}" data-trip-id="${escapeHTML(tripId)}" aria-pressed="${selected ? "true" : "false"}" title="${escapeHTML(tripName)}">
       <span class="dashboard-trip-item-date">▦ ${escapeHTML(formatDashboardTripDate(rawDate))}</span>
-      <span class="dashboard-trip-item-count">${escapeHTML(countText)}<span class="dashboard-trip-item-arrow">›</span></span>
       <span class="dashboard-trip-item-name">${escapeHTML(tripName)}</span>
+      <span class="dashboard-trip-item-metrics">
+        <span>已報名 <b>${registeredCount}</b>${capacity > 0 ? ` / ${capacity}` : ""} 人</span>
+        <span>待繳款 <b>${pendingCount}</b> 筆</span>
+        <span>截止日 <b>${escapeHTML(deadlineText)}</b></span>
+      </span>
+      <span class="dashboard-trip-item-arrow">›</span>
     </button>`;
   }).join("");
 }
+
+// 點選行程卡片時標示目前選取項目；卡片上同步呈現該團報名、待繳及截止資訊。
+document.getElementById("dashboardTripList")?.addEventListener("click", event => {
+  const item = event.target.closest(".dashboard-trip-item");
+  if (!item) return;
+  document.querySelectorAll("#dashboardTripList .dashboard-trip-item").forEach(card => {
+    const active = card === item;
+    card.classList.toggle("is-selected", active);
+    card.setAttribute("aria-pressed", active ? "true" : "false");
+  });
+});
 
 function updateDashboard() {
   renderDashboardTripList();
@@ -1302,6 +1343,8 @@ async function deleteBoardingLocation(id) {
 async function loadRegistrations() {
   registrationData = await adminGetRegistrations();
   renderRegistrations();
+  renderDashboardTripList();
+  renderDashboardRecentTrips();
 }
 
 function maskIdNumber(value) {
@@ -1368,6 +1411,8 @@ document.getElementById("registrationsTableBody")?.addEventListener("click", eve
 async function loadPayments() {
   paymentData = await apiPost({ action: "adminGetOrders", token: adminToken });
   renderPayments();
+  renderDashboardTripList();
+  renderDashboardRecentTrips();
 }
 
 function renderPayments() {

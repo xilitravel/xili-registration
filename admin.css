@@ -6229,3 +6229,14 @@ body.admin-body .admin-table {
 .dashboard-trip-empty { padding:28px 12px; color:#a18a91; text-align:center; font-size:13px; }
 @media (min-width:1101px) { .dashboard-trip-list-card { min-height:330px; } }
 @media (max-width:1100px) { .dashboard-trip-list-card { min-height:260px; } .dashboard-trip-list-wrap { max-height:320px; } }
+
+
+/* v75｜出團行程卡片顯示每團報名、待繳與截止資訊 */
+.dashboard-trip-item { grid-template-columns:minmax(0,1fr) auto; }
+.dashboard-trip-item-name { grid-column:1; grid-row:2; }
+.dashboard-trip-item-metrics { grid-column:1 / -1; display:flex; flex-wrap:wrap; gap:6px 14px; padding-top:7px; border-top:1px solid #f3e1e7; color:#8a6b75; font-size:11px; line-height:1.5; }
+.dashboard-trip-item-metrics span { white-space:nowrap; }
+.dashboard-trip-item-metrics b { color:#a94e70; font-size:12px; }
+.dashboard-trip-item-arrow { grid-column:2; grid-row:1 / span 2; align-self:center; }
+.dashboard-trip-item.is-selected { border-color:#d65d85; background:linear-gradient(135deg,#fff0f5,#ffe7ef); box-shadow:0 3px 10px rgba(194,82,121,.12); }
+.dashboard-trip-item.is-selected .dashboard-trip-item-name { color:#a83f67; }
