@@ -1120,6 +1120,9 @@
            執行
         ========================= */
 
+        let tripsFetchInProgress = false;
+        let lastTripsFetchAt = 0;
+
         async function loadTrips() {
             // 先同步顯示上次成功載入的清單，避免整頁停留在「正在載入」。
             try {
@@ -1135,15 +1138,37 @@
                 tripContainer.innerHTML = `<div class="empty-trip">正在載入旅遊行程...</div>`;
             }
 
-            // 背景更新最新資料，不清空已顯示的行程卡片。
+            // 防止頁面重新取得焦點時，同一時間重複送出多個請求。
+            if (tripsFetchInProgress) return;
+            tripsFetchInProgress = true;
+
             try {
-                const response = await fetch('trips.json', { cache: 'no-cache' });
-                if (!response.ok) throw new Error('讀取行程資料失敗（HTTP ' + response.status + '）');
+                // GitHub Pages 可能經過 CDN 快取；每次加上唯一查詢參數，
+                // 並使用 no-store，確保新增／修改行程後取得最新 trips.json。
+                const tripsUrl = new URL('trips.json', window.location.href);
+                tripsUrl.searchParams.set('_xili_refresh', String(Date.now()));
+
+                const response = await fetch(tripsUrl.toString(), {
+                    cache: 'no-store',
+                    headers: { 'Cache-Control': 'no-cache' }
+                });
+
+                if (!response.ok) {
+                    throw new Error('讀取行程資料失敗（HTTP ' + response.status + '）');
+                }
+
                 const result = await response.json();
                 if (!Array.isArray(result)) throw new Error('trips.json 格式錯誤');
+
                 tripsData = result;
-                try { localStorage.setItem('xili_trips_cache_v1', JSON.stringify(result)); }
-                catch (error) { console.warn('無法保存行程清單快取：', error); }
+                lastTripsFetchAt = Date.now();
+
+                try {
+                    localStorage.setItem('xili_trips_cache_v1', JSON.stringify(result));
+                } catch (error) {
+                    console.warn('無法保存行程清單快取：', error);
+                }
+
                 renderTrips();
             } catch (error) {
                 console.error('背景更新行程失敗：', error);
@@ -1154,8 +1179,21 @@
                             <p>請稍後重新整理，或聯絡囍莉旅遊。</p>
                         </div>`;
                 }
+            } finally {
+                tripsFetchInProgress = false;
             }
         }
+
+        // 從後台切回旅遊行程頁時，若距離上次更新已超過 30 秒，
+        // 自動重新取得最新行程，不必請客人手動重新整理。
+        function refreshTripsWhenStale() {
+            if (document.visibilityState === 'hidden') return;
+            if (Date.now() - lastTripsFetchAt < 30000) return;
+            loadTrips();
+        }
+
+        document.addEventListener('visibilitychange', refreshTripsWhenStale);
+        window.addEventListener('pageshow', refreshTripsWhenStale);
 
         loadTrips();
 
