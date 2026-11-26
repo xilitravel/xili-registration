@@ -300,6 +300,7 @@ async function loadTrips() {
   tripsData = data;
   renderTrips();
   renderDashboardRecentTrips();
+  renderDashboardTripList();
   updateTripLastUpdated();
 }
 
@@ -434,9 +435,114 @@ function renderDashboardRecentTrips() {
   }).join("");
 }
 
+// =====================================================
+// 管理總覽｜選取行程統計（上車、餐食、房型、重要提醒）
+// =====================================================
+let dashboardSelectedTripId = "";
+
+function dashboardTripId(trip) { return String(trip?.tripId || trip?.id || ""); }
+function dashboardTripName(trip) { return String(trip?.name || trip?.title || "未命名行程"); }
+function dashboardIsCancelledRegistration(item) {
+  const status = String(item?.status || item?.registrationStatus || "").trim();
+  if (["已取消", "取消"].includes(status)) return true;
+  const orderId = String(item?.orderId || "");
+  const order = (Array.isArray(paymentData) ? paymentData : []).find(x => String(x.orderId || "") === orderId);
+  return !!order && String(order.paymentStatus || order.status || "").trim() === "已取消";
+}
+function dashboardTripRegistrations(trip) {
+  const id = dashboardTripId(trip), name = dashboardTripName(trip);
+  return (Array.isArray(registrationData) ? registrationData : []).filter(item =>
+    ((id && String(item.tripId || "") === id) || (id && !item.tripId && String(item.tripName || "").trim() === name.trim()) || (!id && String(item.tripName || "").trim() === name.trim()))
+  ).filter(item => !dashboardIsCancelledRegistration(item));
+}
+function dashboardFormatDate(value) {
+  const m = String(value || "").match(/^(\d{4})-(\d{2})-(\d{2})/);
+  return m ? `${m[1]}/${m[2]}/${m[3]}` : (value || "日期未設定");
+}
+function renderDashboardTripList() {
+  const root = document.getElementById("dashboardTripList");
+  if (!root) return;
+  const list = (Array.isArray(tripsData) ? tripsData : []).filter(t => !["已取消", "已下架", "取消"].includes(String(t.status || "").trim())).slice().sort((a,b) => String(a.date||"9999").localeCompare(String(b.date||"9999")));
+  if (!list.length) { root.innerHTML = '<div class="empty-data">目前沒有可統計的行程</div>'; return; }
+  if (!list.some(t => dashboardTripId(t) === dashboardSelectedTripId)) dashboardSelectedTripId = dashboardTripId(list[0]);
+  root.innerHTML = list.map(trip => {
+    const id = dashboardTripId(trip), count = dashboardTripRegistrations(trip).length;
+    const capacity = Number(trip.maxPeople || trip.capacity || 0);
+    return `<button type="button" class="dashboard-trip-select ${id === dashboardSelectedTripId ? "active" : ""}" data-dashboard-trip="${escapeHTML(id)}">
+      <span class="dashboard-trip-select-date">▦ ${escapeHTML(dashboardFormatDate(trip.date))}</span>
+      <strong>${escapeHTML(dashboardTripName(trip))}</strong>
+      <span class="dashboard-trip-select-count">${count}${capacity ? ` / ${capacity}` : ""} ›</span>
+    </button>`;
+  }).join("");
+  root.querySelectorAll("[data-dashboard-trip]").forEach(button => button.addEventListener("click", () => {
+    dashboardSelectedTripId = button.dataset.dashboardTrip;
+    renderDashboardTripList();
+    renderDashboardTripDetail();
+  }));
+  renderDashboardTripDetail();
+}
+function renderDashboardTripDetail() {
+  const trip = (Array.isArray(tripsData) ? tripsData : []).find(t => dashboardTripId(t) === dashboardSelectedTripId);
+  if (!trip) return;
+  const regs = dashboardTripRegistrations(trip);
+  const title = document.getElementById("dashboardSelectedTripName");
+  const meta = document.getElementById("dashboardSelectedTripMeta");
+  if (title) title.textContent = dashboardTripName(trip);
+  if (meta) meta.textContent = `出團日期：${dashboardFormatDate(trip.date)}　｜　報名上限：${Number(trip.maxPeople || 0) || "不限"} 人　｜　目前報名：${regs.length} 人`;
+
+  // 上車地點：同時統計第一、第二上車點，空白不計。
+  const boarding = {};
+  regs.forEach(item => [item.boarding1, item.boarding2].forEach(value => {
+    const point = String(value || "").trim(); if (point && !["不需要", "無", "—"].includes(point)) boarding[point] = (boarding[point] || 0) + 1;
+  }));
+  const boardingRoot = document.getElementById("dashboardBoardingStats");
+  if (boardingRoot) {
+    const entries = Object.entries(boarding).sort((a,b) => b[1]-a[1] || a[0].localeCompare(b[0], "zh-Hant"));
+    const max = Math.max(1, ...entries.map(x=>x[1]));
+    boardingRoot.innerHTML = entries.length ? entries.map(([name,count]) => `<div class="dashboard-boarding-row"><strong>${escapeHTML(name)}</strong><span class="dashboard-boarding-track"><i style="width:${Math.round(count/max*100)}%"></i></span><b>${count} 人</b></div>`).join("") : '<div class="empty-data">目前沒有上車地點資料</div>';
+  }
+
+  // 餐食：每位旅客的餐食欄位若含葷／素即分類；不顯示圓餅圖或總數。
+  let vegetarian = 0, nonVegetarian = 0;
+  regs.forEach(item => {
+    const meal = String(item.meals || item.meal || item.mealPreference || item.food || "");
+    if (/素食/.test(meal)) vegetarian++;
+    else if (/葷食|葷/.test(meal)) nonVegetarian++;
+  });
+  const mealRoot = document.getElementById("dashboardMealStats");
+  if (mealRoot) mealRoot.innerHTML = (vegetarian || nonVegetarian)
+    ? `<div class="dashboard-meal-row"><span class="meal-dot vegetarian"></span><strong>素食</strong><b>${vegetarian} 人</b></div><div class="dashboard-meal-row"><span class="meal-dot non-vegetarian"></span><strong>葷食</strong><b>${nonVegetarian} 人</b></div>`
+    : '<div class="empty-data">目前沒有餐食選擇資料</div>';
+
+  // 房型：依房型統計入住人數；以訂單編號計算房間筆數，避免同訂單旅客重複算房間。
+  const rooms = {};
+  regs.forEach((item, index) => {
+    const room = String(item.room || item.roomType || "").trim(); if (!room) return;
+    if (!rooms[room]) rooms[room] = { people: 0, orders: new Set() };
+    rooms[room].people++;
+    rooms[room].orders.add(String(item.orderId || `row-${index}`));
+  });
+  const roomRoot = document.getElementById("dashboardRoomStats");
+  if (roomRoot) {
+    const entries = Object.entries(rooms);
+    roomRoot.innerHTML = entries.length ? `<div class="dashboard-room-head"><span>房型</span><span>房間數</span><span>入住人數</span></div>` + entries.map(([name,data]) => `<div class="dashboard-room-row"><strong>${escapeHTML(name)}</strong><span>${data.orders.size} 間</span><b>${data.people} 人</b></div>`).join("") : '<div class="empty-data">此行程尚無房型／住宿資料</div>';
+  }
+
+  const notesRoot = document.getElementById("dashboardImportantNotes");
+  if (notesRoot) {
+    const notes = Array.isArray(trip.notes) ? trip.notes : String(trip.notes || "").split(/[\n；;]/);
+    const clean = notes.map(x => String(x || "").trim()).filter(Boolean);
+    notesRoot.innerHTML = clean.length ? `<ul>${clean.map(note => `<li>${escapeHTML(note)}</li>`).join("")}</ul>` : '<div class="empty-data">此行程尚未設定重要提醒</div>';
+  }
+}
+document.getElementById("dashboardTripListReset")?.addEventListener("click", () => {
+  const root = document.getElementById("dashboardTripList");
+  root?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+});
 function updateDashboard() {
 
   renderDashboardRecentTrips();
+  renderDashboardTripList();
 
   document.getElementById("totalTrips")
     .textContent = tripsData.length;
