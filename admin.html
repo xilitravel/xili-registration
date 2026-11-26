@@ -10,7 +10,7 @@
 
   <title>管理後台｜囍莉旅遊</title>
   
-<link rel="stylesheet" href="admin.css?v=20261126-trip-management-refresh-scroll-v57">
+<link rel="stylesheet" href="admin.css?v=20261126-trip-management-refresh-scroll-v58">
 </head>
 
 <body class="admin-body">
@@ -164,11 +164,12 @@
           </div>
 
           <div class="trip-heading-actions">
-            <span id="tripLastUpdated" class="trip-last-updated" aria-live="polite">資料更新：尚未更新</span>
-            <button type="button" class="dashboard-refresh-btn trips-refresh-btn" id="tripsRefreshBtn"><span aria-hidden="true">↻</span> 重新整理</button>
-            <button type="button" class="admin-btn admin-btn-primary" id="addTripBtn">
-              ＋ 新增行程
-            </button>
+            <div class="dashboard-updated">
+              <span class="calendar-small" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><rect x="6" y="9" width="36" height="33" rx="4"/><path d="M15 5v9M33 5v9M6 18h36M15 26h5m8 0h5M15 34h5m8 0h5"/></svg></span>
+              <span class="dashboard-updated-text">資料更新：<time id="tripLastUpdated" aria-live="polite">尚未更新</time></span>
+            </div>
+            <button type="button" class="dashboard-refresh-btn" id="tripsRefreshBtn"><span aria-hidden="true">↻</span> 重新整理</button>
+            <button type="button" class="admin-btn admin-btn-primary" id="addTripBtn">＋ 新增行程</button>
           </div>
 
         </div>
@@ -702,7 +703,7 @@
   </main>
 
 
-  <script src="admin.js?v=20261126-trip-management-refresh-scroll-v57"></script>
+  <script src="admin.js?v=20261126-trip-management-refresh-scroll-v58"></script>
 
 </body>
 </html>

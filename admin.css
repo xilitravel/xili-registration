@@ -5634,3 +5634,109 @@ body.admin-body .admin-table {
     max-height:55vh !important;
   }
 }
+
+
+/* v58｜行程管理工具列完全沿用管理總覽的更新資訊與重新整理樣式 */
+#trips .trip-heading-actions {
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  flex-wrap:wrap;
+  gap:12px !important;
+}
+#trips .trip-heading-actions .dashboard-updated {
+  display:flex !important;
+  align-items:center !important;
+  gap:8px !important;
+  color:#76545a;
+  white-space:nowrap;
+}
+#trips .trip-heading-actions .calendar-small {
+  display:inline-flex !important;
+  align-items:center;
+  justify-content:center;
+  width:32px;
+  height:32px;
+  color:#80646a;
+}
+#trips .trip-heading-actions .calendar-small .ui-icon {
+  width:27px !important;
+  height:27px !important;
+  fill:none !important;
+  stroke:currentColor !important;
+  stroke-width:3 !important;
+}
+#trips .trip-heading-actions .dashboard-updated-text {
+  color:#76545a;
+  font-size:15px;
+  white-space:nowrap;
+}
+#trips .trip-heading-actions .dashboard-refresh-btn {
+  height:46px !important;
+  min-height:46px !important;
+  padding:0 20px !important;
+  border:1px solid #d8a59c !important;
+  border-radius:26px !important;
+  background:linear-gradient(180deg,#fff,#fff8f5) !important;
+  color:#934c4e !important;
+  font-size:16px !important;
+  font-weight:800 !important;
+  white-space:nowrap !important;
+  box-shadow:0 3px 8px rgba(125,73,69,.13) !important;
+}
+#trips .trip-heading-actions .dashboard-refresh-btn > span {
+  display:inline-grid;
+  place-items:center;
+  width:25px;
+  height:25px;
+  margin-right:5px;
+  border-radius:8px;
+  background:#fbe8ed;
+  color:#a94d65;
+  font-size:25px;
+  vertical-align:-2px;
+}
+#trips .trip-heading-actions .dashboard-refresh-btn:disabled {
+  opacity:.65 !important;
+  cursor:wait !important;
+}
+
+/* v58｜列表再縮短：最多約 3～4 列，更多行程在列表內捲動 */
+#trips .trip-list-card {
+  height:300px !important;
+  min-height:0 !important;
+  max-height:300px !important;
+  overflow:hidden !important;
+}
+#trips .trip-table-wrapper {
+  height:300px !important;
+  max-height:300px !important;
+  overflow-x:auto !important;
+  overflow-y:auto !important;
+  overscroll-behavior:contain;
+}
+#trips .trip-admin-table thead th {
+  position:sticky !important;
+  top:0 !important;
+  z-index:6 !important;
+}
+@media (max-width:760px) {
+  #trips .trip-heading-actions {
+    justify-content:flex-start !important;
+    width:100%;
+  }
+  #trips .trip-heading-actions .dashboard-updated-text {
+    font-size:13px;
+  }
+  #trips .trip-heading-actions .dashboard-refresh-btn {
+    height:40px !important;
+    min-height:40px !important;
+    padding:0 13px !important;
+    font-size:14px !important;
+  }
+  #trips .trip-list-card,
+  #trips .trip-table-wrapper {
+    height:280px !important;
+    max-height:280px !important;
+  }
+}
