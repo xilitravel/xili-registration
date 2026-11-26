@@ -6240,3 +6240,49 @@ body.admin-body .admin-table {
 .dashboard-trip-item-arrow { grid-column:2; grid-row:1 / span 2; align-self:center; }
 .dashboard-trip-item.is-selected { border-color:#d65d85; background:linear-gradient(135deg,#fff0f5,#ffe7ef); box-shadow:0 3px 10px rgba(194,82,121,.12); }
 .dashboard-trip-item.is-selected .dashboard-trip-item-name { color:#a83f67; }
+
+
+/* v76｜出團行程標題金色枝條底線＋行程項目收窄 */
+.dashboard-trip-list-card > .dashboard-panel-heading {
+  position: relative;
+  padding-bottom: 28px;
+  margin-bottom: 12px;
+  overflow: visible;
+}
+.dashboard-trip-list-card > .dashboard-panel-heading::after {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 5%;
+  bottom: -5px;
+  height: 31px;
+  background: url("registration-title-gold-branch-v49.png") center center / 100% 100% no-repeat;
+  opacity: .9;
+  pointer-events: none;
+}
+.dashboard-trip-list-wrap {
+  padding: 3px 4px 3px 0;
+}
+.dashboard-trip-list {
+  gap: 8px;
+  padding: 0 10px;
+}
+.dashboard-trip-item {
+  width: 90%;
+  max-width: 520px;
+  margin-inline: auto;
+  padding: 10px 12px;
+  gap: 6px 10px;
+  border-radius: 12px;
+}
+.dashboard-trip-item-metrics {
+  gap: 4px 10px;
+  padding-top: 6px;
+}
+@media (max-width: 700px) {
+  .dashboard-trip-item { width: 100%; max-width: none; }
+  .dashboard-trip-list { padding-inline: 0; }
+  .dashboard-trip-list-card > .dashboard-panel-heading::after {
+    left: 2%; right: 2%; height: 24px;
+  }
+}
