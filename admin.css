@@ -6082,3 +6082,93 @@ body.admin-body .admin-table {
   background:linear-gradient(135deg,#b9915f 0%,#956b43 100%) !important;
   border-color:#956b43 !important;
 }
+
+
+/* v64｜行程列表欄位文字提高對比，保留柔和櫻花粉背景 */
+#trips .trip-admin-table thead th {
+  color:#854052 !important;
+  font-weight:800 !important;
+}
+#trips .trip-admin-table tbody td {
+  color:#59434a !important;
+}
+
+/* 出發日期：深酒紅，日期數字更醒目 */
+#trips .trip-date-chip {
+  color:#873b50 !important;
+  border-color:#e8c3ce !important;
+  background:#fff8fa !important;
+}
+#trips .trip-date-chip small {
+  color:#98717d !important;
+  font-weight:600 !important;
+}
+#trips .trip-date-chip strong {
+  color:#873b50 !important;
+  font-weight:900 !important;
+}
+
+/* 報名截止日：沉穩藍綠色，與出發日期區隔 */
+#trips .trip-deadline-text {
+  color:#28756f !important;
+  background:#eff9f6 !important;
+  border-color:#b9ded5 !important;
+  font-weight:800 !important;
+}
+
+/* 行程名稱：最醒目的深莓果色 */
+#trips .trip-name-text {
+  color:#713044 !important;
+  font-weight:900 !important;
+}
+
+/* 類型：藍紫色字，淡紫底 */
+#trips .trip-type-chip {
+  color:#58618f !important;
+  background:#eef0ff !important;
+  border:1px solid #d9ddfa !important;
+  font-weight:800 !important;
+}
+
+/* 出發地：森林綠，搭配淡綠底 */
+#trips .trip-departure-text {
+  color:#367451 !important;
+  font-weight:800 !important;
+}
+#trips .trip-departure-text::first-letter {
+  color:#367451 !important;
+}
+
+/* 報名狀態：紫紅色，與人數色標區分 */
+#trips .trip-status-chip {
+  color:#87518a !important;
+  background:#f6eafa !important;
+  border:1px solid #e8d4ef !important;
+  font-weight:800 !important;
+}
+
+/* 人數仍依四階段使用指定顏色 */
+#trips .trip-people-chip.count-red {
+  color:#c52e50 !important;
+  background:#ffe1e6 !important;
+}
+#trips .trip-people-chip.count-green {
+  color:#267b43 !important;
+  background:#e0f3df !important;
+}
+#trips .trip-people-chip.count-blue {
+  color:#1768b2 !important;
+  background:#dcefff !important;
+}
+#trips .trip-people-chip.count-purple {
+  color:#7742a2 !important;
+  background:#f0e2fa !important;
+}
+
+/* 編輯與刪除維持原本按鈕色系，避免文字顏色被表格統一規則覆蓋 */
+#trips .trip-actions-cell .admin-btn-light {
+  color:#a34f72 !important;
+}
+#trips .trip-actions-cell .admin-btn-danger {
+  color:#fff !important;
+}
