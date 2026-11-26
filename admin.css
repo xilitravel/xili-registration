@@ -4043,3 +4043,86 @@ body.admin-body {
 @media (max-width:760px) {
   .registration-overview-card .panel-accent { width: 54% !important; height: 30px !important; opacity: .68 !important; }
 }
+
+
+/* v30：選取選單比例與置中、側欄圖示分色、統計卡依底色使用專屬框線 */
+.admin-sidebar .admin-nav-btn {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  box-sizing: border-box !important;
+  height: 62px !important;
+  min-height: 62px !important;
+  padding: 8px 14px !important;
+  line-height: 1.2 !important;
+  margin-top: 0 !important;
+}
+.admin-sidebar .admin-nav-btn > span,
+.admin-sidebar .admin-nav-btn > svg.ui-icon {
+  position: relative !important;
+  top: 0 !important;
+  align-self: center !important;
+}
+.admin-sidebar .admin-nav-btn > span {
+  line-height: 1.2 !important;
+  margin: 0 !important;
+}
+.admin-sidebar .admin-nav-btn > svg.ui-icon {
+  flex: 0 0 38px !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+.admin-sidebar .admin-nav-btn.active {
+  height: 62px !important;
+  min-height: 62px !important;
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+  align-items: center !important;
+  border-radius: 17px !important;
+}
+.admin-sidebar .admin-nav-btn:nth-of-type(1) > svg.ui-icon {
+  color: #fff !important;
+}
+.admin-sidebar .admin-nav-btn:nth-of-type(2) > svg.ui-icon {
+  color: #bd8841 !important;
+}
+.admin-sidebar .admin-nav-btn:nth-of-type(3) > svg.ui-icon {
+  color: #67934e !important;
+}
+.admin-sidebar .admin-nav-btn:nth-of-type(4) > svg.ui-icon {
+  color: #648eae !important;
+}
+.admin-sidebar .admin-nav-btn:nth-of-type(5) > svg.ui-icon {
+  color: #bd5c75 !important;
+}
+.admin-sidebar .admin-nav-btn:nth-of-type(6) > svg.ui-icon {
+  color: #8771a8 !important;
+}
+.admin-sidebar .admin-nav-btn.active > svg.ui-icon {
+  color: #fff !important;
+}
+
+/* 四張統計卡框線改為呼應各自底色，不再共用玫瑰金 */
+.dashboard-stats .admin-stat-card.stat-rose {
+  border: 1.8px solid #d98fa8 !important;
+  box-shadow: 0 5px 15px rgba(189,91,125,.10), inset 0 1px 0 rgba(255,255,255,.88) !important;
+}
+.dashboard-stats .admin-stat-card.stat-gold {
+  border: 1.8px solid #d5b27d !important;
+  box-shadow: 0 5px 15px rgba(174,129,73,.10), inset 0 1px 0 rgba(255,255,255,.88) !important;
+}
+.dashboard-stats .admin-stat-card.stat-blue {
+  border: 1.8px solid #91b9cb !important;
+  box-shadow: 0 5px 15px rgba(90,137,163,.10), inset 0 1px 0 rgba(255,255,255,.88) !important;
+}
+.dashboard-stats .admin-stat-card.stat-green {
+  border: 1.8px solid #a9bd98 !important;
+  box-shadow: 0 5px 15px rgba(100,141,104,.10), inset 0 1px 0 rgba(255,255,255,.88) !important;
+}
+
+/* 報名狀態色彩拉開：待確認=香檳金、已確認=鼠尾草綠、已取消=中性灰 */
+.legend-dot.pending { background: #d8a64b !important; }
+.legend-dot.confirmed { background: #679b72 !important; }
+.legend-dot.cancelled { background: #c8c8c8 !important; }
+.registration-legend > div:nth-child(1) .legend-dot { box-shadow: 0 0 0 3px rgba(216,166,75,.13); }
+.registration-legend > div:nth-child(2) .legend-dot { box-shadow: 0 0 0 3px rgba(103,155,114,.13); }
