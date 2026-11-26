@@ -4992,3 +4992,76 @@ body.admin-body .admin-table {
   }
   .admin-sidebar .admin-nav-btn > span { min-height:56px !important; padding-top:2px !important; }
 }
+
+
+/* v47：標題金枝淡化並延長底線；側欄選單垂直置中；刷新按鈕字樣置中；繳費卡圖示放大 */
+.registration-overview-card .dashboard-panel-heading {
+  min-height:72px !important;
+  padding-right:455px !important;
+}
+.registration-overview-card .panel-accent {
+  width:450px !important;
+  height:70px !important;
+  right:4px !important;
+  top:50% !important;
+  bottom:auto !important;
+  transform:translateY(-50%) !important;
+  background-image:url("registration-title-gold-leaves-v47.png?v=20261126-v47") !important;
+  background-repeat:no-repeat !important;
+  background-position:center right !important;
+  background-size:100% 100% !important;
+  opacity:.43 !important;
+}
+.dashboard-refresh-btn {
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:8px !important;
+  line-height:1 !important;
+  text-align:center !important;
+  vertical-align:middle !important;
+}
+.dashboard-refresh-btn > span {
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  line-height:1 !important;
+  margin:0 !important;
+  padding:0 !important;
+  vertical-align:middle !important;
+  transform:none !important;
+}
+.dashboard-stats .admin-stat-card.stat-green .stat-icon img {
+  transform:scale(1.16) !important;
+  transform-origin:center !important;
+}
+@media (min-width:761px) {
+  .admin-sidebar .admin-nav-btn { position:relative !important; top:8px !important; }
+}
+@media (max-width:760px) {
+  .registration-overview-card .dashboard-panel-heading {
+    min-height:50px !important;
+    padding-right:242px !important;
+  }
+  .registration-overview-card .panel-accent {
+    width:238px !important;
+    height:40px !important;
+    right:2px !important;
+    opacity:.43 !important;
+  }
+  .admin-sidebar .admin-nav-btn {
+    position:relative !important;
+    top:18px !important;
+  }
+  .dashboard-stats .admin-stat-card.stat-green .stat-icon img {
+    transform:scale(1.16) !important;
+  }
+  .dashboard-refresh-btn {
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:6px !important;
+    line-height:1 !important;
+    text-align:center !important;
+  }
+}
