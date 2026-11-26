@@ -434,30 +434,52 @@ function renderDashboardRecentTrips() {
   }).join("");
 }
 
-function updateDashboard() {
+function getTaipeiTodayDateString() {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Taipei",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(new Date());
+  const values = Object.fromEntries(parts.map(part => [part.type, part.value]));
+  return `${values.year}-${values.month}-${values.day}`;
+}
 
+function getDaysUntilNearestDeadline() {
+  const todayText = getTaipeiTodayDateString();
+  const [year, month, day] = todayText.split("-").map(Number);
+  const today = Date.UTC(year, month - 1, day);
+
+  const deadlines = (Array.isArray(tripsData) ? tripsData : [])
+    .filter(trip => !["已取消", "已下架", "已截止", "取消"].includes(String(trip.status || "").trim()))
+    .map(trip => String(trip.deadline || trip.registrationDeadline || "").trim().slice(0, 10))
+    .filter(value => /^\\d{4}-\\d{2}-\\d{2}$/.test(value))
+    .map(value => {
+      const [y, m, d] = value.split("-").map(Number);
+      return Math.round((Date.UTC(y, m - 1, d) - today) / 86400000);
+    })
+    .filter(days => days >= 0)
+    .sort((a, b) => a - b);
+
+  return deadlines.length ? deadlines[0] : null;
+}
+
+function updateDashboard() {
   renderDashboardRecentTrips();
 
-  document.getElementById("totalTrips")
-    .textContent = tripsData.length;
+  document.getElementById("totalTrips").textContent = tripsData.length;
+  document.getElementById("totalRegistrations").textContent = registrationData.length;
 
-  document.getElementById("totalRegistrations")
-    .textContent = registrationData.length;
+  const deadlineDays = getDaysUntilNearestDeadline();
+  document.getElementById("deadlineDays").textContent =
+    deadlineDays === null ? "—" : `${deadlineDays} 天`;
 
-  document.getElementById("pendingRegistrations")
-    .textContent = registrationData.filter(item => {
-
-      return item.status === "待確認";
-
-    }).length;
-
-  document.getElementById("pendingPayments")
-    .textContent = paymentData.filter(item => {
-
-      return item.status === "未繳費";
-
-    }).length;
-
+  const completedStatuses = new Set(["已結清", "已付款", "已繳費", "已取消"]);
+  const pendingPaymentCount = (Array.isArray(paymentData) ? paymentData : []).filter(item => {
+    const status = String(item.paymentStatus || item.status || "").trim();
+    return status && !completedStatuses.has(status);
+  }).length;
+  document.getElementById("pendingPayments").textContent = pendingPaymentCount;
 }
 
 

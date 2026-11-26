@@ -6202,3 +6202,12 @@ body.admin-body .admin-table {
     padding-left:11px !important;
   }
 }
+
+
+/* v71：管理總覽第三張綠色截止倒數卡片圖示 */
+.dashboard-stats .stat-deadline-icon {
+  display: block;
+  width: 48px;
+  height: 48px;
+  color: currentColor;
+}

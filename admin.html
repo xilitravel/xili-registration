@@ -10,7 +10,7 @@
 
   <title>管理後台｜囍莉旅遊</title>
   
-<link rel="stylesheet" href="admin.css?v=20261127-trip-heading-double-divider-v65">
+<link rel="stylesheet" href="admin.css?v=20261127-dashboard-card-order-v71">
 </head>
 
 <body class="admin-body">
@@ -104,13 +104,20 @@
             <div class="stat-icon" aria-hidden="true"><img src="02_報名總人數_香檳金人物.png" alt="金粉立體人物" loading="eager" draggable="false"></div>
             <div><div class="admin-stat-title">報名總人數</div><div class="admin-stat-number" id="totalRegistrations">0</div></div>
           </div>
-          <div class="admin-stat-card stat-blue">
-            <div class="stat-icon" aria-hidden="true"><img src="03_待確認報名_霧藍核取板.png" alt="粉金立體核取板" loading="eager" draggable="false"></div>
-            <div><div class="admin-stat-title">待確認報名</div><div class="admin-stat-number" id="pendingRegistrations">0</div></div>
-          </div>
           <div class="admin-stat-card stat-green">
-            <div class="stat-icon" aria-hidden="true"><img src="04_待繳費人數_鼠尾草綠卡片_v48.png?v=20261126-v48" alt="綠金立體信用卡" loading="eager" draggable="false"></div>
-            <div><div class="admin-stat-title">待繳費人數</div><div class="admin-stat-number" id="pendingPayments">0</div></div>
+            <div class="stat-icon" aria-hidden="true">
+              <svg class="stat-deadline-icon" viewBox="0 0 64 64" focusable="false" aria-hidden="true">
+                <rect x="9" y="13" width="46" height="43" rx="8" fill="none" stroke="currentColor" stroke-width="4"/>
+                <path d="M21 7v13M43 7v13M10 25h44M20 35h8M36 35h8M20 44h8" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+                <circle cx="47" cy="47" r="12" fill="#f8fbf6" stroke="currentColor" stroke-width="3"/>
+                <path d="M47 40v7l5 3" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div><div class="admin-stat-title">距離報名截止日天數</div><div class="admin-stat-number" id="deadlineDays">—</div></div>
+          </div>
+          <div class="admin-stat-card stat-blue">
+            <div class="stat-icon" aria-hidden="true"><img src="03_待確認報名_霧藍核取板.png" alt="霧藍核取板" loading="eager" draggable="false"></div>
+            <div><div class="admin-stat-title">待付款／待核帳</div><div class="admin-stat-number" id="pendingPayments">0</div></div>
           </div>
         </div>
 
@@ -703,7 +710,7 @@
   </main>
 
 
-  <script src="admin.js?v=20261127-trip-heading-double-divider-v65"></script>
+  <script src="admin.js?v=20261127-dashboard-card-order-v71"></script>
 
 </body>
 </html>
