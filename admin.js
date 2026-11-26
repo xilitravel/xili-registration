@@ -470,19 +470,71 @@ function getDaysUntilNearestDeadline() {
   return deadlines.length ? deadlines[0] : null;
 }
 
+function getDashboardTripMatch(item, tripId, tripName) {
+  return (tripId && String(item.tripId || "") === String(tripId)) ||
+    (tripId && !item.tripId && String(item.tripName || "").trim() === String(tripName).trim()) ||
+    (!tripId && String(item.tripName || "").trim() === String(tripName).trim());
+}
+
+function getDashboardTripStats(trip) {
+  const tripId = String(trip.tripId || trip.id || "");
+  const tripName = trip.name || trip.title || trip.tripName || "未命名行程";
+  const registrations = Array.isArray(registrationData) ? registrationData : [];
+  const orders = Array.isArray(paymentData) ? paymentData : [];
+  const tripRegistrations = registrations.filter(item => getDashboardTripMatch(item, tripId, tripName));
+  const tripOrders = orders.filter(item => getDashboardTripMatch(item, tripId, tripName));
+  const pendingCount = tripOrders.filter(item => {
+    const status = String(item.paymentStatus || item.status || "").trim();
+    return status && !["已結清", "已付款", "已繳費", "已取消"].includes(status);
+  }).length;
+
+  const deadline = String(trip.deadline || trip.registrationDeadline || "").trim().slice(0, 10);
+  let deadlineText = "未設定";
+  if (/^\d{4}-\d{2}-\d{2}$/.test(deadline)) {
+    const [dy, dm, dd] = deadline.split("-").map(Number);
+    const [yy, mm, today] = getTaipeiTodayDateString().split("-").map(Number);
+    const days = Math.round((Date.UTC(dy, dm - 1, dd) - Date.UTC(yy, mm - 1, today)) / 86400000);
+    deadlineText = days < 0 ? "已截止" : days === 0 ? "今天截止" : `${days} 天`;
+  }
+
+  return {
+    registeredCount: tripRegistrations.length,
+    pendingCount,
+    deadlineText
+  };
+}
+
+function renderSelectedDashboardTripStats(tripId) {
+  const trip = (Array.isArray(tripsData) ? tripsData : []).find(item =>
+    String(item.tripId || item.id || "") === String(tripId)
+  );
+  const registrationsEl = document.getElementById("totalRegistrations");
+  const pendingEl = document.getElementById("pendingPayments");
+  const deadlineEl = document.getElementById("deadlineDays");
+
+  if (!trip) {
+    if (registrationsEl) registrationsEl.textContent = "0";
+    if (pendingEl) pendingEl.textContent = "0";
+    if (deadlineEl) deadlineEl.textContent = "—";
+    return;
+  }
+
+  const stats = getDashboardTripStats(trip);
+  if (registrationsEl) registrationsEl.textContent = String(stats.registeredCount);
+  if (pendingEl) pendingEl.textContent = String(stats.pendingCount);
+  if (deadlineEl) deadlineEl.textContent = stats.deadlineText;
+}
+
 function renderDashboardTripList() {
   const root = document.getElementById("dashboardTripList");
   if (!root) return;
   if (!Array.isArray(tripsData) || tripsData.length === 0) {
     root.innerHTML = '<div class="dashboard-trip-empty">目前尚無出團行程</div>';
+    renderSelectedDashboardTripStats("");
     return;
   }
   const getDate = trip => String(trip.date || trip.departureDate || trip.tripDate || "").trim();
   const getName = trip => trip.name || trip.title || trip.tripName || "未命名行程";
-  const matchesTrip = (item, tripId, tripName) =>
-    (tripId && String(item.tripId || "") === tripId) ||
-    (tripId && !item.tripId && String(item.tripName || "").trim() === String(tripName).trim()) ||
-    (!tripId && String(item.tripName || "").trim() === String(tripName).trim());
   const todayText = getTaipeiTodayDateString();
   const [yy, mm, dd] = todayText.split("-").map(Number);
   const todayUTC = Date.UTC(yy, mm - 1, dd);
@@ -497,45 +549,45 @@ function renderDashboardTripList() {
     .sort((a, b) => a.stamp - b.stamp || a.index - b.index);
   if (!activeTrips.length) {
     root.innerHTML = '<div class="dashboard-trip-empty">目前沒有可顯示的出團行程</div>';
+    renderSelectedDashboardTripStats("");
     return;
   }
-  const registrations = Array.isArray(registrationData) ? registrationData : [];
-  const orders = Array.isArray(paymentData) ? paymentData : [];
-  const currentSelected = root.querySelector('.dashboard-trip-item.is-selected')?.dataset.tripId || "";
+
+  let currentSelected = root.querySelector(".dashboard-trip-item.is-selected")?.dataset.tripId || "";
+  if (!activeTrips.some(({trip}) => String(trip.tripId || trip.id || "") === currentSelected)) {
+    currentSelected = String(activeTrips[0].trip.tripId || activeTrips[0].trip.id || "");
+  }
+
   root.innerHTML = activeTrips.map(({ trip, rawDate }) => {
     const tripId = String(trip.tripId || trip.id || "");
     const tripName = getName(trip);
-    const tripRegistrations = registrations.filter(item => matchesTrip(item, tripId, tripName));
-    const tripOrders = orders.filter(item => matchesTrip(item, tripId, tripName));
-    const registeredCount = tripRegistrations.length;
+    const stats = getDashboardTripStats(trip);
     const capacity = Number(trip.maxPeople || trip.capacity || 0);
-    const countText = capacity > 0 ? `${registeredCount} / ${capacity} 人` : `${registeredCount} 人`;
-    const pendingCount = tripOrders.filter(item => {
-      const status = String(item.paymentStatus || item.status || "").trim();
-      return status && !["已結清", "已付款", "已繳費", "已取消"].includes(status);
-    }).length;
-    const deadline = String(trip.deadline || trip.registrationDeadline || "").trim().slice(0, 10);
-    let deadlineText = "未設定";
-    if (/^\d{4}-\d{2}-\d{2}$/.test(deadline)) {
-      const [dy, dm, dd2] = deadline.split("-").map(Number);
-      const days = Math.round((Date.UTC(dy, dm - 1, dd2) - todayUTC) / 86400000);
-      deadlineText = days < 0 ? "已截止" : days === 0 ? "今天截止" : `剩 ${days} 天`;
-    }
-    const selected = currentSelected && currentSelected === tripId ? " is-selected" : "";
+    const countText = capacity > 0
+      ? `${stats.registeredCount} / ${capacity} 人`
+      : `${stats.registeredCount} 人`;
+    const deadlineText = stats.deadlineText === "未設定"
+      ? "未設定"
+      : stats.deadlineText === "已截止" || stats.deadlineText === "今天截止"
+        ? stats.deadlineText
+        : `剩 ${stats.deadlineText}`;
+    const selected = currentSelected === tripId ? " is-selected" : "";
     return `<button type="button" class="dashboard-trip-item${selected}" data-trip-id="${escapeHTML(tripId)}" aria-pressed="${selected ? "true" : "false"}" title="${escapeHTML(tripName)}">
       <span class="dashboard-trip-item-date">▦ ${escapeHTML(formatDashboardTripDate(rawDate))}</span>
       <span class="dashboard-trip-item-name">${escapeHTML(tripName)}</span>
       <span class="dashboard-trip-item-metrics">
-        <span>已報名 <b>${registeredCount}</b>${capacity > 0 ? ` / ${capacity}` : ""} 人</span>
-        <span>待繳款 <b>${pendingCount}</b> 筆</span>
+        <span>已報名 <b>${stats.registeredCount}</b>${capacity > 0 ? ` / ${capacity}` : ""} 人</span>
+        <span>待繳款 <b>${stats.pendingCount}</b> 筆</span>
         <span>截止日 <b>${escapeHTML(deadlineText)}</b></span>
       </span>
       <span class="dashboard-trip-item-arrow">›</span>
     </button>`;
   }).join("");
+
+  renderSelectedDashboardTripStats(currentSelected);
 }
 
-// 點選行程卡片時標示目前選取項目；卡片上同步呈現該團報名、待繳及截止資訊。
+// 點選左側行程後，上方卡片同步切換成該行程的報名、待付款及截止日資料。
 document.getElementById("dashboardTripList")?.addEventListener("click", event => {
   const item = event.target.closest(".dashboard-trip-item");
   if (!item) return;
@@ -544,25 +596,15 @@ document.getElementById("dashboardTripList")?.addEventListener("click", event =>
     card.classList.toggle("is-selected", active);
     card.setAttribute("aria-pressed", active ? "true" : "false");
   });
+  renderSelectedDashboardTripStats(item.dataset.tripId);
 });
 
 function updateDashboard() {
   renderDashboardTripList();
   renderDashboardRecentTrips();
 
-  document.getElementById("totalTrips").textContent = tripsData.length;
-  document.getElementById("totalRegistrations").textContent = registrationData.length;
-
-  const deadlineDays = getDaysUntilNearestDeadline();
-  document.getElementById("deadlineDays").textContent =
-    deadlineDays === null ? "—" : `${deadlineDays} 天`;
-
-  const completedStatuses = new Set(["已結清", "已付款", "已繳費", "已取消"]);
-  const pendingPaymentCount = (Array.isArray(paymentData) ? paymentData : []).filter(item => {
-    const status = String(item.paymentStatus || item.status || "").trim();
-    return status && !completedStatuses.has(status);
-  }).length;
-  document.getElementById("pendingPayments").textContent = pendingPaymentCount;
+  const totalTripsEl = document.getElementById("totalTrips");
+  if (totalTripsEl) totalTripsEl.textContent = String(tripsData.length);
 }
 
 
