@@ -504,6 +504,104 @@ function getDashboardTripStats(trip) {
   };
 }
 
+
+function dashboardCountBy(rows, getter) {
+  const counts = new Map();
+  rows.forEach(row => {
+    const value = String(getter(row) || "").trim();
+    if (!value || ["不需要", "無", "未選擇", "未設定"].includes(value)) return;
+    counts.set(value, (counts.get(value) || 0) + 1);
+  });
+  return [...counts.entries()].sort((a,b) => b[1]-a[1] || a[0].localeCompare(b[0], "zh-TW"));
+}
+
+function renderDashboardDetailStats(trip) {
+  const root = document.getElementById("dashboardTripStatsContent");
+  const title = document.getElementById("dashboardStatsTripName");
+  if (!root) return;
+  if (!trip) {
+    if (title) title.textContent = "請選擇左側行程";
+    root.innerHTML = '<div class="dashboard-stats-placeholder">請選擇左側行程</div>';
+    return;
+  }
+  const tripId = String(trip.tripId || trip.id || "");
+  const tripName = trip.name || trip.title || trip.tripName || "未命名行程";
+  if (title) title.textContent = tripName;
+
+  const matches = item => getDashboardTripMatch(item, tripId, tripName);
+  const allOrders = (Array.isArray(paymentData) ? paymentData : []).filter(matches);
+  const cancelledIds = new Set(allOrders.filter(o => ["已取消","取消"].includes(String(o.paymentStatus || o.status || "").trim())).map(o => String(o.orderId || "")));
+  const orders = allOrders.filter(o => !["已取消","取消"].includes(String(o.paymentStatus || o.status || "").trim()));
+  const registrations = (Array.isArray(registrationData) ? registrationData : []).filter(item =>
+    matches(item) && (!item.orderId || !cancelledIds.has(String(item.orderId)))
+  );
+
+  const boardingRows = [];
+  registrations.forEach(r => {
+    [r.boarding1, r.boarding2, r.boardingPoint, r.boarding].forEach(v => {
+      if (v && !["不需要","無","未選擇"].includes(String(v).trim())) boardingRows.push({v:String(v).trim()});
+    });
+  });
+  const boarding = dashboardCountBy(boardingRows, x => x.v);
+  const boardingTotal = boarding.reduce((n,x)=>n+x[1],0);
+
+  const rooms = dashboardCountBy(registrations, r => r.room || r.roomType || r.roomName);
+  const roomTotalPeople = rooms.reduce((n,x)=>n+x[1],0);
+  const roomCount = ([...rooms].reduce((n,[type,people]) => {
+    const match=type.match(/(\d+)\s*人/);
+    const capacity=match?Number(match[1]):(type.includes("雙")?2:type.includes("三")?3:type.includes("四")?4:1);
+    return n+Math.ceil(people/Math.max(1,capacity));
+  },0));
+
+  let meat=0, vegetarian=0, mealOther=0;
+  registrations.forEach(r => {
+    const raw=String(r.meals || r.meal || r.food || r.diet || "").trim();
+    if (!raw) { mealOther++; return; }
+    const veg=(raw.match(/素食/g)||[]).length;
+    const meatHits=(raw.match(/葷食|葷|一般餐/g)||[]).length;
+    if (veg>meatHits) vegetarian++;
+    else if (meatHits>0 || /葷/.test(raw)) meat++;
+    else mealOther++;
+  });
+
+  const payGroups = new Map();
+  orders.forEach(o => {
+    const method=String(o.paymentMethod || o.payMethod || o.paymentType || "未填付款方式").trim() || "未填付款方式";
+    const people=Math.max(1,Number(o.travelerCount || o.peopleCount || 1));
+    payGroups.set(method,(payGroups.get(method)||0)+people);
+  });
+  const payTotal=[...payGroups.values()].reduce((a,b)=>a+b,0);
+  const notes=Array.isArray(trip.notes)?trip.notes.map(x=>typeof x==="string"?x:(x?.text||x?.content||"")).filter(Boolean):String(trip.notes||"").split(/\n/).map(x=>x.trim()).filter(Boolean);
+
+  const barRows = (items,total) => items.length ? items.map(([name,count]) =>
+    `<div class="dashboard-stat-bar-row"><span>${escapeHTML(name)}</span><span class="dashboard-stat-bar"><i style="width:${Math.max(3,Math.round(count/Math.max(1,total)*100))}%"></i></span><strong>${count} 人</strong></div>`
+  ).join("") : '<div class="dashboard-stat-empty">目前沒有統計資料</div>';
+
+  root.innerHTML = `
+    <div class="dashboard-detail-grid">
+      <article class="dashboard-detail-card boarding-detail"><h4>▣ 上車地點人數</h4>
+        ${barRows(boarding,boardingTotal)}
+        ${boarding.length?`<div class="dashboard-detail-total"><b>合計</b><strong>${boardingTotal} 人次</strong></div>`:""}
+      </article>
+      <article class="dashboard-detail-card"><h4>▰ 房型統計</h4>
+        ${rooms.length?`<div class="dashboard-room-head"><span>房型</span><span>房間數*</span><span>入住人數</span></div>${rooms.map(([name,count])=>{const m=name.match(/(\d+)\s*人/);const cap=m?Number(m[1]):(name.includes("雙")?2:name.includes("三")?3:name.includes("四")?4:1);return `<div class="dashboard-room-row"><span>${escapeHTML(name)}</span><b>${Math.ceil(count/Math.max(1,cap))} 間</b><b>${count} 人</b></div>`}).join("")}<div class="dashboard-detail-total"><b>合計</b><strong>${roomCount} 間　${roomTotalPeople} 人</strong></div><small class="dashboard-stat-footnote">* 房間數依房型人數估算</small>`:'<div class="dashboard-stat-empty">此行程尚無房型／住宿資料</div>'}
+      </article>
+      <article class="dashboard-detail-card"><h4>♨ 餐食統計</h4>
+        <div class="dashboard-meal-row"><span>葷食</span><strong>${meat} 人</strong></div>
+        <div class="dashboard-meal-row"><span>素食</span><strong>${vegetarian} 人</strong></div>
+        ${mealOther?`<div class="dashboard-meal-row muted"><span>未填／其他</span><strong>${mealOther} 人</strong></div>`:""}
+        <div class="dashboard-detail-total"><b>合計</b><strong>${meat+vegetarian+mealOther} 人</strong></div>
+      </article>
+      <article class="dashboard-detail-card"><h4>▤ 付款方式統計</h4>
+        ${payGroups.size?[...payGroups.entries()].map(([name,count])=>`<div class="dashboard-meal-row"><span>${escapeHTML(name)}</span><strong>${count} 人</strong></div>`).join(""):'<div class="dashboard-stat-empty">目前沒有付款資料</div>'}
+        ${payGroups.size?`<div class="dashboard-detail-total"><b>合計</b><strong>${payTotal} 人</strong></div>`:""}
+      </article>
+    </div>
+    <article class="dashboard-detail-card dashboard-reminder-card"><h4>⚑ 重點提醒</h4>
+      ${notes.length?`<ul>${notes.map(n=>`<li>${escapeHTML(n)}</li>`).join("")}</ul>`:'<div class="dashboard-stat-empty">此行程尚未設定重要提醒</div>'}
+    </article>`;
+}
+
 function renderSelectedDashboardTripStats(tripId) {
   const trip = (Array.isArray(tripsData) ? tripsData : []).find(item =>
     String(item.tripId || item.id || "") === String(tripId)
@@ -516,6 +614,7 @@ function renderSelectedDashboardTripStats(tripId) {
     if (registrationsEl) registrationsEl.textContent = "0";
     if (pendingEl) pendingEl.textContent = "0";
     if (deadlineEl) deadlineEl.textContent = "—";
+    renderDashboardDetailStats(null);
     return;
   }
 
@@ -523,6 +622,7 @@ function renderSelectedDashboardTripStats(tripId) {
   if (registrationsEl) registrationsEl.textContent = String(stats.registeredCount);
   if (pendingEl) pendingEl.textContent = String(stats.pendingCount);
   if (deadlineEl) deadlineEl.textContent = stats.deadlineText;
+  renderDashboardDetailStats(trip);
 }
 
 function renderDashboardTripList() {
