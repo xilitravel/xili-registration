@@ -667,6 +667,7 @@ function renderTravelers() {
                     type="text"
                     id="travelerName${i}"
                     name="travelerName${i}"
+                    autocomplete="name"
                     required
                     placeholder="請輸入旅客姓名"
                 >
@@ -690,6 +691,7 @@ function renderTravelers() {
                         type="text"
                         id="travelerBirth${i}"
                         name="travelerBirth${i}"
+                        autocomplete="off"
                         required
                         maxlength="9"
                         placeholder="民國 84/06/24"
@@ -759,6 +761,7 @@ function renderTravelers() {
                     type="tel"
                     id="travelerPhone${i}"
                     name="travelerPhone${i}"
+                    autocomplete="off"
                     ${isMainContact ? 'required' : ''}
                     placeholder="請輸入聯絡電話"
                 >
