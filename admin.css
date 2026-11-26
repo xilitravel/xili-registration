@@ -4324,3 +4324,307 @@ body.admin-body .admin-table {
     margin-bottom: 5px !important;
   }
 }
+
+
+/* v34：細緻光澤邊框、圖示精修、選單間距、統計圖不裁切 */
+
+/* 卡片邊框：保留各自粉/金/藍/綠色，增加柔和玻璃光澤 */
+.dashboard-stats .admin-stat-card {
+  box-sizing: border-box !important;
+  border-width: 1.8px !important;
+  border-style: solid !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.98),
+    inset 0 -1px 0 rgba(255,255,255,.45),
+    0 0 0 1px rgba(255,255,255,.65),
+    0 6px 16px rgba(112,76,76,.075) !important;
+}
+.dashboard-stats .admin-stat-card.stat-rose { border-color:#df9bb2 !important; }
+.dashboard-stats .admin-stat-card.stat-gold { border-color:#dfbd86 !important; }
+.dashboard-stats .admin-stat-card.stat-blue { border-color:#9bc5d5 !important; }
+.dashboard-stats .admin-stat-card.stat-green { border-color:#b3c99f !important; }
+
+/* 左側框體：雙層細光，外框尺寸維持原設定 */
+.admin-sidebar::before {
+  border: 1.7px solid #d6a18f !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.98),
+    inset 0 -1px 0 rgba(255,255,255,.65),
+    0 0 0 1px rgba(255,255,255,.72),
+    0 7px 18px rgba(105,67,65,.08) !important;
+}
+
+/* 側欄六個選項：縮短垂直佔位，避免最後一項超出外框 */
+.admin-sidebar {
+  box-sizing: border-box !important;
+  padding-top: 12px !important;
+  padding-bottom: 10px !important;
+}
+.admin-sidebar .admin-nav-btn {
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  height: 59px !important;
+  min-height: 59px !important;
+  margin: 0 0 2px !important;
+  padding: 5px 12px !important;
+  gap: 10px !important;
+  border-radius: 16px !important;
+  line-height: 1.25 !important;
+}
+.admin-sidebar .admin-nav-btn > .ui-icon {
+  width: 50px !important;
+  height: 50px !important;
+  min-width: 50px !important;
+  flex: 0 0 50px !important;
+  padding: 8px !important;
+  margin: 0 2px 0 0 !important;
+  border-radius: 16px !important;
+  box-sizing: border-box !important;
+  stroke: currentColor !important;
+  stroke-width: 3.1 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  filter: drop-shadow(0 1px 1px rgba(75,48,55,.12));
+  box-shadow:
+    inset 0 1px 2px rgba(255,255,255,.98),
+    inset 0 -1px 1px rgba(100,70,75,.06),
+    0 3px 7px rgba(95,65,68,.09) !important;
+}
+.admin-sidebar .admin-nav-btn:nth-of-type(1) > .ui-icon {
+  color:#bd5b79 !important; background:linear-gradient(145deg,#fff5f7,#f5dce5) !important;
+}
+.admin-sidebar .admin-nav-btn:nth-of-type(2) > .ui-icon {
+  color:#b98439 !important; background:linear-gradient(145deg,#fffaf0,#f4e4c9) !important;
+}
+.admin-sidebar .admin-nav-btn:nth-of-type(3) > .ui-icon {
+  color:#648d50 !important; background:linear-gradient(145deg,#f7fbf2,#e1edd8) !important;
+}
+.admin-sidebar .admin-nav-btn:nth-of-type(4) > .ui-icon {
+  color:#5f91b2 !important; background:linear-gradient(145deg,#f5fbfd,#dcecf4) !important;
+}
+.admin-sidebar .admin-nav-btn:nth-of-type(5) > .ui-icon {
+  color:#bd5c75 !important; background:linear-gradient(145deg,#fff5f7,#f4dce5) !important;
+}
+.admin-sidebar .admin-nav-btn:nth-of-type(6) > .ui-icon {
+  color:#8872a8 !important; background:linear-gradient(145deg,#faf7fd,#e8e0f2) !important;
+}
+.admin-sidebar .admin-nav-btn.active {
+  height:59px !important;
+  min-height:59px !important;
+  margin:1px 0 3px !important;
+  padding:5px 12px !important;
+  border-radius:17px !important;
+  box-shadow:
+    0 6px 14px rgba(155,64,84,.18),
+    inset 0 1.5px 0 rgba(255,255,255,.55),
+    inset 0 -1px 0 rgba(126,44,66,.12) !important;
+}
+.admin-sidebar .admin-nav-btn.active > .ui-icon {
+  color:#fff !important;
+  background:linear-gradient(145deg,rgba(255,255,255,.38),rgba(255,255,255,.18)) !important;
+  box-shadow:inset 0 1px 2px rgba(255,255,255,.38),0 2px 5px rgba(103,48,65,.10) !important;
+}
+.admin-sidebar .admin-nav-btn > span {
+  position:relative !important;
+  top:3px !important;
+  line-height:1.25 !important;
+  letter-spacing:.035em !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  min-height:1.4em !important;
+}
+
+/* 統計卡上的花枝裝飾改為柔和的櫻花簇，不再使用細線小花 */
+.registration-overview-card .dashboard-panel-heading {
+  position:relative !important;
+  overflow:hidden !important;
+  min-height:64px !important;
+  padding-right:126px !important;
+  align-items:center !important;
+}
+.registration-overview-card .dashboard-panel-heading h3 {
+  position:relative !important;
+  z-index:2 !important;
+}
+.registration-overview-card .panel-accent {
+  display:block !important;
+  position:absolute !important;
+  z-index:1 !important;
+  top:-7px !important;
+  right:-2px !important;
+  bottom:auto !important;
+  width:138px !important;
+  height:78px !important;
+  background-image:url("registration-status-blossoms.png?v=20261126-v34") !important;
+  background-repeat:no-repeat !important;
+  background-position:center center !important;
+  background-size:contain !important;
+  opacity:.78 !important;
+  pointer-events:none !important;
+}
+
+/* 報名狀態卡片與甜甜圈：自動增高，圓環縮小並完整置中 */
+.registration-overview-card {
+  box-sizing:border-box !important;
+  height:auto !important;
+  min-height:320px !important;
+  overflow:hidden !important;
+  border:1.5px solid #dfb2a3 !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.98),
+    inset 0 -1px 0 rgba(255,255,255,.55),
+    0 0 0 1px rgba(255,255,255,.72),
+    0 7px 18px rgba(105,67,65,.075) !important;
+}
+.registration-overview-card .registration-chart-layout {
+  display:flex !important;
+  flex-direction:row !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:16px !important;
+  width:100% !important;
+  min-width:0 !important;
+  min-height:218px !important;
+  height:auto !important;
+  padding:0 2px 5px !important;
+  box-sizing:border-box !important;
+}
+.registration-overview-card .registration-donut {
+  width:188px !important;
+  height:188px !important;
+  flex:0 1 188px !important;
+  min-width:0 !important;
+  max-width:188px !important;
+  aspect-ratio:1 / 1 !important;
+  margin:0 auto !important;
+  box-sizing:border-box !important;
+}
+.registration-overview-card .registration-donut::before {
+  inset:17px !important;
+}
+.registration-overview-card .donut-center {
+  inset:17px !important;
+  gap:5px !important;
+}
+.registration-overview-card .donut-center span {
+  font-size:19px !important;
+  line-height:1.25 !important;
+}
+.registration-overview-card .donut-center strong {
+  font-size:52px !important;
+  line-height:1 !important;
+}
+.registration-overview-card .registration-legend {
+  flex:1 1 0 !important;
+  min-width:0 !important;
+  max-width:100% !important;
+}
+.registration-overview-card .registration-legend > div {
+  grid-template-columns:12px minmax(0,1fr) auto auto !important;
+  gap:6px !important;
+  padding:10px 0 !important;
+  min-width:0 !important;
+  box-sizing:border-box !important;
+  font-size:15px !important;
+}
+.registration-overview-card .registration-legend strong {
+  font-size:16px !important;
+}
+.registration-overview-card .registration-legend small {
+  min-width:30px !important;
+  font-size:12px !important;
+}
+@media (max-width:760px) {
+  .admin-sidebar {
+    height:auto !important;
+    min-height:0 !important;
+    padding:12px 10px 12px !important;
+    gap:2px !important;
+  }
+  .admin-sidebar::before {
+    height:100% !important;
+    border-radius:22px !important;
+  }
+  .admin-sidebar .admin-nav-btn {
+    width:100% !important;
+    height:59px !important;
+    min-height:59px !important;
+    margin:0 0 2px !important;
+    padding:5px 12px !important;
+    font-size:18px !important;
+  }
+  .admin-sidebar .admin-nav-btn > .ui-icon {
+    width:48px !important;
+    height:48px !important;
+    min-width:48px !important;
+    flex-basis:48px !important;
+    padding:8px !important;
+  }
+  .admin-sidebar .admin-nav-btn.active {
+    height:59px !important;
+    min-height:59px !important;
+    margin:1px 0 3px !important;
+  }
+  .registration-overview-card {
+    min-height:300px !important;
+    padding:15px 16px !important;
+  }
+  .registration-overview-card .dashboard-panel-heading {
+    min-height:56px !important;
+    padding-right:105px !important;
+  }
+  .registration-overview-card .panel-accent {
+    width:112px !important;
+    height:64px !important;
+    top:-3px !important;
+    opacity:.72 !important;
+  }
+  .registration-overview-card .registration-chart-layout {
+    min-height:195px !important;
+    gap:10px !important;
+  }
+  .registration-overview-card .registration-donut {
+    width:166px !important;
+    height:166px !important;
+    flex-basis:166px !important;
+    max-width:166px !important;
+  }
+  .registration-overview-card .registration-donut::before {
+    inset:15px !important;
+  }
+  .registration-overview-card .donut-center span {
+    font-size:16px !important;
+  }
+  .registration-overview-card .donut-center strong {
+    font-size:45px !important;
+  }
+  .registration-overview-card .registration-legend > div {
+    grid-template-columns:10px minmax(0,1fr) auto auto !important;
+    gap:4px !important;
+    padding:9px 0 !important;
+    font-size:13px !important;
+  }
+  .registration-overview-card .registration-legend strong {
+    font-size:14px !important;
+  }
+  .registration-overview-card .registration-legend small {
+    min-width:27px !important;
+    font-size:11px !important;
+  }
+}
+@media (max-width:480px) {
+  .registration-overview-card .registration-chart-layout {
+    flex-direction:column !important;
+    gap:12px !important;
+    padding-bottom:4px !important;
+  }
+  .registration-overview-card .registration-donut {
+    width:164px !important;
+    height:164px !important;
+    flex-basis:164px !important;
+  }
+  .registration-overview-card .registration-legend {
+    width:100% !important;
+  }
+}
