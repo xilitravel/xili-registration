@@ -575,11 +575,7 @@ function renderDashboardTripList() {
     return `<button type="button" class="dashboard-trip-item${selected}" data-trip-id="${escapeHTML(tripId)}" aria-pressed="${selected ? "true" : "false"}" title="${escapeHTML(tripName)}">
       <span class="dashboard-trip-item-date">▦ ${escapeHTML(formatDashboardTripDate(rawDate))}</span>
       <span class="dashboard-trip-item-name">${escapeHTML(tripName)}</span>
-      <span class="dashboard-trip-item-metrics">
-        <span>已報名 <b>${stats.registeredCount}</b>${capacity > 0 ? ` / ${capacity}` : ""} 人</span>
-        <span>待繳款 <b>${stats.pendingCount}</b> 筆</span>
-        <span>截止日 <b>${escapeHTML(deadlineText)}</b></span>
-      </span>
+      <span class="dashboard-trip-item-count">${escapeHTML(countText)}</span>
       <span class="dashboard-trip-item-arrow">›</span>
     </button>`;
   }).join("");
