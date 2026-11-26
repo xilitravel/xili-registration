@@ -10,7 +10,7 @@
 
   <title>管理後台｜囍莉旅遊</title>
   
-<link rel="stylesheet" href="admin.css?v=20261127-dashboard-trip-stats-v69">
+<link rel="stylesheet" href="admin.css?v=20261127-trip-heading-double-divider-v65">
 </head>
 
 <body class="admin-body">
@@ -106,43 +106,42 @@
           </div>
           <div class="admin-stat-card stat-blue">
             <div class="stat-icon" aria-hidden="true"><img src="03_待確認報名_霧藍核取板.png" alt="粉金立體核取板" loading="eager" draggable="false"></div>
-            <div><div class="admin-stat-title">待付款／待核帳</div><div class="admin-stat-number" id="pendingPaymentsAndChecks">0</div></div>
+            <div><div class="admin-stat-title">待確認報名</div><div class="admin-stat-number" id="pendingRegistrations">0</div></div>
           </div>
           <div class="admin-stat-card stat-green">
-            <div class="stat-icon" aria-hidden="true"><svg class="deadline-card-icon" viewBox="0 0 96 96" role="img" aria-label="報名截止日行事曆"><rect x="15" y="20" width="60" height="60" rx="10"/><path d="M29 12v17M61 12v17M15 38h60"/><circle cx="67" cy="66" r="19"/><path d="M67 55v12l8 5"/></svg></div>
-            <div><div class="admin-stat-title">距離報名截止日天數</div><div class="admin-stat-number" id="daysToDeadline">—</div></div>
+            <div class="stat-icon" aria-hidden="true"><img src="04_待繳費人數_鼠尾草綠卡片_v48.png?v=20261126-v48" alt="綠金立體信用卡" loading="eager" draggable="false"></div>
+            <div><div class="admin-stat-title">待繳費人數</div><div class="admin-stat-number" id="pendingPayments">0</div></div>
           </div>
         </div>
 
-        <div class="dashboard-trip-statistics" id="dashboardTripStatistics">
-          <aside class="admin-card dashboard-trip-list-panel">
-            <div class="dashboard-panel-heading"><h3>▥ 出團行程統計 <small>（選擇行程查看詳細）</small></h3></div>
-            <div class="dashboard-trip-list" id="dashboardTripList"><div class="empty-data">行程資料載入中…</div></div>
-          </aside>
-          <section class="admin-card dashboard-trip-detail-panel">
-            <div class="dashboard-trip-detail-heading">
-              <div><h3 id="dashboardSelectedTripName">請選擇行程</h3><p id="dashboardSelectedTripMeta">選擇左側行程以查看統計</p></div>
-              <button type="button" class="admin-btn admin-btn-light" id="dashboardTripListReset">↩ 返回列表</button>
+        <div class="dashboard-panels">
+          <section class="admin-card dashboard-panel registration-overview-card">
+            <div class="dashboard-panel-heading">
+              <h3><span class="panel-heading-icon"><svg class="ui-icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path d="M7 41V27h7v14M21 41V16h7v25M35 41V7h7v34"/></svg></span> 報名狀態統計</h3>
+              <span class="panel-accent" aria-hidden="true"></span>
             </div>
-            <div class="dashboard-stat-detail-grid">
-              <div class="dashboard-stat-column">
-                <section class="dashboard-detail-card">
-                  <h4>▣ 上車地點人數</h4>
-                  <div id="dashboardBoardingStats" class="dashboard-boarding-stats"><div class="empty-data">尚無報名資料</div></div>
-                </section>
-                <section class="dashboard-detail-card dashboard-meal-card">
-                  <h4>♨ 餐食統計</h4>
-                  <div id="dashboardMealStats" class="dashboard-meal-stats"><div class="empty-data">尚無餐食資料</div></div>
-                </section>
+            <div class="registration-chart-layout">
+              <div class="registration-donut" id="registrationDonut" role="img" aria-label="報名狀態統計圖">
+                <div class="donut-center"><span>報名總人數</span><strong id="donutTotal">0</strong></div>
               </div>
-              <section class="dashboard-detail-card">
-                <h4>▰ 房型統計</h4>
-                <div id="dashboardRoomStats" class="dashboard-room-stats"><div class="empty-data">此行程未設定住宿</div></div>
-              </section>
-              <section class="dashboard-detail-card dashboard-reminder-card">
-                <h4>⚑ 重要提醒</h4>
-                <div id="dashboardImportantNotes" class="dashboard-important-notes"><div class="empty-data">目前沒有重要提醒</div></div>
-              </section>
+              <div class="registration-legend">
+                <div><i class="legend-dot pending"></i><span>待確認</span><strong id="chartPending">0 人</strong><small id="chartPendingPct">0%</small></div>
+                <div><i class="legend-dot confirmed"></i><span>已確認</span><strong id="chartConfirmed">0 人</strong><small id="chartConfirmedPct">0%</small></div>
+                <div><i class="legend-dot cancelled"></i><span>已取消</span><strong id="chartCancelled">0 人</strong><small id="chartCancelledPct">0%</small></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="admin-card dashboard-panel recent-trips-card">
+            <div class="dashboard-panel-heading recent-heading">
+              <h3><span class="panel-heading-icon"><svg class="ui-icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><rect x="6" y="9" width="36" height="33" rx="4"/><path d="M15 5v9M33 5v9M6 18h36M15 26h5m8 0h5M15 34h5m8 0h5"/></svg></span> 近期出團行程 <small>（全部上架行程）</small></h3>
+              <button type="button" class="dashboard-more-btn" data-jump-section="trips">查看全部 ›</button>
+            </div>
+            <div class="dashboard-table-wrap">
+              <table class="dashboard-recent-table">
+                <thead><tr><th>出團日期</th><th>行程名稱</th><th>報名 / 名額</th><th>繳費狀態</th></tr></thead>
+                <tbody id="dashboardRecentTrips"><tr><td colspan="4" class="empty-data">資料載入中…</td></tr></tbody>
+              </table>
             </div>
           </section>
         </div>
@@ -704,7 +703,7 @@
   </main>
 
 
-  <script src="admin.js?v=20261127-dashboard-trip-stats-v69"></script>
+  <script src="admin.js?v=20261127-trip-heading-double-divider-v65"></script>
 
 </body>
 </html>
