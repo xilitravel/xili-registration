@@ -6172,3 +6172,33 @@ body.admin-body .admin-table {
 #trips .trip-actions-cell .admin-btn-danger {
   color:#fff !important;
 }
+
+
+/* v65｜行程管理標題右側比照管理總覽，保留雙直線分隔 */
+#trips .admin-section-header.trip-management-header .trip-heading-copy {
+  display:flex !important;
+  align-items:center !important;
+  gap:16px !important;
+}
+#trips .admin-section-header.trip-management-header .trip-heading-copy > h2.trip-page-title {
+  padding-right:17px !important;
+  border-right:2px solid #bd5268 !important;
+}
+#trips .admin-section-header.trip-management-header .trip-heading-copy > p.admin-description {
+  display:inline-block !important;
+  margin:0 !important;
+  padding-left:16px !important;
+  border-left:2px solid #bd5268 !important;
+  color:#382d2e !important;
+}
+@media (max-width:760px) {
+  #trips .admin-section-header.trip-management-header .trip-heading-copy {
+    gap:10px !important;
+  }
+  #trips .admin-section-header.trip-management-header .trip-heading-copy > h2.trip-page-title {
+    padding-right:11px !important;
+  }
+  #trips .admin-section-header.trip-management-header .trip-heading-copy > p.admin-description {
+    padding-left:11px !important;
+  }
+}
