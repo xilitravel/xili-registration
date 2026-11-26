@@ -1363,7 +1363,7 @@ function initializeAdminLock() {
   loginOverlay.id = "adminLoginOverlay";
   loginOverlay.innerHTML = `
     <div class="login-stage">
-      <img class="login-artwork" src="login-cover.png?v=20261126-v27-new-cover" alt="囍莉旅遊旅遊報名系統工作人員登入" draggable="false">
+      <img class="login-artwork" src="login-cover.png?v=20261126-user-login-cover-final" alt="囍莉旅遊旅遊報名系統工作人員登入" draggable="false">
       <form id="adminLoginForm" class="login-hotspots" aria-label="工作人員登入">
         <input id="adminLoginPassword" type="password" autocomplete="current-password"
           placeholder="輸入工作人員 PIN" aria-label="工作人員 PIN" required>

@@ -3951,7 +3951,7 @@ body.admin-body {
 .dashboard-stats .stat-icon img { width:100% !important; height:100% !important; object-fit:contain !important; display:block !important; }
 .registration-overview-card .panel-accent {
   right:0 !important; bottom:-13px !important; width:74% !important; height:54px !important;
-  background-image:url("registration-floral-divider.png?v=20261126-v26-clean-assets") !important;
+  background-image:url("none?v=20261126-v26-clean-assets") !important;
   background-repeat:no-repeat !important; background-position:right center !important; background-size:100% 100% !important;
   opacity:1 !important;
 }
@@ -3998,7 +3998,7 @@ body.admin-body {
   bottom: -13px !important;
   width: 74% !important;
   height: 54px !important;
-  background-image: url("registration-floral-divider.png?v=20261126-v27-divider") !important;
+  background-image: url("none?v=20261126-v27-divider") !important;
   background-repeat: no-repeat !important;
   background-position: right center !important;
   background-size: 100% 100% !important;
@@ -4024,7 +4024,7 @@ body.admin-body {
   bottom: -8px !important;
   width: 62% !important;
   height: 38px !important;
-  background-image: url("registration-accent-subtle.svg?v=20261126-v29") !important;
+  background-image: url("none?v=20261126-v29") !important;
   background-repeat: no-repeat !important;
   background-position: right center !important;
   background-size: contain !important;
@@ -4148,7 +4148,7 @@ body.admin-body {
   bottom: auto !important;
   width: 47% !important;
   height: 58px !important;
-  background-image: url("registration-accent-visible.svg?v=20261126-v31") !important;
+  background-image: url("none?v=20261126-v31") !important;
   background-repeat: no-repeat !important;
   background-position: right center !important;
   background-size: contain !important;
@@ -4456,7 +4456,7 @@ body.admin-body .admin-table {
   bottom:auto !important;
   width:138px !important;
   height:78px !important;
-  background-image:url("registration-status-blossoms.png?v=20261126-v34") !important;
+  background-image:url("none?v=20261126-v34") !important;
   background-repeat:no-repeat !important;
   background-position:center center !important;
   background-size:contain !important;
@@ -4744,7 +4744,7 @@ body.admin-body .admin-table {
   right:4px !important;
   width:180px !important;
   height:66px !important;
-  background-image:url("registration-golden-wheat-accent.png?v=20261126-v35") !important;
+  background-image:url("none?v=20261126-v35") !important;
   background-repeat:no-repeat !important;
   background-position:right center !important;
   background-size:contain !important;
