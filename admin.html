@@ -207,7 +207,7 @@
         <div class="admin-section-header">
 
           <div>
-            <h2>🚌 行程管理</h2>
+            <h2 class="trip-page-title"><svg class="trip-calendar-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg> 行程管理</h2>
             <p>新增、修改及管理旅遊行程。</p>
           </div>
 
@@ -373,40 +373,48 @@
         </div>
 
 
-        <!-- 行程列表 -->
-        <div class="admin-card">
+        <!-- 行程列表：搜尋、篩選與報名人數色彩提示 -->
+        <div class="trip-filter-bar admin-card">
+          <label class="trip-search-field" aria-label="搜尋行程">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg>
+            <input type="search" id="tripSearch" placeholder="輸入行程名稱或編號…">
+          </label>
+          <label class="trip-filter-control">行程類型
+            <select id="tripTypeFilter"><option value="">全部類型</option><option value="一日遊">一日遊</option><option value="多日遊">多日遊</option></select>
+          </label>
+          <label class="trip-filter-control">行程狀態
+            <select id="tripStatusFilter"><option value="">全部狀態</option><option>報名中</option><option>即將成團</option><option>已成團</option><option>已額滿</option><option>已截止</option><option>已取消</option><option>籌備中</option></select>
+          </label>
+          <label class="trip-filter-control">出發月份
+            <select id="tripMonthFilter"><option value="">全部月份</option>{''.join(f'<option value="{i:02d}">{i} 月</option>' for i in range(1,13))}</select>
+          </label>
+          <label class="trip-filter-control trip-sort-control">排序
+            <select id="tripSort"><option value="asc">出發日期（近 → 遠）</option><option value="desc">出發日期（遠 → 近）</option><option value="name">行程名稱</option></select>
+          </label>
+        </div>
 
-          <h3>📋 行程列表</h3>
+        <div class="trip-count-legend" aria-label="報名人數顏色說明">
+          <strong>報名人數顏色說明：</strong>
+          <span class="trip-count-key count-red">0～19 人</span>
+          <span class="trip-count-key count-blue">20～29 人</span>
+          <span class="trip-count-key count-green">30～39 人</span>
+          <span class="trip-count-key count-purple">40 人</span>
+        </div>
 
-          <div class="admin-table-wrapper">
+        <div class="trip-list-heading">
+          <h3><svg class="trip-calendar-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg> 行程列表 <small id="tripListCount">（共 0 筆）</small></h3>
+          <span class="trip-list-note">可使用上方條件快速尋找行程</span>
+        </div>
 
-            <table class="admin-table">
-
-              <thead>
-                <tr>
-                  <th>行程名稱</th>
-                  <th>日期</th>
-                  <th>類型</th>
-                  <th>費用</th>
-                  <th>狀態</th>
-                  <th>操作</th>
-                </tr>
-              </thead>
-
+        <div class="admin-card trip-list-card">
+          <div class="admin-table-wrapper trip-table-wrapper">
+            <table class="admin-table trip-admin-table">
+              <thead><tr><th>出發日期</th><th>行程名稱</th><th>類型</th><th>出發地</th><th>報名人數</th><th>狀態</th><th>操作</th></tr></thead>
               <tbody id="tripsTableBody">
-
-                <tr>
-                  <td colspan="6" class="empty-data">
-                    目前尚無行程資料
-                  </td>
-                </tr>
-
+                <tr><td colspan="7" class="empty-data">目前尚無行程資料</td></tr>
               </tbody>
-
             </table>
-
           </div>
-
         </div>
 
       </section>

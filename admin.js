@@ -726,113 +726,86 @@ tripForm.addEventListener("submit", async event => {
 // =====================================================
 
 function renderTrips() {
+  const tbody = document.getElementById("tripsTableBody");
+  if (!tbody) return;
 
-  const tbody =
-    document.getElementById("tripsTableBody");
+  const search = (document.getElementById("tripSearch")?.value || "").trim().toLowerCase();
+  const typeFilter = document.getElementById("tripTypeFilter")?.value || "";
+  const statusFilter = document.getElementById("tripStatusFilter")?.value || "";
+  const monthFilter = document.getElementById("tripMonthFilter")?.value || "";
+  const sortMode = document.getElementById("tripSort")?.value || "asc";
 
+  const sourceTrips = Array.isArray(tripsData) ? tripsData : [];
+  const filtered = sourceTrips.filter(trip => {
+    const name = String(trip.name || trip.title || "");
+    const id = String(trip.tripId || trip.id || "");
+    const date = String(trip.date || "");
+    const type = String(trip.type || "");
+    const status = String(trip.status || "");
+    return (!search || name.toLowerCase().includes(search) || id.toLowerCase().includes(search))
+      && (!typeFilter || type === typeFilter)
+      && (!statusFilter || status === statusFilter)
+      && (!monthFilter || date.slice(5, 7) === monthFilter);
+  });
 
-  if (!tripsData || tripsData.length === 0) {
+  filtered.sort((a, b) => {
+    const da = String(a.date || "9999-99-99");
+    const db = String(b.date || "9999-99-99");
+    if (sortMode === "name") return String(a.name || a.title || "").localeCompare(String(b.name || b.title || ""), "zh-Hant");
+    return sortMode === "desc" ? db.localeCompare(da) : da.localeCompare(db);
+  });
 
-    tbody.innerHTML = `
+  const countLabel = document.getElementById("tripListCount");
+  if (countLabel) countLabel.textContent = `（共 ${filtered.length} 筆）`;
 
-      <tr>
-
-        <td colspan="6" class="empty-data">
-
-          目前尚無行程資料
-
-        </td>
-
-      </tr>
-
-    `;
-
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="7" class="empty-data">${sourceTrips.length ? "找不到符合條件的行程" : "目前尚無行程資料"}</td></tr>`;
     return;
-
   }
 
-
-  tbody.innerHTML = tripsData.map(trip => {
-
-    const id =
-      trip.tripId || trip.id || "";
-
-    const name =
-      trip.name || trip.title || "";
-
-    const date =
-      trip.date || "";
-
-    const type =
-      trip.type || "";
-
-    const price =
-      Number(trip.price || 0);
-
-    const status =
-      trip.status || "";
-
-
+  const registrations = Array.isArray(registrationData) ? registrationData : [];
+  tbody.innerHTML = filtered.map(trip => {
+    const id = String(trip.tripId || trip.id || "");
+    const name = String(trip.name || trip.title || "未命名行程");
+    const date = String(trip.date || "");
+    const type = String(trip.type || "");
+    const departure = String(trip.departure || "台南");
+    const status = String(trip.status || "");
+    const capacity = Number(trip.maxPeople || trip.capacity || 0);
+    const tripId = String(trip.tripId || trip.id || "");
+    const tripRegistrations = registrations.filter(item =>
+      (tripId && String(item.tripId || "") === tripId) ||
+      (tripId && !item.tripId && String(item.tripName || "").trim() === name.trim()) ||
+      (!tripId && String(item.tripName || "").trim() === name.trim())
+    );
+    const people = tripRegistrations.length;
+    const countClass = people >= 40 ? "count-purple" : people >= 30 ? "count-green" : people >= 20 ? "count-blue" : "count-red";
+    const countText = capacity > 0 ? `${people} / ${capacity} 人` : `${people} 人`;
+    const dateParts = date.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    const dateDisplay = dateParts ? `${dateParts[2]}/${dateParts[3]}` : date;
+    const safeId = escapeHTML(id);
     return `
-
-      <tr>
-
-        <td>
-          ${escapeHTML(name)}
+      <tr class="trip-list-row">
+        <td><span class="trip-date-chip"><small>${dateParts ? `${dateParts[1]} 年` : "出發日期"}</small><strong>${escapeHTML(dateDisplay)}</strong></span></td>
+        <td><strong class="trip-name-text">${escapeHTML(name)}</strong></td>
+        <td><span class="trip-type-chip">${escapeHTML(type || "未設定")}</span></td>
+        <td><span class="trip-departure-text">⌖ ${escapeHTML(departure)}</span></td>
+        <td><span class="trip-people-chip ${countClass}"><span class="trip-people-icon" aria-hidden="true">♟</span>${escapeHTML(countText)}</span></td>
+        <td><span class="trip-status-chip">${escapeHTML(status || "未設定")}</span></td>
+        <td class="trip-actions-cell">
+          <button type="button" class="admin-btn admin-btn-light" onclick="editTrip('${safeId}')">編輯</button>
+          <button type="button" class="admin-btn admin-btn-danger" onclick="deleteTrip('${safeId}')">刪除</button>
         </td>
-
-        <td>
-          ${escapeHTML(date)}
-        </td>
-
-        <td>
-          ${escapeHTML(type)}
-        </td>
-
-        <td>
-          $${price.toLocaleString()}
-        </td>
-
-        <td>
-          ${escapeHTML(status)}
-        </td>
-
-        <td>
-
-          <button
-
-            class="admin-btn admin-btn-light"
-
-            onclick="editTrip('${escapeHTML(id)}')"
-
-          >
-
-            編輯
-
-          </button>
-
-
-          <button
-
-            class="admin-btn admin-btn-danger"
-
-            onclick="deleteTrip('${escapeHTML(id)}')"
-
-          >
-
-            刪除
-
-          </button>
-
-        </td>
-
-      </tr>
-
-    `;
-
+      </tr>`;
   }).join("");
-
 }
+
+// 行程列表篩選條件即時更新，不需重新讀取伺服器資料。
+["tripSearch", "tripTypeFilter", "tripStatusFilter", "tripMonthFilter", "tripSort"].forEach(id => {
+  const control = document.getElementById(id);
+  if (!control) return;
+  control.addEventListener(id === "tripSearch" ? "input" : "change", renderTrips);
+});
 
 
 // =====================================================

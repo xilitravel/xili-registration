@@ -3951,7 +3951,7 @@ body.admin-body {
 .dashboard-stats .stat-icon img { width:100% !important; height:100% !important; object-fit:contain !important; display:block !important; }
 .registration-overview-card .panel-accent {
   right:0 !important; bottom:-13px !important; width:74% !important; height:54px !important;
-  background-image:url("none?v=20261126-v26-clean-assets") !important;
+  background-image:none !important;
   background-repeat:no-repeat !important; background-position:right center !important; background-size:100% 100% !important;
   opacity:1 !important;
 }
@@ -3998,7 +3998,7 @@ body.admin-body {
   bottom: -13px !important;
   width: 74% !important;
   height: 54px !important;
-  background-image: url("none?v=20261126-v27-divider") !important;
+  background-image: none !important;
   background-repeat: no-repeat !important;
   background-position: right center !important;
   background-size: 100% 100% !important;
@@ -4024,7 +4024,7 @@ body.admin-body {
   bottom: -8px !important;
   width: 62% !important;
   height: 38px !important;
-  background-image: url("none?v=20261126-v29") !important;
+  background-image: none !important;
   background-repeat: no-repeat !important;
   background-position: right center !important;
   background-size: contain !important;
@@ -4148,7 +4148,7 @@ body.admin-body {
   bottom: auto !important;
   width: 47% !important;
   height: 58px !important;
-  background-image: url("none?v=20261126-v31") !important;
+  background-image: none !important;
   background-repeat: no-repeat !important;
   background-position: right center !important;
   background-size: contain !important;
@@ -4456,7 +4456,7 @@ body.admin-body .admin-table {
   bottom:auto !important;
   width:138px !important;
   height:78px !important;
-  background-image:url("none?v=20261126-v34") !important;
+  background-image:none !important;
   background-repeat:no-repeat !important;
   background-position:center center !important;
   background-size:contain !important;
@@ -4744,7 +4744,7 @@ body.admin-body .admin-table {
   right:4px !important;
   width:180px !important;
   height:66px !important;
-  background-image:url("none?v=20261126-v35") !important;
+  background-image:none !important;
   background-repeat:no-repeat !important;
   background-position:right center !important;
   background-size:contain !important;
@@ -5449,4 +5449,65 @@ body.admin-body .admin-table {
     overflow-x: auto !important;
     overflow-y: auto !important;
   }
+}
+
+
+/* =====================================================
+   行程管理｜櫻花粉精緻列表版
+   保留既有功能與右上角「查看網站／登出」原配色
+===================================================== */
+#trips .admin-section-header { align-items:center; margin:0 0 12px; }
+#trips .trip-page-title { display:flex; align-items:center; gap:12px; margin:0 0 8px !important; color:#99415f !important; }
+.trip-calendar-icon { width:27px; height:27px; flex:0 0 27px; fill:none; stroke:currentColor; stroke-width:2.3; stroke-linecap:round; stroke-linejoin:round; }
+#trips .admin-section-header p { margin:0; color:#8e707a; font-size:16px; }
+#trips .trip-filter-bar { display:flex; align-items:center; flex-wrap:wrap; gap:12px 18px; padding:14px 16px; margin:14px 0 10px; border-radius:18px; }
+.trip-search-field { display:flex; align-items:center; gap:10px; min-width:220px; flex:1 1 245px; padding:10px 14px; border:1px solid #f0cbd7; border-radius:999px; background:#fff; }
+.trip-search-field svg { width:19px; height:19px; flex:0 0 19px; fill:none; stroke:#a34b68; stroke-width:2; stroke-linecap:round; }
+.trip-search-field input { width:100%; min-width:0; border:0; outline:0; background:transparent; color:#694b55; font:inherit; }
+.trip-filter-control { display:flex; align-items:center; gap:8px; color:#704d5a; font-weight:700; white-space:nowrap; }
+.trip-filter-control select { max-width:180px; min-width:112px; padding:9px 12px; border:1px solid #edc7d4; border-radius:12px; background:#fff; color:#674653; font:inherit; }
+.trip-sort-control { margin-left:auto; }
+.trip-count-legend { display:flex; align-items:center; flex-wrap:wrap; gap:9px 12px; padding:10px 15px; margin:0 0 15px; border:1px solid #f2d4de; border-radius:999px; background:rgba(255,250,251,.88); color:#91435f; }
+.trip-count-legend strong { margin-right:3px; }
+.trip-count-key { display:inline-flex; align-items:center; justify-content:center; min-width:112px; padding:6px 13px; border-radius:999px; font-weight:800; white-space:nowrap; }
+.count-red { color:#c72e48 !important; background:#ffe1e5 !important; }
+.count-blue { color:#1266b1 !important; background:#dcefff !important; }
+.count-green { color:#287a3d !important; background:#e0f3df !important; }
+.count-purple { color:#7c3d9b !important; background:#f0e1fa !important; }
+.trip-list-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:14px 4px 8px; }
+.trip-list-heading h3 { display:flex; align-items:center; gap:9px; margin:0; color:#98425f; font-size:23px; }
+.trip-list-heading h3 small { color:#946f7c; font-size:14px; font-weight:600; }
+.trip-list-note { color:#987c85; font-size:13px; }
+#trips .trip-list-card { padding:0; overflow:hidden; border-radius:19px; }
+.trip-table-wrapper { overflow-x:auto; }
+.trip-admin-table { width:100%; min-width:850px; border-collapse:separate; border-spacing:0 0; }
+.trip-admin-table thead th { padding:13px 12px; background:#f7e4e6; color:#97445f; font-size:15px; text-align:center; border-bottom:1px solid #f0d2d9; }
+.trip-admin-table thead th:first-child { padding-left:18px; }
+.trip-admin-table tbody td { padding:9px 10px; text-align:center; border-bottom:1px solid #f5e2e7; background:rgba(255,255,255,.76); }
+.trip-admin-table tbody tr:last-child td { border-bottom:0; }
+.trip-admin-table tbody tr:hover td { background:#fff5f7; }
+.trip-date-chip { display:flex; flex-direction:column; align-items:center; justify-content:center; width:72px; min-height:56px; margin:auto; padding:5px 7px; border:1px solid #f2cbd7; border-radius:12px; background:linear-gradient(180deg,#fff 0%,#fff7f8 100%); box-shadow:0 2px 7px rgba(177,83,112,.08); color:#9d3655; line-height:1.15; }
+.trip-date-chip small { color:#a76b7d; font-size:10px; }
+.trip-date-chip strong { font-size:19px; font-weight:900; }
+.trip-name-text { color:#87334f; font-size:17px; font-weight:900; }
+.trip-type-chip, .trip-status-chip { display:inline-flex; align-items:center; justify-content:center; padding:6px 13px; border-radius:999px; background:#fde8ef; color:#a34264; font-weight:700; white-space:nowrap; }
+.trip-departure-text { color:#8b435d; font-weight:700; white-space:nowrap; }
+.trip-people-chip { display:inline-flex; align-items:center; justify-content:center; gap:7px; min-width:126px; padding:8px 13px; border-radius:999px; font-size:17px; font-weight:900; white-space:nowrap; }
+.trip-people-icon { font-size:19px; line-height:1; }
+.trip-actions-cell { white-space:nowrap; }
+.trip-actions-cell .admin-btn { min-width:76px; margin:2px 3px; padding:8px 14px; }
+@media(max-width:1050px) {
+  #trips .trip-filter-bar { align-items:stretch; }
+  .trip-sort-control { margin-left:0; }
+}
+@media(max-width:760px) {
+  #trips .admin-section-header { align-items:flex-start; }
+  #trips .trip-filter-bar { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .trip-search-field { grid-column:1/-1; }
+  .trip-filter-control { display:flex; flex-direction:column; align-items:stretch; white-space:normal; }
+  .trip-filter-control select { max-width:none; width:100%; }
+  .trip-sort-control { margin:0; }
+  .trip-count-legend { border-radius:16px; }
+  .trip-count-legend strong { width:100%; }
+  .trip-list-heading { align-items:flex-start; flex-direction:column; }
 }
