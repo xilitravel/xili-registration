@@ -4004,3 +4004,14 @@ body.admin-body {
   background-size: 100% 100% !important;
   opacity: 1 !important;
 }
+
+
+/* v28：依最新截圖微調側邊欄文字與人物位置；外框固定不動 */
+.admin-sidebar .admin-nav-btn > span,
+.admin-sidebar .admin-nav-btn > svg.ui-icon {
+  position: relative !important;
+  top: 6px !important;
+}
+.admin-sidebar .admin-sidebar-character {
+  top: 400px !important;
+}
