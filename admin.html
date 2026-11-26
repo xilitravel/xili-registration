@@ -115,19 +115,14 @@
         </div>
 
         <div class="dashboard-panels">
-          <section class="admin-card dashboard-panel registration-overview-card">
+          <section class="admin-card dashboard-panel dashboard-trip-list-card">
             <div class="dashboard-panel-heading">
-              <h3><span class="panel-heading-icon"><svg class="ui-icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path d="M7 41V27h7v14M21 41V16h7v25M35 41V7h7v34"/></svg></span> 報名狀態統計</h3>
-              <span class="panel-accent" aria-hidden="true"></span>
+              <h3><span class="panel-heading-icon"><svg class="ui-icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><rect x="6" y="9" width="36" height="33" rx="4"/><path d="M15 5v9M33 5v9M6 18h36M15 26h5m8 0h5M15 34h5m8 0h5"/></svg></span> 出團行程</h3>
+              <button type="button" class="dashboard-more-btn" data-jump-section="trips">行程管理 ›</button>
             </div>
-            <div class="registration-chart-layout">
-              <div class="registration-donut" id="registrationDonut" role="img" aria-label="報名狀態統計圖">
-                <div class="donut-center"><span>報名總人數</span><strong id="donutTotal">0</strong></div>
-              </div>
-              <div class="registration-legend">
-                <div><i class="legend-dot pending"></i><span>待確認</span><strong id="chartPending">0 人</strong><small id="chartPendingPct">0%</small></div>
-                <div><i class="legend-dot confirmed"></i><span>已確認</span><strong id="chartConfirmed">0 人</strong><small id="chartConfirmedPct">0%</small></div>
-                <div><i class="legend-dot cancelled"></i><span>已取消</span><strong id="chartCancelled">0 人</strong><small id="chartCancelledPct">0%</small></div>
+            <div class="dashboard-trip-list-wrap">
+              <div class="dashboard-trip-list" id="dashboardTripList" aria-live="polite">
+                <div class="dashboard-trip-empty">行程資料載入中…</div>
               </div>
             </div>
           </section>

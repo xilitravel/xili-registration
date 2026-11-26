@@ -6211,3 +6211,21 @@ body.admin-body .admin-table {
   height: 48px;
   color: currentColor;
 }
+
+
+/* v73｜管理總覽左欄改為出團行程清單，取代報名狀態圓餅圖 */
+.dashboard-trip-list-card { display:flex; flex-direction:column; min-height:0; }
+.dashboard-trip-list-wrap { min-height:0; flex:1 1 auto; overflow-y:auto; overflow-x:hidden; padding:2px 5px 2px 0; scrollbar-width:thin; scrollbar-color:#d9a5b5 #fbf1f4; }
+.dashboard-trip-list-wrap::-webkit-scrollbar { width:7px; }
+.dashboard-trip-list-wrap::-webkit-scrollbar-track { background:#fbf1f4; border-radius:10px; }
+.dashboard-trip-list-wrap::-webkit-scrollbar-thumb { background:#d9a5b5; border-radius:10px; }
+.dashboard-trip-list { display:grid; gap:9px; }
+.dashboard-trip-item { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:8px 12px; width:100%; padding:12px 14px; border:1px solid #f0d7df; border-radius:13px; background:linear-gradient(135deg,#fffdfd,#fff7f9); color:#654b54; text-align:left; cursor:pointer; transition:background .18s ease,border-color .18s ease,transform .18s ease; }
+.dashboard-trip-item:hover { border-color:#df9eb3; background:#fff0f4; transform:translateY(-1px); }
+.dashboard-trip-item-date { color:#9b6678; font-size:12px; font-weight:800; white-space:nowrap; }
+.dashboard-trip-item-name { grid-column:1; min-width:0; overflow:hidden; color:#47363c; font-size:14px; font-weight:800; text-overflow:ellipsis; white-space:nowrap; }
+.dashboard-trip-item-count { grid-column:2; grid-row:1 / span 2; color:#a94e70; font-size:13px; font-weight:900; white-space:nowrap; }
+.dashboard-trip-item-arrow { margin-left:4px; color:#c56b8a; }
+.dashboard-trip-empty { padding:28px 12px; color:#a18a91; text-align:center; font-size:13px; }
+@media (min-width:1101px) { .dashboard-trip-list-card { min-height:330px; } }
+@media (max-width:1100px) { .dashboard-trip-list-card { min-height:260px; } .dashboard-trip-list-wrap { max-height:320px; } }

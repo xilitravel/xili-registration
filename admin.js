@@ -464,7 +464,49 @@ function getDaysUntilNearestDeadline() {
   return deadlines.length ? deadlines[0] : null;
 }
 
+function renderDashboardTripList() {
+  const root = document.getElementById("dashboardTripList");
+  if (!root) return;
+  if (!Array.isArray(tripsData) || tripsData.length === 0) {
+    root.innerHTML = '<div class="dashboard-trip-empty">目前尚無出團行程</div>';
+    return;
+  }
+  const getDate = trip => String(trip.date || trip.departureDate || trip.tripDate || "").trim();
+  const getName = trip => trip.name || trip.title || trip.tripName || "未命名行程";
+  const activeTrips = tripsData
+    .filter(trip => !["已取消", "已下架", "取消"].includes(String(trip.status || "").trim()))
+    .map((trip, index) => {
+      const rawDate = getDate(trip);
+      const parsed = rawDate ? new Date(`${rawDate.slice(0, 10)}T00:00:00`) : null;
+      const stamp = parsed && !Number.isNaN(parsed.getTime()) ? parsed.getTime() : Number.MAX_SAFE_INTEGER;
+      return { trip, index, rawDate, stamp };
+    })
+    .sort((a, b) => a.stamp - b.stamp || a.index - b.index);
+  if (!activeTrips.length) {
+    root.innerHTML = '<div class="dashboard-trip-empty">目前沒有可顯示的出團行程</div>';
+    return;
+  }
+  const registrations = Array.isArray(registrationData) ? registrationData : [];
+  root.innerHTML = activeTrips.map(({ trip, rawDate }) => {
+    const tripId = String(trip.tripId || trip.id || "");
+    const tripName = getName(trip);
+    const count = registrations.filter(item =>
+      (tripId && String(item.tripId || "") === tripId) ||
+      (tripId && !item.tripId && String(item.tripName || "").trim() === String(tripName).trim()) ||
+      (!tripId && String(item.tripName || "").trim() === String(tripName).trim())
+    ).length;
+    const capacity = Number(trip.maxPeople || trip.capacity || 0);
+    const countText = capacity > 0 ? `${count} / ${capacity} 人` : `${count} 人`;
+    return `<button type="button" class="dashboard-trip-item" data-jump-section="trips" title="前往行程管理：${escapeHTML(tripName)}">
+      <span class="dashboard-trip-item-date">▦ ${escapeHTML(formatDashboardTripDate(rawDate))}</span>
+      <span class="dashboard-trip-item-count">${escapeHTML(countText)}<span class="dashboard-trip-item-arrow">›</span></span>
+      <span class="dashboard-trip-item-name">${escapeHTML(tripName)}</span>
+    </button>`;
+  }).join("");
+}
+
 function updateDashboard() {
+  renderDashboardTripList();
   renderDashboardRecentTrips();
 
   document.getElementById("totalTrips").textContent = tripsData.length;
