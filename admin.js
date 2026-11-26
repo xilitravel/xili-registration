@@ -550,19 +550,37 @@ function updateDashboard() {
   document.getElementById("totalRegistrations")
     .textContent = registrationData.length;
 
-  document.getElementById("pendingRegistrations")
-    .textContent = registrationData.filter(item => {
+  // 待付款／待核帳：以訂單付款狀態統計，排除已結清及已取消訂單。
+  const paidStatuses = new Set(["已結清", "已付款", "已繳費"]);
+  const cancelledStatuses = new Set(["已取消", "取消", "已作廢"]);
+  const pendingPaymentStatuses = new Set(["待付款", "未繳費", "待核帳"]);
+  const pendingPaymentCount = paymentData.filter(item => {
+    const status = String(item.paymentStatus || item.status || "").trim();
+    if (!status || paidStatuses.has(status) || cancelledStatuses.has(status)) return false;
+    return pendingPaymentStatuses.has(status);
+  }).length;
+  const pendingPaymentCard = document.getElementById("pendingPaymentsAndChecks");
+  if (pendingPaymentCard) pendingPaymentCard.textContent = pendingPaymentCount;
 
-      return item.status === "待確認";
-
-    }).length;
-
-  document.getElementById("pendingPayments")
-    .textContent = paymentData.filter(item => {
-
-      return item.status === "未繳費";
-
-    }).length;
+  // 距離最近一個尚未截止行程的報名截止日天數（以台灣本地日期計算）。
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const upcomingDeadlines = tripsData
+    .map(trip => String(trip.deadline || "").trim())
+    .filter(value => /^\d{4}-\d{2}-\d{2}$/.test(value))
+    .map(value => {
+      const [year, month, day] = value.split("-").map(Number);
+      const date = new Date(year, month - 1, day);
+      return Math.round((date.getTime() - today.getTime()) / 86400000);
+    })
+    .filter(days => days >= 0)
+    .sort((a, b) => a - b);
+  const deadlineCard = document.getElementById("daysToDeadline");
+  if (deadlineCard) {
+    deadlineCard.innerHTML = upcomingDeadlines.length
+      ? `${upcomingDeadlines[0]}<span class="deadline-day-unit">天</span>`
+      : "—";
+  }
 
 }
 
