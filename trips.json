@@ -130,5 +130,45 @@
     ],
     "registeredPeople": 0,
     "staffSeatIds": []
+  },
+  {
+    "tripId": "40c45e00-4efd-40c0-9794-8db113fb73f5",
+    "id": "40c45e00-4efd-40c0-9794-8db113fb73f5",
+    "name": "1223",
+    "title": "1223",
+    "date": "2026-12-31",
+    "dateText": "2026-12-31",
+    "type": "一日遊",
+    "price": 1000,
+    "priceText": "$1,000",
+    "deadline": "2026-11-30",
+    "maxPeople": 40,
+    "status": "報名中",
+    "sheetName": "1223",
+    "departure": "台南",
+    "description": "",
+    "highlights": [],
+    "boardingPoints": [],
+    "notes": [],
+    "image": "",
+    "days": 1,
+    "lodging": false,
+    "roomTypes": [],
+    "meals": [
+      {
+        "key": "day1_早餐",
+        "provided": false
+      },
+      {
+        "key": "day1_午餐",
+        "provided": false
+      },
+      {
+        "key": "day1_晚餐",
+        "provided": false
+      }
+    ],
+    "registeredPeople": 0,
+    "staffSeatIds": []
   }
 ]
