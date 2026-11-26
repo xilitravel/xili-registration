@@ -263,10 +263,123 @@ async function loadTrips() {
   if (!Array.isArray(data)) throw new Error("trips.json 格式錯誤");
   tripsData = data;
   renderTrips();
+  renderDashboardRecentTrips();
 }
 
 
+
+// =====================================================
+// 管理總覽｜近期出團行程（最近 5 筆）
+// =====================================================
+
+function formatDashboardTripDate(value) {
+  if (!value) return "日期未設定";
+  const raw = String(value).trim();
+
+  // 日期欄位通常是 YYYY-MM-DD；直接拆字串避免時區造成日期前移。
+  const match = raw.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);
+  if (match) {
+    return `${match[1]}/${String(match[2]).padStart(2, "0")}/${String(match[3]).padStart(2, "0")}`;
+  }
+
+  const date = new Date(raw);
+  if (Number.isNaN(date.getTime())) return raw;
+  return date.toLocaleDateString("zh-TW", {
+    timeZone: "Asia/Taipei",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  });
+}
+
+function renderDashboardRecentTrips() {
+  const tbody = document.getElementById("dashboardRecentTrips");
+  if (!tbody) return;
+
+  if (!Array.isArray(tripsData) || tripsData.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="4" class="empty-data">目前尚無出團行程</td></tr>`;
+    return;
+  }
+
+  const getTripDate = trip => String(trip.date || trip.departureDate || trip.tripDate || "").trim();
+  const getTripName = trip => trip.name || trip.title || trip.tripName || "未命名行程";
+  const getTripId = trip => String(trip.tripId || trip.id || "");
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const sortedTrips = tripsData
+    .filter(trip => !["已取消", "已下架", "取消"].includes(String(trip.status || "").trim()))
+    .map((trip, index) => {
+      const dateText = getTripDate(trip);
+      const parsedDate = dateText ? new Date(`${dateText.slice(0, 10)}T00:00:00`) : null;
+      const timestamp = parsedDate && !Number.isNaN(parsedDate.getTime())
+        ? parsedDate.getTime()
+        : Number.MAX_SAFE_INTEGER;
+      return { trip, index, timestamp, dateText };
+    })
+    .sort((a, b) => {
+      // 有日期的行程依日期排序；日期相同或未設定時保留原始順序。
+      if (a.timestamp !== b.timestamp) return a.timestamp - b.timestamp;
+      return a.index - b.index;
+    })
+    .slice(0, 5);
+
+  if (!sortedTrips.length) {
+    tbody.innerHTML = `<tr><td colspan="4" class="empty-data">目前沒有可顯示的出團行程</td></tr>`;
+    return;
+  }
+
+  const registrations = Array.isArray(registrationData) ? registrationData : [];
+  const orders = Array.isArray(paymentData) ? paymentData : [];
+
+  tbody.innerHTML = sortedTrips.map(({ trip, dateText }) => {
+    const tripId = getTripId(trip);
+    const tripName = getTripName(trip);
+
+    const tripRegistrations = registrations.filter(item =>
+      (tripId && String(item.tripId || "") === tripId) ||
+      (!tripId && String(item.tripName || "").trim() === String(tripName).trim()) ||
+      (tripId && !item.tripId && String(item.tripName || "").trim() === String(tripName).trim())
+    );
+
+    const tripOrders = orders.filter(item =>
+      (tripId && String(item.tripId || "") === tripId) ||
+      (!tripId && String(item.tripName || "").trim() === String(tripName).trim()) ||
+      (tripId && !item.tripId && String(item.tripName || "").trim() === String(tripName).trim())
+    );
+
+    const registeredCount = tripRegistrations.length;
+    const capacity = Number(trip.maxPeople || trip.capacity || 0);
+    const registrationText = capacity > 0
+      ? `${registeredCount} / ${capacity} 人`
+      : `${registeredCount} 人`;
+
+    let paymentText = "尚無繳費資料";
+    if (tripOrders.length) {
+      const paidCount = tripOrders.filter(item =>
+        ["已結清", "已付款", "已繳費"].includes(String(item.paymentStatus || item.status || "").trim())
+      ).length;
+      const unpaidCount = tripOrders.filter(item =>
+        !["已結清", "已付款", "已繳費", "已取消"].includes(String(item.paymentStatus || item.status || "").trim())
+      ).length;
+      paymentText = unpaidCount > 0
+        ? `待繳 ${unpaidCount} 筆`
+        : (paidCount > 0 ? `已結清 ${paidCount} 筆` : `${tripOrders.length} 筆訂單`);
+    }
+
+    return `<tr>
+      <td>${escapeHTML(formatDashboardTripDate(dateText))}</td>
+      <td>${escapeHTML(tripName)}</td>
+      <td>${escapeHTML(registrationText)}</td>
+      <td>${escapeHTML(paymentText)}</td>
+    </tr>`;
+  }).join("");
+}
+
 function updateDashboard() {
+
+  renderDashboardRecentTrips();
 
   document.getElementById("totalTrips")
     .textContent = tripsData.length;
