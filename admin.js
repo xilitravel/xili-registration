@@ -346,7 +346,13 @@ function formatDashboardTripDate(value) {
   // 日期欄位通常是 YYYY-MM-DD；直接拆字串避免時區造成日期前移。
   const match = raw.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);
   if (match) {
-    return `${match[1]}/${String(match[2]).padStart(2, "0")}/${String(match[3]).padStart(2, "0")}`;
+    const year = Number(match[1]);
+    const month = Number(match[2]);
+    const day = Number(match[3]);
+    const weekdayNames = ["日", "一", "二", "三", "四", "五", "六"];
+    // 使用 UTC 計算星期，避免時區造成日期偏移。
+    const weekday = weekdayNames[new Date(Date.UTC(year, month - 1, day)).getUTCDay()];
+    return `${year}/${String(month).padStart(2, "0")}/${String(day).padStart(2, "0")}（${weekday}）`;
   }
 
   const date = new Date(raw);
