@@ -346,13 +346,7 @@ function formatDashboardTripDate(value) {
   // 日期欄位通常是 YYYY-MM-DD；直接拆字串避免時區造成日期前移。
   const match = raw.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);
   if (match) {
-    const year = Number(match[1]);
-    const month = Number(match[2]);
-    const day = Number(match[3]);
-    const weekdayNames = ["日", "一", "二", "三", "四", "五", "六"];
-    // 使用 UTC 計算星期，避免時區造成日期偏移。
-    const weekday = weekdayNames[new Date(Date.UTC(year, month - 1, day)).getUTCDay()];
-    return `${year}/${String(month).padStart(2, "0")}/${String(day).padStart(2, "0")}（${weekday}）`;
+    return `${match[1]}/${String(match[2]).padStart(2, "0")}/${String(match[3]).padStart(2, "0")}`;
   }
 
   const date = new Date(raw);
@@ -689,7 +683,6 @@ function renderDashboardTripList() {
     return `<button type="button" class="dashboard-trip-item${selected}" data-trip-id="${escapeHTML(tripId)}" aria-pressed="${selected ? "true" : "false"}" title="${escapeHTML(tripName)}">
       <span class="dashboard-trip-item-date"><svg class="dashboard-trip-calendar" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="16" rx="2.5"/><path d="M7.5 3v4M16.5 3v4M3.5 9.5h17"/></svg><span>${escapeHTML(formatDashboardTripDate(rawDate))}</span></span>
       <span class="dashboard-trip-item-name">${escapeHTML(tripName)}</span>
-      <span class="dashboard-trip-item-count"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M2.8 19c.5-3.5 2.6-5.3 6.2-5.3s5.7 1.8 6.2 5.3"/><path d="M16 5.5a3 3 0 0 1 0 5.8M17 14c2.5.5 3.8 2.1 4.2 4.5"/></svg><span>${escapeHTML(countText)}</span></span>
       <span class="dashboard-trip-item-arrow" aria-hidden="true">›</span>
     </button>`;
   }).join("");

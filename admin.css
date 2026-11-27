@@ -7352,3 +7352,30 @@ body.admin-body .admin-table {
     bottom:5px !important;
   }
 }
+
+
+/* v89｜行程清單：移除重複人數，將空間留給團名；標題改為典雅羅盤徽章 */
+.dashboard-trip-list-card > .dashboard-panel-heading h3 .dashboard-trip-premium-icon {
+  width:34px !important; height:34px !important; flex:0 0 34px !important;
+  display:inline-flex !important; align-items:center !important; justify-content:center !important;
+  color:#b88743 !important; background:linear-gradient(145deg,#fffaf0,#f6e7c9) !important;
+  border:1px solid rgba(190,145,75,.48) !important; border-radius:50% !important;
+  box-shadow:0 2px 7px rgba(151,111,55,.14),inset 0 1px 0 #fff !important;
+}
+.dashboard-trip-list-card > .dashboard-panel-heading h3 .dashboard-trip-premium-icon svg {
+  width:23px !important; height:23px !important; fill:none !important;
+  stroke:#a97937 !important; stroke-width:1.45 !important; stroke-linecap:round !important; stroke-linejoin:round !important;
+}
+.dashboard-trip-list .dashboard-trip-item {
+  grid-template-columns:minmax(142px, 174px) minmax(0,1fr) 14px !important;
+  column-gap:14px !important;
+}
+.dashboard-trip-item-name {
+  padding-left:14px !important; border-left:1px solid rgba(194,125,143,.30) !important;
+  overflow:hidden !important; text-overflow:ellipsis !important; white-space:nowrap !important;
+}
+.dashboard-trip-item-count { display:none !important; }
+@media(max-width:900px) {
+  .dashboard-trip-list .dashboard-trip-item { grid-template-columns:minmax(130px, 158px) minmax(0,1fr) 12px !important; column-gap:9px !important; }
+  .dashboard-trip-item-name { padding-left:9px !important; }
+}
