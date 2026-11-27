@@ -8175,16 +8175,48 @@ body.admin-body .admin-table {
   color: #2457A6 !important;
 }
 
-/* v116｜登入封面 PIN 輸入框定位校正
-   只調整桌面版透明輸入熱區，背景封面、按鈕與手機版不變 */
-#adminLoginOverlay #adminLoginPassword,
-#adminLoginOverlay #adminLoginPassword:focus,
-#adminLoginOverlay #adminLoginPassword:focus-visible,
-#adminLoginOverlay #adminLoginPassword:active {
-  left: 32.70% !important;
-  top: 72.80% !important;
-  width: 34.00% !important;
-  height: 7.80% !important;
-  padding: 0 16px !important;
-  line-height: 1.2 !important;
+/* v117｜行程標題與人數統計標題統一縮小；行程團名改寶藍色 */
+.dashboard-trip-list-card > .dashboard-panel-heading .dashboard-trip-title-premium,
+.dashboard-trip-stats-card .dashboard-panel-heading .dashboard-stats-title > img {
+  display: block !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: 158px !important;
+  height: 48px !important;
+  min-height: 0 !important;
+  max-height: 48px !important;
+  flex: 0 1 auto !important;
+  object-fit: contain !important;
+  object-position: left center !important;
+}
+.dashboard-trip-list-card > .dashboard-panel-heading .dashboard-trip-title-art {
+  height: 54px !important;
+  min-height: 54px !important;
+}
+.dashboard-trip-list .dashboard-trip-item-name {
+  color: #2457A6 !important;
+}
+@media (max-width: 900px) {
+  .dashboard-trip-list-card > .dashboard-panel-heading .dashboard-trip-title-premium,
+  .dashboard-trip-stats-card .dashboard-panel-heading .dashboard-stats-title > img {
+    height: 44px !important;
+    max-height: 44px !important;
+    max-width: 145px !important;
+  }
+  .dashboard-trip-list-card > .dashboard-panel-heading .dashboard-trip-title-art {
+    height: 50px !important;
+    min-height: 50px !important;
+  }
+}
+@media (max-width: 560px) {
+  .dashboard-trip-list-card > .dashboard-panel-heading .dashboard-trip-title-premium,
+  .dashboard-trip-stats-card .dashboard-panel-heading .dashboard-stats-title > img {
+    height: 40px !important;
+    max-height: 40px !important;
+    max-width: 132px !important;
+  }
+  .dashboard-trip-list-card > .dashboard-panel-heading .dashboard-trip-title-art {
+    height: 46px !important;
+    min-height: 46px !important;
+  }
 }
