@@ -8175,78 +8175,93 @@ body.admin-body .admin-table {
   color: #2457A6 !important;
 }
 
-/* v119｜強制套用：兩個標題圖片同寬同高、行程團名寶藍色 */
-/* 行程標題容器不要再以舊版 240px/440px 尺寸撐大 */
-.dashboard-trip-list-card .dashboard-panel-heading h3.dashboard-trip-title-art {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: flex-start !important;
-  width: 145px !important;
-  min-width: 145px !important;
-  max-width: 145px !important;
-  height: 50px !important;
-  min-height: 50px !important;
-  max-height: 50px !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  flex: 0 0 145px !important;
-  overflow: visible !important;
-}
-.dashboard-trip-list-card .dashboard-panel-heading img.dashboard-trip-title-premium,
-.dashboard-trip-stats-card .dashboard-panel-heading h3.dashboard-stats-title > img {
-  display: block !important;
-  width: 145px !important;
-  min-width: 145px !important;
-  max-width: 145px !important;
-  height: auto !important;
-  min-height: 0 !important;
-  max-height: 50px !important;
-  flex: 0 0 145px !important;
-  object-fit: contain !important;
-  object-position: left center !important;
-}
-/* 團名本體與內層文字都指定顏色，覆蓋舊版深色設定 */
-#dashboardTripList .dashboard-trip-item-name,
-#dashboardTripList .dashboard-trip-item-name *,
-#dashboardTripList .dashboard-trip-item-name strong,
-#dashboardTripList .dashboard-trip-item-name span {
-  color: #2457A6 !important;
+/* v120｜行程與人數統計標題視覺同高，兩條底線對齊 */
+@media (min-width: 901px) {
+  .dashboard-premium .dashboard-trip-list-card > .dashboard-panel-heading,
+  .dashboard-premium .dashboard-trip-stats-card > .dashboard-panel-heading {
+    box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+    height: 76px !important;
+    min-height: 76px !important;
+    max-height: 76px !important;
+    flex: 0 0 76px !important;
+    margin: 0 0 8px !important;
+    padding: 0 0 8px !important;
+    border-bottom: 1px solid #eadbd6 !important;
+  }
+
+  .dashboard-premium .dashboard-trip-list-card .dashboard-trip-title-art,
+  .dashboard-premium .dashboard-trip-stats-card .dashboard-stats-title {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 14px !important;
+    height: 58px !important;
+    min-height: 58px !important;
+    max-height: 58px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+  }
+
+  /* 兩張原圖採相同實際高度，寬度依各自比例自然計算 */
+  .dashboard-premium .dashboard-trip-list-card .dashboard-trip-title-premium,
+  .dashboard-premium .dashboard-trip-stats-card .dashboard-stats-title > img {
+    display: block !important;
+    width: auto !important;
+    height: 50px !important;
+    min-width: 0 !important;
+    min-height: 50px !important;
+    max-width: 230px !important;
+    max-height: 50px !important;
+    flex: 0 0 auto !important;
+    object-fit: contain !important;
+    object-position: left center !important;
+  }
+
+  .dashboard-premium .dashboard-trip-stats-card .dashboard-stats-title small {
+    color: #2457A6 !important;
+    font-size: 20px !important;
+    font-weight: 800 !important;
+    line-height: 1.25 !important;
+  }
 }
 @media (max-width: 900px) {
-  .dashboard-trip-list-card .dashboard-panel-heading h3.dashboard-trip-title-art {
-    width: 132px !important;
-    min-width: 132px !important;
-    max-width: 132px !important;
-    height: 46px !important;
-    min-height: 46px !important;
-    max-height: 46px !important;
-    flex-basis: 132px !important;
+  .dashboard-premium .dashboard-trip-list-card > .dashboard-panel-heading,
+  .dashboard-premium .dashboard-trip-stats-card > .dashboard-panel-heading {
+    box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+    min-height: 68px !important;
+    margin: 0 0 8px !important;
+    padding: 0 0 8px !important;
+    border-bottom: 1px solid #eadbd6 !important;
   }
-  .dashboard-trip-list-card .dashboard-panel-heading img.dashboard-trip-title-premium,
-  .dashboard-trip-stats-card .dashboard-panel-heading h3.dashboard-stats-title > img {
-    width: 132px !important;
-    min-width: 132px !important;
-    max-width: 132px !important;
-    max-height: 46px !important;
-    flex-basis: 132px !important;
+  .dashboard-premium .dashboard-trip-list-card .dashboard-trip-title-art,
+  .dashboard-premium .dashboard-trip-stats-card .dashboard-stats-title {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    min-height: 52px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .dashboard-premium .dashboard-trip-list-card .dashboard-trip-title-premium,
+  .dashboard-premium .dashboard-trip-stats-card .dashboard-stats-title > img {
+    width: auto !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    max-height: 44px !important;
+    max-width: 200px !important;
+    object-fit: contain !important;
   }
 }
 @media (max-width: 560px) {
-  .dashboard-trip-list-card .dashboard-panel-heading h3.dashboard-trip-title-art {
-    width: 120px !important;
-    min-width: 120px !important;
-    max-width: 120px !important;
-    height: 42px !important;
-    min-height: 42px !important;
-    max-height: 42px !important;
-    flex-basis: 120px !important;
-  }
-  .dashboard-trip-list-card .dashboard-panel-heading img.dashboard-trip-title-premium,
-  .dashboard-trip-stats-card .dashboard-panel-heading h3.dashboard-stats-title > img {
-    width: 120px !important;
-    min-width: 120px !important;
-    max-width: 120px !important;
-    max-height: 42px !important;
-    flex-basis: 120px !important;
+  .dashboard-premium .dashboard-trip-list-card .dashboard-trip-title-premium,
+  .dashboard-premium .dashboard-trip-stats-card .dashboard-stats-title > img {
+    height: 40px !important;
+    min-height: 40px !important;
+    max-height: 40px !important;
   }
 }
