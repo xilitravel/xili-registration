@@ -7554,3 +7554,85 @@ body.admin-body .admin-table {
  .dashboard-trip-list-card > .dashboard-panel-heading .dashboard-trip-title-art{height:72px!important;min-height:72px!important;}
  .dashboard-trip-stats-card .dashboard-panel-heading .dashboard-stats-title>img{width:220px!important;max-width:220px!important;height:66px!important;max-height:66px!important;flex-basis:220px!important;}
 }
+
+
+/* v100｜行程與人數統計：統一成同系列粉金標題 */
+.dashboard-trip-list-card > .dashboard-panel-heading,
+.dashboard-trip-stats-card > .dashboard-panel-heading {
+  display: flex !important;
+  align-items: center !important;
+  min-height: 96px !important;
+  height: 96px !important;
+  padding: 0 0 10px !important;
+  margin: 0 0 12px !important;
+  border-bottom: 1px solid #f0d5dd !important;
+  box-sizing: border-box !important;
+}
+.dashboard-trip-list-card > .dashboard-panel-heading .dashboard-trip-title-art,
+.dashboard-trip-stats-card > .dashboard-panel-heading .dashboard-stats-title {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 12px !important;
+  width: 100% !important;
+  height: 82px !important;
+  min-height: 82px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  transform: none !important;
+}
+.dashboard-trip-title-premium,
+.dashboard-trip-stats-card .dashboard-panel-heading .dashboard-stats-title > img {
+  display: block !important;
+  width: 300px !important;
+  max-width: min(300px, 68%) !important;
+  height: 82px !important;
+  max-height: 82px !important;
+  object-fit: contain !important;
+  object-position: left center !important;
+  flex: 0 1 300px !important;
+}
+.dashboard-trip-stats-card .dashboard-panel-heading .dashboard-stats-title small {
+  min-width: 0 !important;
+  max-width: 190px !important;
+  margin-left: 0 !important;
+  color: #92717c !important;
+  font-size: 12px !important;
+  font-weight: 650 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+@media (max-width: 900px) {
+  .dashboard-trip-list-card > .dashboard-panel-heading,
+  .dashboard-trip-stats-card > .dashboard-panel-heading {
+    min-height: 84px !important;
+    height: 84px !important;
+    padding-bottom: 8px !important;
+    margin-bottom: 10px !important;
+  }
+  .dashboard-trip-list-card > .dashboard-panel-heading .dashboard-trip-title-art,
+  .dashboard-trip-stats-card > .dashboard-panel-heading .dashboard-stats-title {
+    height: 72px !important;
+    min-height: 72px !important;
+  }
+  .dashboard-trip-title-premium,
+  .dashboard-trip-stats-card .dashboard-panel-heading .dashboard-stats-title > img {
+    width: 260px !important;
+    max-width: min(260px, 68%) !important;
+    height: 72px !important;
+    max-height: 72px !important;
+    flex-basis: 260px !important;
+  }
+}
+@media (max-width: 560px) {
+  .dashboard-trip-title-premium,
+  .dashboard-trip-stats-card .dashboard-panel-heading .dashboard-stats-title > img {
+    width: 220px !important;
+    max-width: min(220px, 66%) !important;
+    height: 64px !important;
+    max-height: 64px !important;
+    flex-basis: 220px !important;
+  }
+}
