@@ -8085,3 +8085,48 @@ body.admin-body .admin-table {
     max-width: 190px !important;
   }
 }
+
+/* v113｜行程／人數統計標題：統一酒紅色，視覺尺寸一起縮小 */
+.dashboard-trip-list-card > .dashboard-panel-heading .dashboard-trip-title-art {
+  height: 62px !important;
+  min-height: 62px !important;
+}
+.dashboard-trip-list-card > .dashboard-panel-heading .dashboard-trip-title-premium,
+.dashboard-trip-stats-card .dashboard-panel-heading .dashboard-stats-title > img {
+  display: block !important;
+  width: auto !important;
+  height: 58px !important;
+  min-height: 0 !important;
+  max-height: 58px !important;
+  max-width: 220px !important;
+  flex: 0 1 auto !important;
+  object-fit: contain !important;
+  object-position: left center !important;
+}
+.dashboard-trip-stats-card .dashboard-panel-heading .dashboard-stats-title {
+  gap: 10px !important;
+}
+@media (max-width: 900px) {
+  .dashboard-trip-list-card > .dashboard-panel-heading .dashboard-trip-title-art {
+    height: 58px !important;
+    min-height: 58px !important;
+  }
+  .dashboard-trip-list-card > .dashboard-panel-heading .dashboard-trip-title-premium,
+  .dashboard-trip-stats-card .dashboard-panel-heading .dashboard-stats-title > img {
+    height: 52px !important;
+    max-height: 52px !important;
+    max-width: 195px !important;
+  }
+}
+@media (max-width: 560px) {
+  .dashboard-trip-list-card > .dashboard-panel-heading .dashboard-trip-title-art {
+    height: 54px !important;
+    min-height: 54px !important;
+  }
+  .dashboard-trip-list-card > .dashboard-panel-heading .dashboard-trip-title-premium,
+  .dashboard-trip-stats-card .dashboard-panel-heading .dashboard-stats-title > img {
+    height: 48px !important;
+    max-height: 48px !important;
+    max-width: 180px !important;
+  }
+}
