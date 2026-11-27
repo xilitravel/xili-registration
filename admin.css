@@ -8130,3 +8130,47 @@ body.admin-body .admin-table {
     max-width: 180px !important;
   }
 }
+
+
+/* v114｜行程標題再縮小，與人數統計標題統一視覺寬度 */
+.dashboard-trip-list-card > .dashboard-panel-heading .dashboard-trip-title-premium,
+.dashboard-trip-stats-card .dashboard-panel-heading .dashboard-stats-title > img {
+  width: 158px !important;
+  min-width: 158px !important;
+  max-width: 158px !important;
+  height: 58px !important;
+  min-height: 0 !important;
+  max-height: 58px !important;
+  flex: 0 0 158px !important;
+  object-fit: contain !important;
+  object-position: left center !important;
+}
+@media (max-width: 900px) {
+  .dashboard-trip-list-card > .dashboard-panel-heading .dashboard-trip-title-premium,
+  .dashboard-trip-stats-card .dashboard-panel-heading .dashboard-stats-title > img {
+    width: 145px !important;
+    min-width: 145px !important;
+    max-width: 145px !important;
+    height: 54px !important;
+    max-height: 54px !important;
+    flex-basis: 145px !important;
+  }
+}
+@media (max-width: 560px) {
+  .dashboard-trip-list-card > .dashboard-panel-heading .dashboard-trip-title-premium,
+  .dashboard-trip-stats-card .dashboard-panel-heading .dashboard-stats-title > img {
+    width: 132px !important;
+    min-width: 132px !important;
+    max-width: 132px !important;
+    height: 48px !important;
+    max-height: 48px !important;
+    flex-basis: 132px !important;
+  }
+}
+
+
+/* v115｜人數統計旁團名：改為指定寶藍色 */
+.dashboard-trip-stats-card .dashboard-panel-heading .dashboard-stats-title small,
+.dashboard-trip-stats-card .dashboard-panel-heading #dashboardStatsTripName {
+  color: #2457A6 !important;
+}
