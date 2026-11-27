@@ -561,15 +561,14 @@ function renderDashboardDetailStats(trip) {
     return n+Math.ceil(people/Math.max(1,capacity));
   },0));
 
-  let meat=0, vegetarian=0, mealOther=0;
+  let meat=0, vegetarian=0;
   registrations.forEach(r => {
     const raw=String(r.meals || r.meal || r.food || r.diet || r["餐食需求"] || r["餐食"] || "").trim();
-    if (!raw) { mealOther++; return; }
+    if (!raw) return;
     const veg=(raw.match(/素食/g)||[]).length;
     const meatHits=(raw.match(/葷食|葷|一般餐/g)||[]).length;
     if (veg>0 && meatHits===0) vegetarian++;
     else if (meatHits>0) meat++;
-    else mealOther++;
   });
 
   const payGroups = new Map();
@@ -587,25 +586,23 @@ function renderDashboardDetailStats(trip) {
 
   root.innerHTML = `
     <div class="dashboard-detail-grid">
-      <article class="dashboard-detail-card boarding-detail"><h4 class="dashboard-detail-heading-art"><img src="02_上車地點.png" alt="上車地點" draggable="false"></h4>
+      <article class="dashboard-detail-card boarding-detail"><h4 class="dashboard-detail-heading-art"><img src="boarding-point.png" alt="上車地點" draggable="false"></h4>
         ${barRows(boarding,boardingTotal)}
         ${boarding.length?`<div class="dashboard-detail-total"><b>合計</b><strong>${boardingTotal} 人次</strong></div>`:""}
       </article>
-      <article class="dashboard-detail-card"><h4 class="dashboard-detail-heading-art"><img src="03_房型.png" alt="房型" draggable="false"></h4>
+      <article class="dashboard-detail-card"><h4 class="dashboard-detail-heading-art"><img src="room-type.png" alt="房型" draggable="false"></h4>
         ${rooms.length?`<div class="dashboard-room-head"><span>房型</span><span>房間數*</span><span>入住人數</span></div>${rooms.map(([name,count])=>{const m=name.match(/(\d+)\s*人/);const cap=m?Number(m[1]):(name.includes("雙")?2:name.includes("三")?3:name.includes("四")?4:1);return `<div class="dashboard-room-row"><span>${escapeHTML(name)}</span><b>${Math.ceil(count/Math.max(1,cap))} 間</b><b>${count} 人</b></div>`}).join("")}<div class="dashboard-detail-total"><b>合計</b><strong>${roomCount} 間　${roomTotalPeople} 人</strong></div><small class="dashboard-stat-footnote">* 房間數依房型人數估算</small>`:'<div class="dashboard-stat-empty">此行程尚無房型／住宿資料</div>'}
       </article>
-      <article class="dashboard-detail-card"><h4 class="dashboard-detail-heading-art"><img src="04_餐食.png" alt="餐食" draggable="false"></h4>
+      <article class="dashboard-detail-card"><h4 class="dashboard-detail-heading-art"><img src="meal.png" alt="餐食" draggable="false"></h4>
         <div class="dashboard-meal-row"><span>葷食</span><strong>${meat} 人</strong></div>
         <div class="dashboard-meal-row"><span>素食</span><strong>${vegetarian} 人</strong></div>
-        ${mealOther?`<div class="dashboard-meal-row muted"><span>未填／其他</span><strong>${mealOther} 人</strong></div>`:""}
-        <div class="dashboard-detail-total"><b>合計</b><strong>${meat+vegetarian+mealOther} 人</strong></div>
       </article>
-      <article class="dashboard-detail-card"><h4 class="dashboard-detail-heading-art"><img src="05_付款方式.png" alt="付款方式" draggable="false"></h4>
+      <article class="dashboard-detail-card"><h4 class="dashboard-detail-heading-art"><img src="payment-method.png" alt="付款方式" draggable="false"></h4>
         ${payGroups.size?[...payGroups.entries()].map(([name,count])=>`<div class="dashboard-meal-row"><span>${escapeHTML(name)}</span><strong>${count} 人</strong></div>`).join(""):'<div class="dashboard-stat-empty">目前沒有付款資料</div>'}
         ${payGroups.size?`<div class="dashboard-detail-total"><b>合計</b><strong>${payTotal} 人</strong></div>`:""}
       </article>
     </div>
-    <article class="dashboard-detail-card dashboard-reminder-card"><h4 class="dashboard-detail-heading-art"><img src="06_重點提醒.png" alt="重點提醒" draggable="false"></h4>
+    <article class="dashboard-detail-card dashboard-reminder-card"><h4 class="dashboard-detail-heading-art"><img src="important-reminder.png" alt="重點提醒" draggable="false"></h4>
       ${notes.length?`<ul>${notes.map(n=>`<li>${escapeHTML(n)}</li>`).join("")}</ul>`:'<div class="dashboard-stat-empty">此行程尚未設定重要提醒</div>'}
     </article>`;
 }

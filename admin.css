@@ -7636,3 +7636,44 @@ body.admin-body .admin-table {
     flex-basis: 220px !important;
   }
 }
+
+/* v101｜囍莉旅遊：行程／人數統計標題與分類素材套用 */
+.dashboard-trip-list-card > .dashboard-panel-heading,
+.dashboard-trip-stats-card > .dashboard-panel-heading {
+  background: transparent !important;
+}
+.dashboard-trip-title-premium,
+.dashboard-trip-stats-card .dashboard-panel-heading .dashboard-stats-title > img {
+  object-fit: contain !important;
+  object-position: left center !important;
+  display: block !important;
+}
+.dashboard-detail-heading-art {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  min-height: 66px !important;
+  height: 66px !important;
+  margin: 0 0 10px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  overflow: visible !important;
+}
+.dashboard-detail-heading-art img {
+  display: block !important;
+  width: auto !important;
+  max-width: 100% !important;
+  height: 62px !important;
+  max-height: 62px !important;
+  object-fit: contain !important;
+  object-position: left center !important;
+}
+.dashboard-reminder-card .dashboard-detail-heading-art img {
+  height: 66px !important;
+  max-height: 66px !important;
+}
+@media (max-width: 560px) {
+  .dashboard-detail-heading-art { height: 58px !important; min-height: 58px !important; }
+  .dashboard-detail-heading-art img { height: 54px !important; max-height: 54px !important; }
+}
