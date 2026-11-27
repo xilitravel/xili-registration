@@ -7933,3 +7933,132 @@ body.admin-body .admin-table {
     max-width: min(100%, 205px) !important;
   }
 }
+
+/* v108｜依目前正式 HTML 結構重設管理總覽欄位高度與捲動 */
+@media (min-width: 901px) {
+  .dashboard-premium .dashboard-panels {
+    display: grid !important;
+    grid-template-columns: minmax(270px, .82fr) minmax(0, 1.68fr) !important;
+    align-items: stretch !important;
+    gap: 14px !important;
+    height: 390px !important;
+    min-height: 390px !important;
+    max-height: 390px !important;
+  }
+  .dashboard-premium .dashboard-panels > .dashboard-trip-list-card,
+  .dashboard-premium .dashboard-panels > .dashboard-trip-stats-card {
+    display: flex !important;
+    flex-direction: column !important;
+    align-self: stretch !important;
+    width: 100% !important;
+    height: 390px !important;
+    min-height: 390px !important;
+    max-height: 390px !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+  }
+  .dashboard-premium .dashboard-trip-list-card > .dashboard-panel-heading,
+  .dashboard-premium .dashboard-trip-stats-card > .dashboard-panel-heading {
+    flex: 0 0 auto !important;
+    min-height: 66px !important;
+    margin-bottom: 8px !important;
+    padding-bottom: 6px !important;
+  }
+  .dashboard-premium .dashboard-trip-list-card .dashboard-trip-list-wrap {
+    flex: 1 1 0 !important;
+    min-height: 0 !important;
+    height: 0 !important;
+    max-height: none !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+  }
+  .dashboard-premium .dashboard-trip-stats-card #dashboardTripStatsContent {
+    display: block !important;
+    flex: 1 1 0 !important;
+    min-height: 0 !important;
+    height: 0 !important;
+    max-height: none !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+    padding: 2px 6px 8px 0 !important;
+  }
+  .dashboard-premium .dashboard-trip-stats-card #dashboardTripStatsContent::-webkit-scrollbar,
+  .dashboard-premium .dashboard-trip-list-card .dashboard-trip-list-wrap::-webkit-scrollbar {
+    width: 7px !important;
+  }
+  .dashboard-premium .dashboard-trip-stats-card #dashboardTripStatsContent::-webkit-scrollbar-thumb,
+  .dashboard-premium .dashboard-trip-list-card .dashboard-trip-list-wrap::-webkit-scrollbar-thumb {
+    background: #d9a5b5 !important;
+    border-radius: 10px !important;
+  }
+  .dashboard-premium .dashboard-trip-stats-card #dashboardTripStatsContent,
+  .dashboard-premium .dashboard-trip-list-card .dashboard-trip-list-wrap {
+    scrollbar-width: thin !important;
+    scrollbar-color: #d9a5b5 #fbf1f4 !important;
+  }
+}
+
+/* 五張標題圖：只顯示圖片本身，不出現破圖替代文字 */
+.dashboard-detail-card h4.dashboard-detail-heading-art {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  height: 68px !important;
+  min-height: 68px !important;
+  margin: 0 0 7px !important;
+  padding: 0 0 6px !important;
+  overflow: hidden !important;
+  border-bottom: 1px solid #f2dce2 !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+}
+.dashboard-detail-card h4.dashboard-detail-heading-art img {
+  display: block !important;
+  width: auto !important;
+  height: 62px !important;
+  max-width: min(100%, 230px) !important;
+  max-height: 62px !important;
+  object-fit: contain !important;
+  object-position: left center !important;
+  flex: 0 1 auto !important;
+}
+.dashboard-reminder-card h4.dashboard-detail-heading-art img {
+  height: 62px !important;
+  max-height: 62px !important;
+  max-width: min(100%, 230px) !important;
+}
+@media (max-width: 900px) {
+  .dashboard-premium .dashboard-panels {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+  }
+  .dashboard-premium .dashboard-panels > .dashboard-trip-list-card,
+  .dashboard-premium .dashboard-panels > .dashboard-trip-stats-card {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+  }
+  .dashboard-premium .dashboard-trip-list-card .dashboard-trip-list-wrap {
+    height: auto !important;
+    max-height: 320px !important;
+    overflow-y: auto !important;
+  }
+  .dashboard-premium .dashboard-trip-stats-card #dashboardTripStatsContent {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+}
+@media (max-width: 560px) {
+  .dashboard-detail-card h4.dashboard-detail-heading-art {
+    height: 58px !important;
+    min-height: 58px !important;
+  }
+  .dashboard-detail-card h4.dashboard-detail-heading-art img {
+    height: 52px !important;
+    max-height: 52px !important;
+  }
+}
