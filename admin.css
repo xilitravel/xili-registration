@@ -7748,3 +7748,24 @@ body.admin-body .admin-table {
     max-height: 58px !important;
   }
 }
+
+/* v105｜修正管理總覽統計面板仍被舊版 378px 高度限制 */
+@media (min-width: 1101px) {
+  .dashboard-premium .dashboard-panels > .dashboard-trip-stats-card {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    align-self: start !important;
+  }
+  .dashboard-premium .dashboard-trip-stats-card .dashboard-trip-stats-content {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+}
+.dashboard-premium .dashboard-trip-stats-card,
+.dashboard-premium .dashboard-trip-stats-card * {
+  box-sizing: border-box;
+}
