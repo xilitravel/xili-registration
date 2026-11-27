@@ -189,7 +189,7 @@
       },
       {
         "key": "day1_午餐",
-        "provided": false
+        "provided": true
       },
       {
         "key": "day1_晚餐",
