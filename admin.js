@@ -681,10 +681,10 @@ function renderDashboardTripList() {
         : `剩 ${stats.deadlineText}`;
     const selected = currentSelected === tripId ? " is-selected" : "";
     return `<button type="button" class="dashboard-trip-item${selected}" data-trip-id="${escapeHTML(tripId)}" aria-pressed="${selected ? "true" : "false"}" title="${escapeHTML(tripName)}">
-      <span class="dashboard-trip-item-date">▦ ${escapeHTML(formatDashboardTripDate(rawDate))}</span>
+      <span class="dashboard-trip-item-date"><svg class="dashboard-trip-calendar" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="16" rx="2.5"/><path d="M7.5 3v4M16.5 3v4M3.5 9.5h17"/></svg><span>${escapeHTML(formatDashboardTripDate(rawDate))}</span></span>
       <span class="dashboard-trip-item-name">${escapeHTML(tripName)}</span>
-      <span class="dashboard-trip-item-count">${escapeHTML(countText)}</span>
-      <span class="dashboard-trip-item-arrow">›</span>
+      <span class="dashboard-trip-item-count"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M2.8 19c.5-3.5 2.6-5.3 6.2-5.3s5.7 1.8 6.2 5.3"/><path d="M16 5.5a3 3 0 0 1 0 5.8M17 14c2.5.5 3.8 2.1 4.2 4.5"/></svg><span>${escapeHTML(countText)}</span></span>
+      <span class="dashboard-trip-item-arrow" aria-hidden="true">›</span>
     </button>`;
   }).join("");
 

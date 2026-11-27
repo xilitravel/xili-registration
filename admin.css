@@ -7179,3 +7179,143 @@ body.admin-body .admin-table {
     font-size:24px !important;
   }
 }
+
+
+/* v85｜行程清單視覺重整：縮短花枝、升高花枝，卡片資訊分區 */
+.dashboard-trip-list-card > .dashboard-panel-heading {
+  flex-basis:82px !important;
+  height:82px !important;
+  min-height:82px !important;
+  margin-bottom:10px !important;
+}
+.dashboard-trip-floral-underline {
+  left:0 !important;
+  right:auto !important;
+  width:82% !important;
+  height:27px !important;
+  max-height:27px !important;
+  bottom:7px !important;
+  object-fit:fill !important;
+  object-position:left center !important;
+  filter:drop-shadow(0 1px 2px rgba(194,137,50,.22)) !important;
+}
+.dashboard-trip-list {
+  gap:9px !important;
+  padding:2px 4px 10px 2px !important;
+}
+.dashboard-trip-list .dashboard-trip-item {
+  display:grid !important;
+  grid-template-columns: minmax(132px, 158px) minmax(70px,1fr) max-content 14px !important;
+  align-items:center !important;
+  column-gap:12px !important;
+  min-height:56px !important;
+  height:56px !important;
+  flex:0 0 56px !important;
+  padding:8px 13px !important;
+  border:1px solid #ead1d2 !important;
+  border-radius:17px !important;
+  background:linear-gradient(115deg,#fffefd 0%,#fff9f8 55%,#fff1f3 100%) !important;
+  box-shadow:0 3px 10px rgba(139,83,91,.075),inset 0 1px 0 rgba(255,255,255,.95) !important;
+}
+.dashboard-trip-list .dashboard-trip-item:hover {
+  background:linear-gradient(115deg,#fff9fa,#ffedf1) !important;
+  border-color:#dca4b2 !important;
+  box-shadow:0 5px 13px rgba(151,83,107,.12) !important;
+}
+.dashboard-trip-list .dashboard-trip-item.is-selected,
+.dashboard-trip-list .dashboard-trip-item[aria-pressed="true"] {
+  border:1.5px solid #d77f9b !important;
+  background:linear-gradient(110deg,#fce8ee 0%,#f9e3e9 100%) !important;
+  box-shadow:inset 4px 0 0 #bd557b,0 5px 13px rgba(165,79,111,.13) !important;
+}
+.dashboard-trip-item-date {
+  display:flex !important;
+  align-items:center !important;
+  gap:8px !important;
+  min-width:0 !important;
+  color:#a85b77 !important;
+  font-size:13px !important;
+  font-weight:800 !important;
+  letter-spacing:.15px !important;
+  white-space:nowrap !important;
+}
+.dashboard-trip-calendar {
+  display:block !important;
+  width:19px !important;
+  height:19px !important;
+  flex:0 0 19px !important;
+  fill:none !important;
+  stroke:#c56d8a !important;
+  stroke-width:1.8 !important;
+  stroke-linecap:round !important;
+  stroke-linejoin:round !important;
+}
+.dashboard-trip-item-name {
+  min-width:0 !important;
+  padding-left:12px !important;
+  border-left:1px solid rgba(194,125,143,.32) !important;
+  color:#4c343c !important;
+  font-size:14px !important;
+  font-weight:850 !important;
+  text-align:left !important;
+}
+.dashboard-trip-item-count {
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:6px !important;
+  min-width:105px !important;
+  padding:7px 11px !important;
+  border:1px solid #efcbd3 !important;
+  border-radius:999px !important;
+  background:rgba(255,255,255,.68) !important;
+  color:#a8496c !important;
+  font-size:13px !important;
+  font-weight:850 !important;
+  white-space:nowrap !important;
+}
+.dashboard-trip-item-count svg {
+  display:block !important;
+  width:17px !important;
+  height:17px !important;
+  flex:0 0 17px !important;
+  fill:none !important;
+  stroke:currentColor !important;
+  stroke-width:1.8 !important;
+  stroke-linecap:round !important;
+  stroke-linejoin:round !important;
+}
+.dashboard-trip-item-arrow {
+  color:#b45c7a !important;
+  font-size:23px !important;
+  line-height:1 !important;
+  font-weight:400 !important;
+}
+@media(max-width:900px) {
+  .dashboard-trip-list-card > .dashboard-panel-heading {
+    flex-basis:82px !important;
+    height:82px !important;
+    min-height:82px !important;
+  }
+  .dashboard-trip-floral-underline {
+    width:82% !important;
+    height:25px !important;
+    max-height:25px !important;
+    bottom:7px !important;
+  }
+}
+@media(max-width:560px) {
+  .dashboard-trip-list .dashboard-trip-item {
+    grid-template-columns:minmax(108px, 124px) minmax(42px,1fr) max-content 10px !important;
+    column-gap:7px !important;
+    padding:7px 8px !important;
+    height:52px !important;
+    min-height:52px !important;
+    flex-basis:52px !important;
+  }
+  .dashboard-trip-item-date {font-size:11px !important;gap:5px !important;}
+  .dashboard-trip-calendar {width:16px !important;height:16px !important;flex-basis:16px !important;}
+  .dashboard-trip-item-name {font-size:12px !important;padding-left:7px !important;}
+  .dashboard-trip-item-count {min-width:82px !important;padding:6px 7px !important;font-size:11px !important;gap:4px !important;}
+  .dashboard-trip-item-count svg {width:14px !important;height:14px !important;flex-basis:14px !important;}
+}
