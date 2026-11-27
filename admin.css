@@ -7379,3 +7379,59 @@ body.admin-body .admin-table {
   .dashboard-trip-list .dashboard-trip-item { grid-template-columns:minmax(130px, 158px) minmax(0,1fr) 12px !important; column-gap:9px !important; }
   .dashboard-trip-item-name { padding-left:9px !important; }
 }
+
+
+/* v90｜行程統計精緻化：主統計清楚、餐食縮小 */
+.dashboard-detail-grid-v90{
+  display:grid!important;
+  grid-template-columns:minmax(0,1.02fr) minmax(0,1.02fr) minmax(190px,.78fr)!important;
+  gap:12px!important; align-items:start!important;
+}
+.dashboard-detail-grid-v90>.dashboard-detail-card,
+.dashboard-detail-grid-v90 .dashboard-stats-side-stack>.dashboard-detail-card{
+  border:1px solid rgba(213,145,158,.42)!important;
+  border-radius:17px!important;
+  background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(255,247,249,.96))!important;
+  box-shadow:0 5px 16px rgba(143,82,98,.075),inset 0 1px 0 #fff!important;
+  padding:13px 14px!important;
+}
+.dashboard-detail-grid-v90 .dashboard-detail-card h4{
+  display:flex;align-items:center;gap:8px;
+  margin:0 0 11px!important;padding:0 0 10px!important;
+  border-bottom:1px solid #f2dce3!important;
+  color:#a74463!important;font-size:16px!important;letter-spacing:.04em;
+}
+.stats-icon{display:inline-grid;place-items:center;width:27px;height:27px;border-radius:9px;font-size:17px;font-weight:800}
+.stats-icon-pink{color:#c64d78;background:#fde8ef}
+.stats-icon-rose{color:#a94d68;background:#f8e8ed}
+.stats-icon-green{color:#6b986c;background:#edf5e9}
+.stats-icon-gold{color:#b98542;background:#fff3df}
+.dashboard-chart-list{padding:1px 0}
+.dashboard-detail-grid-v90 .dashboard-stat-bar-row{grid-template-columns:minmax(48px,.72fr) minmax(55px,1.35fr) auto!important;gap:8px!important;margin:9px 0!important;font-size:13px!important}
+.dashboard-detail-grid-v90 .dashboard-stat-bar{height:10px!important;background:#f5e8ed!important;box-shadow:inset 0 1px 2px rgba(130,70,90,.06)}
+.dashboard-detail-grid-v90 .dashboard-stat-bar i{background:linear-gradient(90deg,#f19bb3,#cf527a)!important;box-shadow:0 1px 3px rgba(190,75,112,.18)}
+.dashboard-detail-grid-v90 .dashboard-detail-total{margin-top:11px!important;border:1px solid #f4dce4;background:linear-gradient(90deg,#fff0f4,#fbe5ec)!important;border-radius:11px!important}
+.dashboard-detail-grid-v90 .dashboard-room-head{padding:8px 5px!important;background:linear-gradient(90deg,#f9e9ee,#f7e1e8)!important}
+.dashboard-detail-grid-v90 .dashboard-room-row{padding:9px 5px!important;border-bottom:1px solid #f6e9ed}
+.dashboard-stats-side-stack{display:flex;flex-direction:column;gap:10px;min-width:0}
+.dashboard-detail-grid-v90 .meal-detail-compact{padding:11px 12px!important}
+.dashboard-detail-grid-v90 .meal-detail-compact h4,
+.dashboard-detail-grid-v90 .payment-detail-compact h4{font-size:15px!important;margin-bottom:8px!important;padding-bottom:7px!important}
+.dashboard-meal-compact-row{display:flex;flex-wrap:wrap;gap:6px}
+.meal-chip{display:inline-flex;align-items:center;gap:4px;padding:6px 9px;border-radius:999px;font-size:12px;white-space:nowrap}
+.meal-chip b{font-size:14px}
+.meat-chip{color:#b34b69;background:#fff0f3;border:1px solid #f4d2dc}
+.veg-chip{color:#608d62;background:#eff7ed;border:1px solid #d9ead5}
+.other-chip{color:#8a7b80;background:#f5f1f2;border:1px solid #e8dfe2}
+.dashboard-payment-line{display:flex;justify-content:space-between;gap:6px;padding:6px 2px;border-bottom:1px solid #f4e7eb;font-size:12px}
+.dashboard-payment-line strong{white-space:nowrap;color:#875064}
+.dashboard-detail-grid-v90 .payment-detail-compact .dashboard-detail-total{font-size:12px;padding:6px 8px;margin-top:7px!important}
+.dashboard-reminder-card{margin-top:11px!important;border-radius:16px!important;box-shadow:0 4px 14px rgba(143,82,98,.06)!important}
+@media(max-width:1100px){
+ .dashboard-detail-grid-v90{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .dashboard-stats-side-stack{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:680px){
+ .dashboard-detail-grid-v90{grid-template-columns:1fr!important}
+ .dashboard-stats-side-stack{grid-column:auto;grid-template-columns:1fr}
+}
