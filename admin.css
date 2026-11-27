@@ -7677,3 +7677,46 @@ body.admin-body .admin-table {
   .dashboard-detail-heading-art { height: 58px !important; min-height: 58px !important; }
   .dashboard-detail-heading-art img { height: 54px !important; max-height: 54px !important; }
 }
+
+
+/* v102｜標題圖尺寸統一，分類圖片固定從 assets 資料夾載入 */
+.dashboard-trip-title-premium,
+.dashboard-stats-title-image {
+  display: block !important;
+  width: 220px !important;
+  min-width: 220px !important;
+  max-width: 220px !important;
+  height: 64px !important;
+  min-height: 64px !important;
+  max-height: 64px !important;
+  flex: 0 0 220px !important;
+  object-fit: contain !important;
+  object-position: left center !important;
+}
+.dashboard-stats-title {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  min-width: 0 !important;
+}
+.dashboard-stats-title small { flex: 0 1 auto !important; min-width: 0 !important; }
+.dashboard-detail-heading-art img {
+  height: 66px !important;
+  max-height: 66px !important;
+  width: auto !important;
+  max-width: min(100%, 190px) !important;
+  object-fit: contain !important;
+  object-position: left center !important;
+}
+@media (max-width: 700px) {
+  .dashboard-trip-title-premium,
+  .dashboard-stats-title-image {
+    width: 190px !important;
+    min-width: 190px !important;
+    max-width: 190px !important;
+    height: 56px !important;
+    min-height: 56px !important;
+    max-height: 56px !important;
+    flex-basis: 190px !important;
+  }
+}
