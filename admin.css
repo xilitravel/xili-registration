@@ -7392,3 +7392,44 @@ body.admin-body .admin-table {
   .dashboard-trip-list .dashboard-trip-item-date { font-size: 12px !important; gap:5px !important; }
   .dashboard-trip-list .dashboard-trip-item-name { font-size: 15px !important; padding-left:7px !important; }
 }
+
+
+/* v95｜行程標題與花枝微調 */
+.dashboard-trip-title-text {
+  width:74px !important;
+  height:40px !important;
+  object-fit:contain !important;
+}
+.dashboard-trip-list-card .dashboard-trip-floral-underline {
+  bottom:7px !important;
+  width:70% !important;
+  max-width:310px !important;
+  height:29px !important;
+  max-height:29px !important;
+  opacity:.72 !important;
+  object-fit:fill !important;
+  filter:none !important;
+}
+.dashboard-trip-list .dashboard-trip-item {
+  grid-template-columns:minmax(180px, 205px) minmax(0,1fr) 14px !important;
+}
+.dashboard-trip-list .dashboard-trip-item-name {
+  font-size:18px !important;
+  font-weight:850 !important;
+}
+@media(max-width:900px) {
+  .dashboard-trip-title-text { width:68px !important; height:37px !important; }
+  .dashboard-trip-list-card .dashboard-trip-floral-underline {
+    bottom:7px !important; width:72% !important; max-width:270px !important;
+    height:25px !important; max-height:25px !important; opacity:.72 !important;
+  }
+  .dashboard-trip-list .dashboard-trip-item {
+    grid-template-columns:minmax(170px, 190px) minmax(0,1fr) 12px !important;
+  }
+}
+@media(max-width:560px) {
+  .dashboard-trip-title-text { width:64px !important; height:35px !important; }
+  .dashboard-trip-list .dashboard-trip-item {
+    grid-template-columns:minmax(160px, 172px) minmax(0,1fr) 10px !important;
+  }
+}

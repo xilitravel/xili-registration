@@ -635,7 +635,7 @@ function renderSelectedDashboardTripStats(tripId) {
 
 function formatDashboardTripDateWithWeekday(value) {
   const base = formatDashboardTripDate(value);
-  const match = String(value || "").trim().match(/^(\\d{4})[-/](\\d{1,2})[-/](\\d{1,2})/);
+  const match = String(value || "").trim().match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);
   if (!match) return base;
   const date = new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3])));
   const weekdays = ["日", "一", "二", "三", "四", "五", "六"];
