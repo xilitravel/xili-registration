@@ -346,17 +346,24 @@ function formatDashboardTripDate(value) {
   // 日期欄位通常是 YYYY-MM-DD；直接拆字串避免時區造成日期前移。
   const match = raw.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);
   if (match) {
-    return `${match[1]}/${String(match[2]).padStart(2, "0")}/${String(match[3]).padStart(2, "0")}`;
+    const year = Number(match[1]);
+    const month = Number(match[2]);
+    const day = Number(match[3]);
+    const dateText = `${year}/${String(month).padStart(2, "0")}/${String(day).padStart(2, "0")}`;
+    const weekday = ["日", "一", "二", "三", "四", "五", "六"][new Date(Date.UTC(year, month - 1, day)).getUTCDay()];
+    return `${dateText}（${weekday}）`;
   }
 
   const date = new Date(raw);
   if (Number.isNaN(date.getTime())) return raw;
-  return date.toLocaleDateString("zh-TW", {
+  const dateText = date.toLocaleDateString("zh-TW", {
     timeZone: "Asia/Taipei",
     year: "numeric",
     month: "2-digit",
     day: "2-digit"
   });
+  const weekday = date.toLocaleDateString("zh-TW", { timeZone: "Asia/Taipei", weekday: "short" });
+  return `${dateText}（${weekday.replace("週", "")}）`;
 }
 
 function renderDashboardRecentTrips() {
