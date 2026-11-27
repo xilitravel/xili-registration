@@ -7519,3 +7519,16 @@ body.admin-body .admin-table {
   .dashboard-trip-list .dashboard-trip-item-date { font-size:12px !important; gap:5px !important; }
   .dashboard-trip-list .dashboard-trip-item-name { font-size:15px !important; padding-left:7px !important; }
 }
+
+/* v97｜統計區改用獨立 PNG 標題素材 */
+.dashboard-stats-title{display:flex!important;align-items:center!important;gap:12px!important;min-width:0;}
+.dashboard-stats-title>img{display:block;width:min(270px,42%);height:76px;object-fit:contain;object-position:left center;flex:0 1 auto;}
+.dashboard-stats-title small{font-size:12px!important;color:#92717c!important;font-weight:650!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.dashboard-detail-card h4.dashboard-detail-heading-art{height:66px;min-height:66px;margin:0 0 9px;padding:0 0 7px;border-bottom:1px solid #f2dce2;display:flex;align-items:center;justify-content:flex-start;overflow:hidden;}
+.dashboard-detail-heading-art img{display:block;width:auto;height:62px;max-width:min(100%,190px);object-fit:contain;object-position:left center;}
+.dashboard-reminder-card .dashboard-detail-heading-art img{max-width:230px;height:66px;}
+.dashboard-detail-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+.dashboard-detail-card{padding:12px 14px 13px;border-radius:17px;}
+.dashboard-trip-stats-card .dashboard-panel-heading{padding-bottom:7px;}
+.dashboard-trip-stats-content{padding-top:2px;}
+@media(max-width:900px){.dashboard-stats-title>img{width:205px;height:62px}.dashboard-detail-card h4.dashboard-detail-heading-art{height:58px;min-height:58px}.dashboard-detail-heading-art img{height:54px}.dashboard-detail-grid{grid-template-columns:1fr!important}}
