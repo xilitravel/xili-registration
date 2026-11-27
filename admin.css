@@ -7433,3 +7433,89 @@ body.admin-body .admin-table {
     grid-template-columns:minmax(160px, 172px) minmax(0,1fr) 10px !important;
   }
 }
+
+/* v96｜行程清單：縮短金色枝葉、標題上移、團名欄加寬 */
+.dashboard-trip-list-card > .dashboard-panel-heading {
+  position:relative !important;
+  flex-basis:76px !important;
+  height:76px !important;
+  min-height:76px !important;
+  margin-bottom:8px !important;
+}
+.dashboard-trip-list-card > .dashboard-panel-heading .dashboard-trip-title-art {
+  height:52px !important;
+  transform:translateY(-5px) !important;
+  gap:8px !important;
+}
+.dashboard-trip-title-icon {
+  width:38px !important;
+  height:38px !important;
+  flex-basis:38px !important;
+}
+.dashboard-trip-title-text {
+  width:68px !important;
+  height:36px !important;
+  object-fit:contain !important;
+}
+.dashboard-trip-list-card .dashboard-trip-floral-underline {
+  left:0 !important;
+  right:auto !important;
+  top:23px !important;
+  bottom:auto !important;
+  width:245px !important;
+  max-width:46% !important;
+  height:48px !important;
+  max-height:48px !important;
+  object-fit:fill !important;
+  object-position:left center !important;
+  opacity:.78 !important;
+  z-index:1 !important;
+  filter:none !important;
+}
+.dashboard-trip-list .dashboard-trip-item {
+  grid-template-columns:minmax(155px, 166px) minmax(0,1fr) 14px !important;
+  column-gap:10px !important;
+}
+.dashboard-trip-list .dashboard-trip-item-date {
+  font-size:14px !important;
+  gap:7px !important;
+}
+.dashboard-trip-list .dashboard-trip-item-name {
+  padding-left:10px !important;
+  font-size:18px !important;
+  line-height:1.25 !important;
+}
+@media(max-width:900px) {
+  .dashboard-trip-list-card > .dashboard-panel-heading {
+    flex-basis:72px !important;
+    height:72px !important;
+    min-height:72px !important;
+  }
+  .dashboard-trip-list-card .dashboard-trip-floral-underline {
+    top:23px !important;
+    width:220px !important;
+    max-width:48% !important;
+    height:43px !important;
+    max-height:43px !important;
+  }
+  .dashboard-trip-list .dashboard-trip-item {
+    grid-template-columns:minmax(150px, 158px) minmax(0,1fr) 12px !important;
+    column-gap:8px !important;
+  }
+}
+@media(max-width:560px) {
+  .dashboard-trip-title-text { width:62px !important; height:34px !important; }
+  .dashboard-trip-list-card .dashboard-trip-floral-underline {
+    top:25px !important;
+    width:190px !important;
+    max-width:52% !important;
+    height:38px !important;
+    max-height:38px !important;
+  }
+  .dashboard-trip-list .dashboard-trip-item {
+    grid-template-columns:minmax(142px, 148px) minmax(0,1fr) 10px !important;
+    column-gap:6px !important;
+  }
+  .dashboard-trip-list .dashboard-trip-item-date { font-size:12px !important; gap:5px !important; }
+  .dashboard-trip-list .dashboard-trip-item-name { font-size:15px !important; padding-left:7px !important; }
+}
