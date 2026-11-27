@@ -8062,3 +8062,26 @@ body.admin-body .admin-table {
     max-height: 52px !important;
   }
 }
+
+/* v111｜人數統計旁團名：加大並改為高對比寶藍色 */
+.dashboard-trip-stats-card .dashboard-panel-heading .dashboard-stats-title small {
+  font-size: 20px !important;
+  line-height: 1.35 !important;
+  font-weight: 800 !important;
+  color: #2457A6 !important;
+  max-width: 300px !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+@media (max-width: 900px) {
+  .dashboard-trip-stats-card .dashboard-panel-heading .dashboard-stats-title small {
+    font-size: 18px !important;
+    max-width: 240px !important;
+  }
+}
+@media (max-width: 560px) {
+  .dashboard-trip-stats-card .dashboard-panel-heading .dashboard-stats-title small {
+    font-size: 16px !important;
+    max-width: 190px !important;
+  }
+}
