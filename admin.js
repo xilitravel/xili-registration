@@ -691,7 +691,7 @@ function renderDashboardTripList() {
         : `剩 ${stats.deadlineText}`;
     const selected = currentSelected === tripId ? " is-selected" : "";
     return `<button type="button" class="dashboard-trip-item${selected}" data-trip-id="${escapeHTML(tripId)}" aria-pressed="${selected ? "true" : "false"}" title="${escapeHTML(tripName)}">
-      <span class="dashboard-trip-item-date"><svg class="dashboard-trip-calendar" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="16" rx="2.5"/><path d="M7.5 3v4M16.5 3v4M3.5 9.5h17"/></svg><span>${escapeHTML(formatDashboardTripDate(rawDate))}</span></span>
+      <span class="dashboard-trip-item-date"><img class="dashboard-trip-calendar" src="trip-row-calendar.svg" alt="" aria-hidden="true" draggable="false"><span>${escapeHTML(formatDashboardTripDate(rawDate))}</span></span>
       <span class="dashboard-trip-item-name">${escapeHTML(tripName)}</span>
       <span class="dashboard-trip-item-arrow" aria-hidden="true">›</span>
     </button>`;

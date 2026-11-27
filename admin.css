@@ -7476,3 +7476,46 @@ body.admin-body .admin-table {
   .dashboard-trip-item-date {font-size:12px !important;gap:5px !important;}
   .dashboard-trip-item-name {font-size:14px !important;padding-left:7px !important;}
 }
+
+/* v92｜行程圖示與金色枝條改用固定 SVG 素材，避免字型／內嵌圖示跑位 */
+.dashboard-trip-list-card > .dashboard-panel-heading {
+  position:relative !important;
+  overflow:visible !important;
+}
+.dashboard-trip-title-icon {
+  display:inline-block !important;
+  width:38px !important;height:38px !important;
+  flex:0 0 38px !important;
+  object-fit:contain !important;
+  vertical-align:middle !important;
+  margin-right:5px !important;
+  position:relative !important;
+  z-index:2 !important;
+}
+.dashboard-trip-list-card > .dashboard-panel-heading h3 {
+  display:flex !important;align-items:center !important;gap:7px !important;
+  color:#8f3f5b !important;letter-spacing:.04em !important;
+  position:relative !important;z-index:2 !important;
+}
+.dashboard-trip-floral-underline {
+  position:absolute !important;
+  left:0 !important;right:auto !important;
+  top:auto !important;bottom:0 !important;
+  width:min(68%, 430px) !important;
+  height:42px !important;max-height:42px !important;
+  object-fit:contain !important;object-position:left center !important;
+  transform:none !important;opacity:1 !important;
+  z-index:1 !important;pointer-events:none !important;
+}
+.dashboard-trip-calendar {
+  display:inline-block !important;
+  width:19px !important;height:19px !important;
+  flex:0 0 19px !important;
+  object-fit:contain !important;
+  vertical-align:middle !important;
+}
+.dashboard-trip-item-date {display:flex !important;align-items:center !important;gap:7px !important;}
+@media(max-width:900px){
+ .dashboard-trip-title-icon{width:34px !important;height:34px !important;flex-basis:34px !important;}
+ .dashboard-trip-floral-underline{width:min(70%,390px) !important;height:38px !important;max-height:38px !important;}
+}

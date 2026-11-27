@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="行程日曆圖示">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7d58a"/><stop offset=".48" stop-color="#c18a39"/><stop offset="1" stop-color="#8e5524"/></linearGradient>
+    <linearGradient id="p" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff7ec"/><stop offset="1" stop-color="#f7dce2"/></linearGradient>
+  </defs>
+  <rect x="9" y="12" width="46" height="44" rx="9" fill="url(#p)" stroke="url(#g)" stroke-width="2.6"/>
+  <path d="M9 23h46" stroke="url(#g)" stroke-width="2.6"/>
+  <path d="M20 7v11M44 7v11" stroke="url(#g)" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M19 31h7M34 31h10M19 40h7M34 40h10" stroke="#b97883" stroke-width="2.6" stroke-linecap="round"/>
+  <path d="M19 48h7" stroke="#b97883" stroke-width="2.6" stroke-linecap="round"/>
+  <path d="m27 34 17-7-8 10 2 7-5-4-6 3 2-6-2-3z" fill="url(#g)" stroke="#a66c2d" stroke-width=".8" stroke-linejoin="round"/>
+</svg>
