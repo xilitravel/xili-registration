@@ -7348,3 +7348,47 @@ body.admin-body .admin-table {
   .dashboard-trip-title-text { width:72px !important; height:42px !important; }
   .dashboard-trip-list-card .dashboard-trip-floral-underline { width:78% !important; max-width:280px !important; height:25px !important; max-height:25px !important; }
 }
+
+
+/* v94｜行程清單依最新校稿：不顯示人數、日期含星期、團名放大 */
+.dashboard-trip-list .dashboard-trip-item {
+  grid-template-columns: minmax(172px, 190px) minmax(0, 1fr) 14px !important;
+  column-gap: 12px !important;
+}
+.dashboard-trip-list .dashboard-trip-item-date {
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  letter-spacing: .15px !important;
+}
+.dashboard-trip-list .dashboard-trip-item-name {
+  font-size: 17px !important;
+  font-weight: 850 !important;
+  line-height: 1.25 !important;
+  padding-left: 12px !important;
+}
+.dashboard-trip-list .dashboard-trip-item-count {
+  display: none !important;
+}
+.dashboard-trip-list .dashboard-trip-item-arrow {
+  grid-column: 3 !important;
+}
+.dashboard-trip-list-card .dashboard-trip-floral-underline {
+  opacity: .88 !important;
+  filter: none !important;
+}
+@media(max-width:900px) {
+  .dashboard-trip-list .dashboard-trip-item {
+    grid-template-columns: minmax(154px, 174px) minmax(0,1fr) 12px !important;
+    column-gap: 8px !important;
+  }
+  .dashboard-trip-list .dashboard-trip-item-date { font-size: 13px !important; }
+  .dashboard-trip-list .dashboard-trip-item-name { font-size: 16px !important; }
+}
+@media(max-width:560px) {
+  .dashboard-trip-list .dashboard-trip-item {
+    grid-template-columns: minmax(145px, 154px) minmax(0,1fr) 10px !important;
+    column-gap: 6px !important;
+  }
+  .dashboard-trip-list .dashboard-trip-item-date { font-size: 12px !important; gap:5px !important; }
+  .dashboard-trip-list .dashboard-trip-item-name { font-size: 15px !important; padding-left:7px !important; }
+}

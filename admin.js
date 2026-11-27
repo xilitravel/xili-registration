@@ -633,6 +633,15 @@ function renderSelectedDashboardTripStats(tripId) {
   renderDashboardDetailStats(trip);
 }
 
+function formatDashboardTripDateWithWeekday(value) {
+  const base = formatDashboardTripDate(value);
+  const match = String(value || "").trim().match(/^(\\d{4})[-/](\\d{1,2})[-/](\\d{1,2})/);
+  if (!match) return base;
+  const date = new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3])));
+  const weekdays = ["日", "一", "二", "三", "四", "五", "六"];
+  return `${base}（${weekdays[date.getUTCDay()]}）`;
+}
+
 function renderDashboardTripList() {
   const root = document.getElementById("dashboardTripList");
   if (!root) return;
@@ -669,21 +678,11 @@ function renderDashboardTripList() {
   root.innerHTML = activeTrips.map(({ trip, rawDate }) => {
     const tripId = String(trip.tripId || trip.id || "");
     const tripName = getName(trip);
-    const stats = getDashboardTripStats(trip);
-    const capacity = Number(trip.maxPeople || trip.capacity || 0);
-    const countText = capacity > 0
-      ? `${stats.registeredCount} / ${capacity} 人`
-      : `${stats.registeredCount} 人`;
-    const deadlineText = stats.deadlineText === "未設定"
-      ? "未設定"
-      : stats.deadlineText === "已截止" || stats.deadlineText === "今天截止"
-        ? stats.deadlineText
-        : `剩 ${stats.deadlineText}`;
+    const dateText = formatDashboardTripDateWithWeekday(rawDate);
     const selected = currentSelected === tripId ? " is-selected" : "";
     return `<button type="button" class="dashboard-trip-item${selected}" data-trip-id="${escapeHTML(tripId)}" aria-pressed="${selected ? "true" : "false"}" title="${escapeHTML(tripName)}">
-      <span class="dashboard-trip-item-date"><img class="dashboard-trip-calendar" src="trip-row-calendar.png" alt="" aria-hidden="true" draggable="false"><span>${escapeHTML(formatDashboardTripDate(rawDate))}</span></span>
+      <span class="dashboard-trip-item-date"><img class="dashboard-trip-calendar" src="trip-row-calendar.png" alt="" aria-hidden="true" draggable="false"><span>${escapeHTML(dateText)}</span></span>
       <span class="dashboard-trip-item-name">${escapeHTML(tripName)}</span>
-      <span class="dashboard-trip-item-count"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M2.8 19c.5-3.5 2.6-5.3 6.2-5.3s5.7 1.8 6.2 5.3"/><path d="M16 5.5a3 3 0 0 1 0 5.8M17 14c2.5.5 3.8 2.1 4.2 4.5"/></svg><span>${escapeHTML(countText)}</span></span>
       <span class="dashboard-trip-item-arrow" aria-hidden="true"><img src="trip-chevron.png" alt="" draggable="false"></span>
     </button>`;
   }).join("");
