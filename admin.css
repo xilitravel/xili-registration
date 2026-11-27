@@ -8174,3 +8174,17 @@ body.admin-body .admin-table {
 .dashboard-trip-stats-card .dashboard-panel-heading #dashboardStatsTripName {
   color: #2457A6 !important;
 }
+
+/* v116｜登入封面 PIN 輸入框定位校正
+   只調整桌面版透明輸入熱區，背景封面、按鈕與手機版不變 */
+#adminLoginOverlay #adminLoginPassword,
+#adminLoginOverlay #adminLoginPassword:focus,
+#adminLoginOverlay #adminLoginPassword:focus-visible,
+#adminLoginOverlay #adminLoginPassword:active {
+  left: 32.70% !important;
+  top: 72.80% !important;
+  width: 34.00% !important;
+  height: 7.80% !important;
+  padding: 0 16px !important;
+  line-height: 1.2 !important;
+}
